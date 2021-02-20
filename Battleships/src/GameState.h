@@ -4,6 +4,7 @@
 #include "State.h"
 #include "Grid.h"
 
+
 class GameState : public State
 {
 private:
@@ -11,6 +12,8 @@ private:
 	Grid *mTargetsGrid;
 	sf::Texture mBackgroundTexture;
 	sf::Sprite mBackground;
+	//Ship ship1;
+
 
 public:
 	GameState(sf::RenderWindow *window);

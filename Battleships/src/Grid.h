@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Ship.h"
+
 class Grid : sf::Sprite
 {
 private:
@@ -14,7 +16,10 @@ private:
 
 	sf::Vector2i mGridOrigin;
 	sf::Texture mTexture;
+	sf::Texture mShipTileTexture;
 	sf::Sprite mSprite;
+	std::vector<Ship> mShips;
+
 
 	struct Cursor
 	{
