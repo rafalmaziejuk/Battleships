@@ -12,7 +12,17 @@ MenuState::MenuState(sf::RenderWindow *window) :
 
 MenuState::~MenuState(void)
 {
-	
+	while (!mButtonTextures.empty())
+	{
+		delete mButtonTextures.back();
+		mButtonTextures.pop_back();
+	}
+	while (!mButtons.empty())
+	{
+		delete mButtons.back();
+		mButtons.pop_back();
+	}
+
 }
 
 void MenuState::init_ui(void)

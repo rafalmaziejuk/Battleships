@@ -19,12 +19,15 @@ private:
 	struct Cursor
 	{
 		sf::RectangleShape mShape;
+		sf::Texture mCursorTex;
 		bool mDraw = false;
 
 		Cursor(void) :
 			mShape()
 		{
-			mShape.setFillColor(sf::Color::Cyan);
+			mCursorTex.loadFromFile("assets/selectedtile.png");
+			mShape.setTexture(&mCursorTex);
+			//mShape.setFillColor(sf::Color::Cyan);
 			mShape.setSize(sf::Vector2f(CELL_SIZE, CELL_SIZE));
 		}
 		~Cursor(void) { }

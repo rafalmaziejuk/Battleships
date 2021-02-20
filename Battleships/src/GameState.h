@@ -9,6 +9,8 @@ class GameState : public State
 private:
 	Grid *mShipsGrid;
 	Grid *mTargetsGrid;
+	sf::Texture mBackgroundTexture;
+	sf::Sprite mBackground;
 
 public:
 	GameState(sf::RenderWindow *window);

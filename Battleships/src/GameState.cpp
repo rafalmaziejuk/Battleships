@@ -5,7 +5,8 @@ GameState::GameState(sf::RenderWindow *window) :
 	mShipsGrid(new Grid(sf::Vector2i(50, 50))),
 	mTargetsGrid(new Grid(sf::Vector2i(650, 50)))
 {
-
+	mBackgroundTexture.loadFromFile("assets/gamebg.png");
+	mBackground.setTexture(mBackgroundTexture);
 }
 
 GameState::~GameState(void)
@@ -16,6 +17,7 @@ GameState::~GameState(void)
 
 void GameState::render(void)
 {
+	State::get_window()->draw(mBackground);
 	mShipsGrid->draw(State::get_window());
 	mTargetsGrid->draw(State::get_window());
 }
