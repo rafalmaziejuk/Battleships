@@ -47,11 +47,21 @@ void MenuState::update(sf::Time elapsedTime)
 		i->update(get_window(),mMouseClicked);
 }
 
-void MenuState::handle_input(void)
+void MenuState::handle_event(sf::Event &event)
 {
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	switch (event.type)
 	{
-		StateManager::get_instance().change_state<GameState>(State::get_window());
-		mMouseClicked = true;
+		case sf::Event::MouseButtonPressed:
+		{
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			{
+				StateManager::get_instance().change_state<GameState>(State::get_window());
+				mMouseClicked = true;
+			}
+
+			break;
+		}
+
+		default: break;
 	}
 }

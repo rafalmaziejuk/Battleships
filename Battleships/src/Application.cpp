@@ -55,6 +55,8 @@ void Application::process_events(void)
 	sf::Event event;
 	while (mWindow->pollEvent(event))
 	{
+		StateManager::get_instance().get_state()->handle_event(event);
+
 		switch (event.type)
 		{
 			case sf::Event::Closed:
@@ -97,7 +99,6 @@ void Application::run(void)
 			timeSinceLastUpdate -= TIME_PER_FRAME;
 
 			process_events();
-			StateManager::get_instance().get_state()->handle_input();
 			StateManager::get_instance().get_state()->update(TIME_PER_FRAME);
 		}
 

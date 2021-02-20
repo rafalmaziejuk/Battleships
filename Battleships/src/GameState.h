@@ -14,7 +14,7 @@ public:
 	GameState(sf::RenderWindow *window);
 	virtual ~GameState(void);
 
-	virtual void render(void);
-	virtual void update(sf::Time elapsedTime);
-	virtual void handle_input(void);
+	virtual void render(void) override;
+	virtual void update(sf::Time elapsedTime) override;
+	virtual void handle_event(sf::Event &event) override;
 };

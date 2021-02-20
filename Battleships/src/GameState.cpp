@@ -26,7 +26,10 @@ void GameState::update(sf::Time elapsedTime)
 	mTargetsGrid->update_cursor(sf::Mouse::getPosition(*State::get_window()));
 }
 
-void GameState::handle_input(void)
+void GameState::handle_event(sf::Event &event)
 {
-	
+	switch (event.type)
+	{
+		default: break;
+	}
 }

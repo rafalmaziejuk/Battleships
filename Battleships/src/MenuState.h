@@ -20,5 +20,5 @@ public:
 	void init_ui(void);
 	virtual void render(void) override;
 	virtual void update(sf::Time elapsedTime) override;
-	virtual void handle_input(void) override;
+	virtual void handle_event(sf::Event &event) override;
 };

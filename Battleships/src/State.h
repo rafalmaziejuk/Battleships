@@ -16,5 +16,5 @@ public:
 
 	virtual void render(void) = 0;
 	virtual void update(sf::Time elapsedTime) = 0;
-	virtual void handle_input(void) = 0;
+	virtual void handle_event(sf::Event &event) = 0;
 };

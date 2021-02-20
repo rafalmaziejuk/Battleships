@@ -33,10 +33,7 @@ private:
 		{
 			mShape.setPosition(sf::Vector2f(position.x * CELL_SIZE, position.y * CELL_SIZE));
 		}
-	};
-	
-	Cursor mCursor;
-	
+	} mCursor;
 
 public:
 	Grid(sf::Vector2i &&gridOrigin);
