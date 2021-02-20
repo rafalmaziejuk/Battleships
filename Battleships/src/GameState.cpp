@@ -1,4 +1,3 @@
-#include <iostream>
 #include "GameState.h"
 
 GameState::GameState(sf::RenderWindow *window) :
@@ -23,10 +22,11 @@ void GameState::render(void)
 
 void GameState::update(sf::Time elapsedTime)
 {
-
+	mShipsGrid->update_cursor(sf::Mouse::getPosition(*State::get_window()));
+	mTargetsGrid->update_cursor(sf::Mouse::getPosition(*State::get_window()));
 }
 
 void GameState::handle_input(void)
 {
-
+	
 }

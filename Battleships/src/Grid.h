@@ -15,12 +15,33 @@ private:
 	sf::Vector2i mGridOrigin;
 	sf::Texture mTexture;
 	sf::Sprite mSprite;
-	sf::RectangleShape mCursor;
+
+	struct Cursor
+	{
+		sf::RectangleShape mShape;
+		bool mDraw = false;
+
+		Cursor(void) :
+			mShape()
+		{
+			mShape.setFillColor(sf::Color::Cyan);
+			mShape.setSize(sf::Vector2f(CELL_SIZE, CELL_SIZE));
+		}
+		~Cursor(void) { }
+
+		void setPosition(sf::Vector2f position)
+		{
+			mShape.setPosition(sf::Vector2f(position.x * CELL_SIZE, position.y * CELL_SIZE));
+		}
+	};
+	
+	Cursor mCursor;
+	
 
 public:
 	Grid(sf::Vector2i &&gridOrigin);
 	~Grid(void);
 
 	void draw(sf::RenderWindow *window) const;
-	void set_cursor_position(sf::Vector2f mousePosition);
+	void update_cursor(sf::Vector2i mousePosition);
 };
