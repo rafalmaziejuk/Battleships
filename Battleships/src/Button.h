@@ -7,6 +7,11 @@
 
 const std::string FONT_PATH = "assets/VIKING-FONT.ttf"; // font path that have to be set manually
 
+enum class ButtonId : uint8_t
+{
+    NONE,M_HOST,M_CONNECT,M_EXIT
+};
+
 class Button : public sf::Sprite
 {
 private:
@@ -23,8 +28,8 @@ private:
 public:
 
     /* virtual methods that have to be overrided, onclick and update actions need to be handled in child class */
-    virtual void onClick() = 0;                                                         
-    virtual void update(sf::RenderWindow* window, bool mouseClicked) = 0;
+    virtual void onClick(sf::RenderWindow* window) = 0;
+    virtual ButtonId update(sf::RenderWindow* window, bool mouseClicked) = 0;
 
     /* methods */
     bool isCovered(sf::RenderWindow* window);       // checks if button is covered by mouse
@@ -32,6 +37,7 @@ public:
     void setNewCharSize(int font_size);             // sets new font size and shifts text to the button center
     sf::Vector2f getSize(void);                     // returns button size
     void setSize(const sf::FloatRect& newSize);
+    std::string getString(void);
 
     /* constructor/ destructor */
     /* constructor should be called with the child class constructor like that : YourButton(T a, T b, T c, T d) : Button(a,b,c,d) */

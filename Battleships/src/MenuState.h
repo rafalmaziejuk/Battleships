@@ -12,6 +12,7 @@ private:
 	std::vector<Button*> mButtons;
 	sf::Sprite mBackground;
 	bool mMouseClicked;
+	ButtonId mButtonClicked;
 
 public:
 	MenuState(sf::RenderWindow *window);

@@ -7,6 +7,7 @@ MenuState::MenuState(sf::RenderWindow *window) :
 	State(window)
 {
 	init_ui();
+	mButtonClicked = ButtonId::NONE;
 }
 
 MenuState::~MenuState(void)
@@ -42,9 +43,24 @@ void MenuState::render(void)
 
 void MenuState::update(sf::Time elapsedTime)
 {
-	mMouseClicked = false;
+	bool clicked = false;
+	 
 	for (auto& i : mButtons)
-		i->update(get_window(),mMouseClicked);
+	{
+		mButtonClicked = i->update(get_window(), mMouseClicked);
+		if (mButtonClicked != ButtonId::NONE)
+		{
+			switch (mButtonClicked)
+			{
+				
+				case ButtonId::M_HOST: clicked = true; StateManager::get_instance().change_state<GameState>(State::get_window()); break;
+				case ButtonId::M_CONNECT:  break;
+				case ButtonId::M_EXIT: break;
+			}
+			if (clicked) break;
+		}
+	}
+	mMouseClicked = false;
 }
 
 void MenuState::handle_event(sf::Event &event)
@@ -55,8 +71,8 @@ void MenuState::handle_event(sf::Event &event)
 		{
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			{
-				StateManager::get_instance().change_state<GameState>(State::get_window());
 				mMouseClicked = true;
+				
 			}
 
 			break;

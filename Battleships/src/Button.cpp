@@ -68,6 +68,10 @@ void Button::setSize(const sf::FloatRect& newSize)
     size = {newSize.width, newSize.height};
 }
 
+std::string Button::getString(void)
+{
+    return text_string;
+}
 
 /* constructor/ destructor */
 
