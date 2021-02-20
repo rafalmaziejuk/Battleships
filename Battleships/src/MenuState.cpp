@@ -26,5 +26,6 @@ void MenuState::update(sf::Time elapsedTime)
 
 void MenuState::handle_input(void)
 {
-	
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		StateManager::get_instance().change_state<GameState>(State::get_window());
 }

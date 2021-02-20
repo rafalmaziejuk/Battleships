@@ -2,10 +2,13 @@
 
 #include <SFML/Graphics.hpp>
 #include "State.h"
+#include "Grid.h"
 
 class GameState : public State
 {
 private:
+	Grid *mShipsGrid;
+	Grid *mTargetsGrid;
 
 public:
 	GameState(sf::RenderWindow *window);
