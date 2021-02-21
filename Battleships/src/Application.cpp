@@ -28,7 +28,7 @@ Application::Application(void) :
 	mStatisticsUpdateTime(),
 	mStatisticsNumberOfFrames(0)
 {
-	//mWindow.setKeyRepeatEnabled(false);
+	mWindow.setKeyRepeatEnabled(false);
 	mWindow.setFramerateLimit(FPS);
 
 	mFonts.load_resource(Fonts::ID::SANSATION, "assets/Sansation.ttf");

@@ -11,20 +11,16 @@ enum class Orientation
 class Ship
 {
 private:
-	static const int CELL_SIZE = 50;
-	static const int FIELDS = 10;
-	static const int GRID_SIZE = CELL_SIZE * (FIELDS + 1);
+	std::vector<sf::Sprite> mTiles;
+	sf::Vector2f mHeadPosition;
 
 private:
-	
-	sf::Vector2f mHeadPosition;
-	std::vector<sf::Sprite> mTiles;
-
 	uint8_t mShipLength;
 	Orientation mOrientation;
 	bool mIsAlive;
 
 public:
+	Ship(void);
 	Ship(sf::Vector2f headPosition, uint8_t shipLength, Orientation orientation, const sf::Texture &texture);
 	~Ship(void);
 
