@@ -3,6 +3,7 @@
 #include "Button.h"
 #include "GameState.h"
 #include "StateManager.h"
+
 class MenuButton : public Button
 {
 public:
@@ -12,7 +13,7 @@ public:
         
     }
 
-    ButtonId update(sf::RenderWindow* window, bool mouseClicked) override
+    ButtonID update(sf::RenderWindow* window, bool mouseClicked) override
     {
         if (this->isCovered(window))
         {
@@ -20,22 +21,22 @@ public:
             if (mouseClicked)
             {
                 this->onClick(window);
-                if (getString() == "Host") return ButtonId::M_HOST;
-                else if (getString() == "Connect") return ButtonId::M_CONNECT;
-                else if (getString() == "Exit") return ButtonId::M_EXIT;
+                if (getString() == "Host") return ButtonID::M_HOST;
+                else if (getString() == "Connect") return ButtonID::M_CONNECT;
+                else if (getString() == "Exit") return ButtonID::M_EXIT;
             }
         }
         else
         {
             this->setNewCharSize(25);
-            return ButtonId::NONE;
+            return ButtonID::NONE;
         }
     }
 
-    MenuButton(sf::Texture* texture, const std::string& bText, const sf::Vector2f& pos, int fontSize)
-        : Button(texture, bText, pos, fontSize) 
+    MenuButton(const sf::Texture& texture, const std::string& bText, const sf::Vector2f& pos, const sf::Font &font, int fontSize)
+        : Button(texture, bText, pos, font, fontSize) 
     {
         
     }
-    ~MenuButton() {}
+    ~MenuButton() { }
 };

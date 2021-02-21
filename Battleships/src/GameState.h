@@ -1,25 +1,20 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "State.h"
-#include "Grid.h"
 
+#include "State.h"
+#include "World.h"
 
 class GameState : public State
 {
 private:
-	Grid *mShipsGrid;
-	Grid *mTargetsGrid;
-	sf::Texture mBackgroundTexture;
-	sf::Sprite mBackground;
-	//Ship ship1;
-
+	World mWorld;
 
 public:
-	GameState(sf::RenderWindow *window);
+	GameState(Context context);
 	virtual ~GameState(void);
 
 	virtual void render(void) override;
 	virtual void update(sf::Time elapsedTime) override;
-	virtual void handle_event(sf::Event &event) override;
+	virtual void handle_event(const sf::Event &event) override;
 };

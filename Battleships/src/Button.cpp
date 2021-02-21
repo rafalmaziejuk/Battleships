@@ -1,5 +1,22 @@
 #include "Button.h"
 
+/* constructor/ destructor */
+
+Button::Button(const sf::Texture& texture, const std::string& bText, const sf::Vector2f& pos, const sf::Font& font, int fontSize)
+{
+	initButtonTexture(texture);
+	setPosition(pos);
+	text_string = bText;
+	text_font = font;
+	font_size = fontSize;
+	initText(bText);
+}
+
+Button::~Button()
+{
+
+}
+
 /* functions used to getting character and string size in pixels */
 
 static int getLetterSize(char letter, sf::Font& font, int font_size)
@@ -22,10 +39,10 @@ void Button::initText(const std::string& b_text)
 }
 
 
-void Button::initButtonTexture(sf::Texture* tex)
+void Button::initButtonTexture(const sf::Texture& tex)
 {
-    texture = tex;
-    setTexture(*texture);
+    mTexture = tex;
+    setTexture(mTexture);
 
     sf::Vector2f sprite_size = { getLocalBounds().width,getLocalBounds().height };
     size = sprite_size;
@@ -71,20 +88,4 @@ void Button::setSize(const sf::FloatRect& newSize)
 std::string Button::getString(void)
 {
     return text_string;
-}
-
-/* constructor/ destructor */
-
-Button::Button(sf::Texture* texture, const std::string& bText, const sf::Vector2f& pos, int fontSize)
-{
-    initButtonTexture(texture);
-    setPosition(pos);
-    text_font.loadFromFile(FONT_PATH);
-    text_string = bText;
-    font_size = fontSize;
-    initText(bText);
-}
-
-Button::~Button()
-{
 }

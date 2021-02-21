@@ -2,9 +2,10 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "ResourceIdentifiers.h"
 #include "Ship.h"
 
-class Grid : sf::Sprite
+class Grid
 {
 private:
 	static const int CELL_SIZE = 50;
@@ -12,39 +13,29 @@ private:
 	static const int GRID_SIZE = CELL_SIZE * (FIELDS + 1);
 
 private:
-	bool mGridFields[FIELDS][FIELDS] = { false };
-
 	sf::Vector2i mGridOrigin;
-	sf::Texture mTexture;
-	sf::Texture mShipTileTexture;
-	sf::Sprite mSprite;
-	std::vector<Ship> mShips;
+	sf::Sprite mGridSprite;
 
+private:
+	bool mGridFields[FIELDS][FIELDS] = { false };
+	std::vector<Ship> mShips;
 
 	struct Cursor
 	{
-		sf::RectangleShape mShape;
-		sf::Texture mCursorTex;
+		sf::Sprite mCursorSprite;
 		bool mDraw = false;
 
-		Cursor(void) :
-			mShape()
-		{
-			mCursorTex.loadFromFile("assets/selectedtile.png");
-			mShape.setTexture(&mCursorTex);
-			//mShape.setFillColor(sf::Color::Cyan);
-			mShape.setSize(sf::Vector2f(CELL_SIZE, CELL_SIZE));
-		}
+		explicit Cursor(const sf::Texture &texture) : mCursorSprite(texture) { }
 		~Cursor(void) { }
 
-		void setPosition(sf::Vector2f position)
+		void set_position(sf::Vector2f position)
 		{
-			mShape.setPosition(sf::Vector2f(position.x * CELL_SIZE, position.y * CELL_SIZE));
+			mCursorSprite.setPosition(sf::Vector2f(position.x * CELL_SIZE, position.y * CELL_SIZE));
 		}
 	} mCursor;
 
 public:
-	Grid(sf::Vector2i &&gridOrigin);
+	Grid(sf::Vector2i &gridOrigin, const TextureManager &textures);
 	~Grid(void);
 
 	void draw(sf::RenderWindow *window) const;
