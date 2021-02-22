@@ -20,12 +20,19 @@ private:
 private:
 	void load_textures(void);
 	void init_ships(void);
+	bool clicked_on_ships_grid(const sf::Vector2f position);
+	Ship* is_ship_choosen(const sf::Vector2i& cursorPos);
+	Ship* get_this_ship_head(const sf::Vector2i& cursorPos);
 
 private:
 	Grid* mShipsGrid;
 	Grid* mTargetsGrid;
 	Cursor mCursor;
 	std::vector<Ship> mShips;
+	bool** mUnavailableFields;
+	bool mShipPicked;
+	Ship* mActuallyPickedShip;
+	sf::Vector2i mMousePositionWindow;
 
 public:
 	explicit World(sf::RenderWindow *window);
@@ -33,5 +40,5 @@ public:
 
 	void draw(void) const;
 	void update(void);
-	void handle_input(sf::Vector2i mousePosition, bool isPressed);
+	void handle_input(sf::Vector2i mousePosition, const sf::Event& event);
 };
