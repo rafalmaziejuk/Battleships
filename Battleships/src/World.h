@@ -19,10 +19,11 @@ private:
 
 private:
 	void load_textures(void);
+	void init_ships(void);
 
 private:
-	Grid mShipsGrid;
-	Grid mTargetsGrid;
+	Grid* mShipsGrid;
+	Grid* mTargetsGrid;
 	Cursor mCursor;
 	std::vector<Ship> mShips;
 

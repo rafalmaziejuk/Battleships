@@ -12,7 +12,7 @@ private:
 	sf::Sprite mGridSprite;
 
 private:
-	bool mGridFields[FIELDS][FIELDS] = { false };
+	bool** mGridFields;
 	
 
 public:
@@ -20,5 +20,7 @@ public:
 	Grid(sf::Vector2i &gridOrigin, const TextureManager &textures);
 	~Grid(void);
 
-	void draw(sf::RenderWindow *window) const;
+	void draw(sf::RenderWindow *window, bool consoleDebug) const;
+	bool** get_grid_fields(void);
+	
 };
