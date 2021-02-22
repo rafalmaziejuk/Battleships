@@ -9,6 +9,7 @@ class GameState : public State
 {
 private:
 	World mWorld;
+	sf::Vector2i mMousePosition;
 
 public:
 	GameState(Context context);

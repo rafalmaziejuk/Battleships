@@ -35,16 +35,18 @@ Grid::Grid(sf::Vector2i &gridOrigin, const TextureManager &textures) :
 
 	// grid fields allocation
 	mGridFields = new bool* [FIELDS];
-	mUnavailableFields = new bool* [FIELDS];
+
+	//mUnavailableFields = new bool* [FIELDS];
 
 	for (unsigned i = 0; i < FIELDS; i++)
 	{
 		mGridFields[i] = new bool[FIELDS];
-		mUnavailableFields[i] = new bool [FIELDS];
+
+		//mUnavailableFields[i] = new bool[FIELDS];
 		for (unsigned j = 0; j < FIELDS; j++)
 		{
 			mGridFields[i][j] = false;
-			mUnavailableFields[i][j] = false;
+			//mUnavailableFields[i][j] = false;
 		}
 	}
 }
@@ -54,14 +56,16 @@ Grid::~Grid(void)
 	for (unsigned i = 0; i < FIELDS; i++)
 	{
 		delete mGridFields[i];
-		delete mUnavailableFields[i];
+
+		//delete mUnavailableFields[i];
 	}
 	delete mGridFields;
-	delete mUnavailableFields;
+	//delete mUnavailableFields;
 
 }
 
-void Grid::draw(sf::RenderWindow *window, bool consoleDebug) const
+
+void Grid::draw(sf::RenderWindow *window, bool consoleDebug,bool** unavailableFields) const
 {
 	window->draw(mGridSprite);
 
@@ -70,7 +74,9 @@ void Grid::draw(sf::RenderWindow *window, bool consoleDebug) const
 	{
 		// for debugging purpose only
 		//////////////////////////////////////////////////
-		
+
+		/*
+>>>>>>> pm
 		console_cursor(false);
 		std::cout << "GridFields\n";
 		std::cout << "  0 1 2 3 4 5 6 7 8 9\n";
@@ -91,12 +97,14 @@ void Grid::draw(sf::RenderWindow *window, bool consoleDebug) const
 			std::cout << i << " ";
 			for (unsigned j = 0; j < FIELDS; j++)
 			{
-				(mUnavailableFields[i][j] == false) ? std::cout << ". " : std::cout << "x ";
+				(unavailableFields[i][j] == false) ? std::cout << ". " : std::cout << "x ";
 			}
 			std::cout << "\n";
 		}
 		cls();
-		
+
+		*/
+
 		//////////////////////////////////////////////////
 	}
 }
@@ -106,7 +114,4 @@ bool** Grid::get_grid_fields(void)
 	return mGridFields;
 }
 
-bool** Grid::get_unavailable_fields()
-{
-	return mUnavailableFields;
-}
+

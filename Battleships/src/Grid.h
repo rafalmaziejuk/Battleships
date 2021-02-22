@@ -13,14 +13,18 @@ private:
 
 private:
 	bool** mGridFields;
-	bool** mUnavailableFields;
+
+	//bool** mUnavailableFields;
+
 
 public:
 	Grid(void);
 	Grid(sf::Vector2i &gridOrigin, const TextureManager &textures);
 	~Grid(void);
 
-	void draw(sf::RenderWindow *window, bool consoleDebug) const;
+	void draw(sf::RenderWindow *window, bool consoleDebug, bool** unavailableFields) const;
 	bool** get_grid_fields(void);
-	bool** get_unavailable_fields();
+
+	//bool** get_unavailable_fields(void);
+
 };

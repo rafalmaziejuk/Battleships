@@ -19,25 +19,11 @@ void GameState::render(void)
 
 void GameState::update(sf::Time elapsedTime)
 {
+	mMousePosition = sf::Mouse::getPosition(*get_context().mWindow);
 	mWorld.update();
 }
 
 void GameState::handle_event(const sf::Event &event)
 {
-	switch (event.type)
-	{
-		case sf::Event::MouseButtonPressed:
-		{
-			mWorld.handle_input(sf::Mouse::getPosition(*get_context().mWindow), true);
-			break;
-		}
-		
-		case sf::Event::MouseButtonReleased:
-		{
-			mWorld.handle_input(sf::Mouse::getPosition(*get_context().mWindow), false);
-			break;
-		}
-
-		default: break;
-	}
+	mWorld.handle_input(mMousePosition, event);
 }
