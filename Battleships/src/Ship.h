@@ -3,32 +3,25 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-enum class Orientation
-{
-	Horizontal, Vertical
-};
-
 class Ship
 {
 private:
-	static const int CELL_SIZE = 50;
-	static const int FIELDS = 10;
-	static const int GRID_SIZE = CELL_SIZE * (FIELDS + 1);
+	sf::Vector2i mStart;
+	sf::Vector2i mEnd;
 
 private:
-	
-	sf::Vector2f mHeadPosition;
-	std::vector<sf::Sprite> mTiles;
-
-	uint8_t mShipLength;
-	Orientation mOrientation;
-	bool mIsAlive;
+	uint8_t mLength = 0;
+	bool mIsOnGrid = false;
 
 public:
-	Ship(sf::Vector2f headPosition, uint8_t shipLength, Orientation orientation, const sf::Texture &texture);
+	Ship(void);
 	~Ship(void);
 
-	void move_ship(void);
-	void draw_ship(sf::RenderWindow* window);
+	void set_length(uint8_t length);
+	void set_position(sf::Vector2i start, sf::Vector2i end);
+	sf::Vector2i get_start(void) const;
+	sf::Vector2i get_end(void) const;
+	uint8_t get_length(void) const;
+	bool is_on_grid(void) const;
 };
 

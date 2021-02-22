@@ -1,22 +1,13 @@
 #include "Ship.h"
+#include "Defines.h"
+#include "Grid.h"
+#include <iostream>
 
-Ship::Ship(sf::Vector2f headPosition, uint8_t shipLength, Orientation orientation, const sf::Texture &texture) :
-	mHeadPosition(headPosition),
-	mShipLength(shipLength),
-	mOrientation(orientation),
-	mIsAlive(true)
+Ship::Ship(void) :
+	mStart(),
+	mEnd()
 {
-	//tiles initialization
-	sf::Vector2f shift(0.0f, 0.0f);
 
-	for (uint8_t i = 0; i < shipLength; i++)
-	{
-		mTiles.push_back(sf::Sprite(texture));
-		mTiles.back().setPosition((mHeadPosition.x + shift.x) * CELL_SIZE, (mHeadPosition.y + shift.y) * CELL_SIZE);
-
-		//updating shift for the new segment position
-		(mOrientation == Orientation::Horizontal) ? shift.x += 1.0f : shift.y += 1.0f;
-	}
 }
 
 Ship::~Ship(void) 
@@ -24,13 +15,34 @@ Ship::~Ship(void)
 
 }
 
-void Ship::move_ship(void)
+void Ship::set_length(uint8_t length)
 {
-
+	mLength = length;
 }
 
-void Ship::draw_ship(sf::RenderWindow* window)
+void Ship::set_position(sf::Vector2i start, sf::Vector2i end)
 {
-	for (auto& i : mTiles)
-		window->draw(i);
+	mStart = start;
+	mEnd = end;
+	mIsOnGrid = true;
+}
+
+sf::Vector2i Ship::get_start(void) const
+{
+	return mStart;
+}
+
+sf::Vector2i Ship::get_end(void) const
+{
+	return mEnd;
+}
+
+uint8_t Ship::get_length(void) const
+{
+	return mLength;
+}
+
+bool Ship::is_on_grid(void) const
+{
+	return mIsOnGrid;
 }

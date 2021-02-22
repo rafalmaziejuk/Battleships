@@ -3,41 +3,40 @@
 #include <SFML/Graphics.hpp>
 
 #include "ResourceIdentifiers.h"
-#include "Ship.h"
+#include "Defines.h"
+
+class Ship;
+
+enum class Type
+{
+	PLAYER,
+	ENEMY
+};
 
 class Grid
 {
 private:
-	static const int CELL_SIZE = 50;
-	static const int FIELDS = 10;
-	static const int GRID_SIZE = CELL_SIZE * (FIELDS + 1);
+	sf::Texture mTileTexture;
+	std::vector<sf::Sprite> mTileSprites;
+	sf::Vector2i mGridStart;
 
 private:
-	sf::Vector2i mGridOrigin;
-	sf::Sprite mGridSprite;
+	bool mFields[FIELDS][FIELDS] = { false };
+	Type mType;
 
 private:
-	bool mGridFields[FIELDS][FIELDS] = { false };
-	std::vector<Ship> mShips;
-
-	struct Cursor
-	{
-		sf::Sprite mCursorSprite;
-		bool mDraw = false;
-
-		explicit Cursor(const sf::Texture &texture) : mCursorSprite(texture) { }
-		~Cursor(void) { }
-
-		void set_position(sf::Vector2f position)
-		{
-			mCursorSprite.setPosition(sf::Vector2f(position.x * CELL_SIZE, position.y * CELL_SIZE));
-		}
-	} mCursor;
+	void update_fields(sf::Vector2i position);
+	sf::Vector2i get_window_coordinates(sf::Vector2i position) const;
 
 public:
-	Grid(sf::Vector2i &gridOrigin, const TextureManager &textures);
+	Grid(Type type, sf::Vector2i gridStart);
 	~Grid(void);
 
 	void draw(sf::RenderWindow *window) const;
-	void update_cursor(sf::Vector2i mousePosition);
+	void update(const Ship &ship);
+
+	void set_texture(const sf::Texture &texture);
+	Type get_type(void) const;
+	sf::Vector2i get_grid_coordinates(sf::Vector2i mousePosition) const;
+	bool is_field_free(sf::Vector2i position) const;
 };

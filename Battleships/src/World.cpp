@@ -1,20 +1,29 @@
 #include "World.h"
+#include <iostream>
 
 World::World(sf::RenderWindow *window) :
 	mWindow(window),
-	mTextures()
+	mTextures(),
+	mPlayerGrid(Grid(Type::PLAYER, sf::Vector2i(100, 100))),
+	mEnemyGrid(Grid(Type::ENEMY, sf::Vector2i(700, 100)))
 {
 	load_textures();
-	mBackground.setTexture(mTextures.get_resource(Textures::ID::GAME_BACKGROUND));
+	set_ships();
 
-	mShipsGrid = new Grid(sf::Vector2i(50, 50), mTextures);
-	mTargetsGrid = new Grid(sf::Vector2i(650, 50), mTextures);
+	mPlayerGrid.set_texture(mTextures.get_resource(Textures::ID::SHIP_TILE));
+	mBackgroundSprite.setTexture(mTextures.get_resource(Textures::ID::GAME_BACKGROUND));
+
+	mGridSprites[0].setTexture(mTextures.get_resource(Textures::ID::GRID));
+	mGridSprites[0].setPosition(sf::Vector2f(50.0f, 50.0f));
+	mGridSprites[1].setTexture(mTextures.get_resource(Textures::ID::GRID));
+	mGridSprites[1].setPosition(sf::Vector2f(650.0f, 50.0f));
+	
+	mCursor = Cursor(mTextures.get_resource(Textures::ID::SELECTED_TILE));
 }
 
 World::~World(void)
 {
-	delete mShipsGrid;
-	delete mTargetsGrid;
+	
 }
 
 void World::load_textures(void)
@@ -25,15 +34,72 @@ void World::load_textures(void)
 	mTextures.load_resource(Textures::ID::SHIP_TILE, "assets/shiptile.png");
 }
 
-void World::draw(void)
+void World::set_ships(void)
 {
-	mWindow->draw(mBackground);
-	mShipsGrid->draw(mWindow);
-	mTargetsGrid->draw(mWindow);
+	mPlayerShips[0].set_length(1);
+	mPlayerShips[1].set_length(1);
+	mPlayerShips[2].set_length(1);
+	mPlayerShips[3].set_length(1);
+	mPlayerShips[4].set_length(2);
+	mPlayerShips[5].set_length(2);
+	mPlayerShips[6].set_length(2);
+	mPlayerShips[7].set_length(3);
+	mPlayerShips[8].set_length(3);
+	mPlayerShips[9].set_length(4);
+}
+
+void World::draw(void) const
+{
+	mWindow->draw(mBackgroundSprite);
+	mWindow->draw(mGridSprites[0]);
+	mWindow->draw(mGridSprites[1]);
+	mPlayerGrid.draw(mWindow);
+
+	mCursor.draw(mWindow);
 }
 
 void World::update(void)
 {
-	mShipsGrid->update_cursor(sf::Mouse::getPosition(*mWindow));
-	mTargetsGrid->update_cursor(sf::Mouse::getPosition(*mWindow));
+	mCursor.update(sf::Mouse::getPosition(*mWindow));
+}
+
+void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPressed)
+{
+	if (mouse.x > 100 && mouse.y > 100 && mouse.x < 600 && mouse.y < 600)
+	{
+		if (isPressed == true)
+			mStart = mPlayerGrid.get_grid_coordinates(sf::Vector2i(mouse.x, mouse.y));
+
+		if (isPressed == false)
+		{
+			mEnd = mPlayerGrid.get_grid_coordinates(sf::Vector2i(mouse.x, mouse.y));
+
+			if (mPlayerGrid.is_field_free(mEnd) == true)
+			{
+				uint8_t length = 1;
+
+				if (mEnd.x == mStart.x)
+					length += abs(mEnd.y - mStart.y);
+				else if (mEnd.y == mStart.y)
+					length += abs(mEnd.x - mStart.x);
+
+				if (length <= 4)
+				{
+					for (int i = 0; i < NUM_OF_SHIPS; i++)
+					{
+						if (mPlayerShips[i].get_length() == length && mPlayerShips[i].is_on_grid() == false)
+						{
+							mPlayerShips[i].set_position(mStart, mEnd);
+							mPlayerGrid.update(mPlayerShips[i]);
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	else if (mouse.x > 700 && mouse.y > 100 && mouse.x < 1200 && mouse.y < 600)
+	{
+		;//Target grid
+	}
 }
