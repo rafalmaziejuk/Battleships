@@ -13,7 +13,7 @@ private:
 
 private:
 	bool** mGridFields;
-	
+	bool** mUnavailableFields;
 
 public:
 	Grid(void);
@@ -22,5 +22,5 @@ public:
 
 	void draw(sf::RenderWindow *window, bool consoleDebug) const;
 	bool** get_grid_fields(void);
-	
+	bool** get_unavailable_fields();
 };

@@ -31,16 +31,19 @@ void World::load_textures(void)
 
 void World::init_ships(void)
 {
-	mShips.push_back(Ship(sf::Vector2f(5.0f,0.0f), 3, Orientation::Horizontal, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields()));
-	mShips.push_back(Ship(sf::Vector2f(1.0f,2.0f), 4, Orientation::Horizontal, mTextures.get_resource(Textures::ID::SHIP_TILE), mShipsGrid->get_grid_fields()));
-	mShips.push_back(Ship(sf::Vector2f(8.0f,2.0f), 2, Orientation::Horizontal, mTextures.get_resource(Textures::ID::SHIP_TILE), mShipsGrid->get_grid_fields()));
-	mShips.push_back(Ship(sf::Vector2f(2.0f,4.0f), 2, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE), mShipsGrid->get_grid_fields()));
-	mShips.push_back(Ship(sf::Vector2f(9.0f,4.0f), 3, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields()));
-	mShips.push_back(Ship(sf::Vector2f(0.0f,8.0f), 2, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields()));
-	mShips.push_back(Ship(sf::Vector2f(3.0f,7.0f), 1, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields()));
-	mShips.push_back(Ship(sf::Vector2f(3.0f,9.0f), 1, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields()));
-	mShips.push_back(Ship(sf::Vector2f(5.0f,7.0f), 1, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields()));
-	mShips.push_back(Ship(sf::Vector2f(5.0f,9.0f), 1, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields()));
+
+	// first [x] then [y] --> field[x][y]
+	mShips.push_back(Ship(sf::Vector2f(0.0f,5.0f), 3, Orientation::Horizontal, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields(), mShipsGrid->get_unavailable_fields()));
+	mShips.push_back(Ship(sf::Vector2f(2.0f,1.0f), 4, Orientation::Horizontal, mTextures.get_resource(Textures::ID::SHIP_TILE), mShipsGrid->get_grid_fields(), mShipsGrid->get_unavailable_fields()));
+	mShips.push_back(Ship(sf::Vector2f(2.0f,8.0f), 2, Orientation::Horizontal, mTextures.get_resource(Textures::ID::SHIP_TILE), mShipsGrid->get_grid_fields(), mShipsGrid->get_unavailable_fields()));
+	mShips.push_back(Ship(sf::Vector2f(4.0f,2.0f), 2, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE), mShipsGrid->get_grid_fields(), mShipsGrid->get_unavailable_fields()));
+	mShips.push_back(Ship(sf::Vector2f(4.0f,9.0f), 3, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields(), mShipsGrid->get_unavailable_fields()));
+	mShips.push_back(Ship(sf::Vector2f(8.0f,0.0f), 2, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields(), mShipsGrid->get_unavailable_fields()));
+	mShips.push_back(Ship(sf::Vector2f(7.0f,3.0f), 1, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields(), mShipsGrid->get_unavailable_fields()));
+	mShips.push_back(Ship(sf::Vector2f(9.0f,3.0f), 1, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields(), mShipsGrid->get_unavailable_fields()));
+	mShips.push_back(Ship(sf::Vector2f(7.0f,5.0f), 1, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields(), mShipsGrid->get_unavailable_fields()));
+	mShips.push_back(Ship(sf::Vector2f(9.0f,5.0f), 1, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields(), mShipsGrid->get_unavailable_fields()));
+
 }
 
 void World::draw(void) const

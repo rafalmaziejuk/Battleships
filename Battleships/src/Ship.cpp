@@ -15,6 +15,19 @@ inline static sf::Vector2f map_to_grid(sf::Vector2f vec)
 	return vec + sf::Vector2f(2, 2);
 }
 
+///////////////////////////////////////////////////////////////
+
+inline static sf::Vector2f invert_vector(sf::Vector2f vec)
+{
+	return sf::Vector2f(vec.y, vec.x);
+}
+
+inline static sf::Vector2i invert_vector(sf::Vector2i vec)
+{
+	return sf::Vector2i(vec.y, vec.x);
+}
+
+
 Ship::Ship(void) :
 	mHeadPosition(),
 	mTiles(),
@@ -25,7 +38,7 @@ Ship::Ship(void) :
 
 }
 
-Ship::Ship(const sf::Vector2f& headPosition, uint8_t shipLength, Orientation orientation, const sf::Texture &texture, bool** gridFields) :
+Ship::Ship(const sf::Vector2f& headPosition, uint8_t shipLength, Orientation orientation, const sf::Texture &texture, bool** gridFields, bool** unavailableFields) :
 	mHeadPosition(headPosition),
 	mShipLength(shipLength),
 	mOrientation(orientation),
@@ -36,6 +49,7 @@ Ship::Ship(const sf::Vector2f& headPosition, uint8_t shipLength, Orientation ori
 		mTiles.back().setPosition(mHeadPosition.x * CELL_SIZE, mHeadPosition.y * CELL_SIZE);
 	*/
 
+	mHeadPosition = invert_vector(mHeadPosition);
 	// shifting to board position
 
 	//tiles initialization
@@ -45,7 +59,10 @@ Ship::Ship(const sf::Vector2f& headPosition, uint8_t shipLength, Orientation ori
 	{
 		mTiles.push_back(sf::Sprite(texture));
 		mTiles.back().setPosition((map_to_grid(mHeadPosition.x) + shift.x) * CELL_SIZE, (map_to_grid(mHeadPosition.y) + shift.y) * CELL_SIZE);
-		gridFields[(int)(mHeadPosition.y + shift.y)][(int)(mHeadPosition.x + shift.x)] = true;
+		
+		update_grid_fields(sf::Vector2i(mHeadPosition.x + shift.x, mHeadPosition.y + shift.y),gridFields);
+		update_unavailable_fields(sf::Vector2i(mHeadPosition.x + shift.x, mHeadPosition.y + shift.y), unavailableFields);
+
 		//updating shift for the new segment position
 		(mOrientation == Orientation::Horizontal) ? shift.x += 1.0f : shift.y += 1.0f;
 		//std::cout << mTiles.back().getPosition().x << " " << mTiles.back().getPosition().y<<"\n";
@@ -70,7 +87,20 @@ void Ship::draw_ship(sf::RenderWindow* window)
 	//window->draw(mTiles[3]);
 }
 
-void Ship::updateGridFields(sf::Vector2i shipSegment)
+void Ship::update_grid_fields(sf::Vector2i&& shipSegment, bool** gridFields)
 {
+	sf::Vector2i vec = shipSegment;
+	vec = invert_vector(vec);
 
+	gridFields[(int)(vec.x)][(int)(vec.y)] = true;
+}
+
+void Ship::update_unavailable_fields(sf::Vector2i&& shipSegment, bool** gridFields)
+{
+	sf::Vector2i vec(shipSegment);
+
+	// x-1,y-1 
+	//
+	//
+	//gridFields[vec.x-1]
 }
