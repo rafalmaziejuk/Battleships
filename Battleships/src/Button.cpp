@@ -21,7 +21,7 @@ Button::~Button()
 
 static int getLetterSize(char letter, sf::Font& font, int font_size)
 {
-    return font.getGlyph(int(letter), font_size, false).advance;
+    return int(font.getGlyph(int(letter), font_size, false).advance);
 }
 
 static int getTextLenghtInPixel(const std::string& b_text, int letter_size)

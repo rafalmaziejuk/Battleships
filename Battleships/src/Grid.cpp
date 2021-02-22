@@ -31,7 +31,7 @@ Grid::Grid(sf::Vector2i &gridOrigin, const TextureManager &textures) :
 	mGridOrigin(gridOrigin),
 	mGridSprite(textures.get_resource(Textures::ID::GRID))
 {
-	mGridSprite.setPosition(gridOrigin.x, gridOrigin.y);
+	mGridSprite.setPosition(float(gridOrigin.x), float(gridOrigin.y));
 
 	// grid fields allocation
 	mGridFields = new bool* [FIELDS];

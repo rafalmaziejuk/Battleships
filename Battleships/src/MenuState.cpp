@@ -9,7 +9,7 @@ MenuState::MenuState(Context context) :
 	mBackground()
 {
 	mBackground.setTexture(get_context().mTextures->get_resource(Textures::ID::MENU_BACKGROUND));
-	mBackground.setScale(0.95, 0.95);
+	mBackground.setScale(0.95f, 0.95f);
 	mMouseClicked = false;
 
 	sf::Font &font = get_context().mFonts->get_resource(Fonts::ID::VIKING);

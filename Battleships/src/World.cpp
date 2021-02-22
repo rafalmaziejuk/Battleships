@@ -41,7 +41,6 @@ void World::init_ships(void)
 	mShips.push_back(Ship(sf::Vector2f(3.0f,9.0f), 1, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields()));
 	mShips.push_back(Ship(sf::Vector2f(5.0f,7.0f), 1, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields()));
 	mShips.push_back(Ship(sf::Vector2f(5.0f,9.0f), 1, Orientation::Vertical, mTextures.get_resource(Textures::ID::SHIP_TILE),mShipsGrid->get_grid_fields()));
-
 }
 
 void World::draw(void) const

@@ -18,7 +18,7 @@ namespace
 	}
 }
 
-const sf::Time Application::TIME_PER_FRAME = sf::seconds(1.0 / FPS);
+const sf::Time Application::TIME_PER_FRAME = sf::seconds(1.0f / FPS);
 
 Application::Application(void) :
 	mWindow(sf::RenderWindow(sf::VideoMode(SCREEN_HEIGHT, SCREEN_WIDTH), "Battleships")),
@@ -29,7 +29,7 @@ Application::Application(void) :
 	mStatisticsNumberOfFrames(0)
 {
 	mWindow.setKeyRepeatEnabled(false);
-	mWindow.setFramerateLimit(FPS);
+	mWindow.setFramerateLimit(unsigned int(FPS));
 
 	mFonts.load_resource(Fonts::ID::SANSATION, "assets/Sansation.ttf");
 	mFonts.load_resource(Fonts::ID::VIKING, "assets/VIKING-FONT.ttf");
@@ -42,8 +42,9 @@ Application::Application(void) :
 	StateManager::get_instance().change_state<MenuState>(context);
 
 	mStatisticsText.setFont(mFonts.get_resource(Fonts::ID::SANSATION));
-	mStatisticsText.setPosition(5.0, 5.0);
+	mStatisticsText.setPosition(5.0f, 5.0f);
 	mStatisticsText.setCharacterSize(10);
+	mStatisticsText.setFillColor(sf::Color::Black);
 }
 
 Application::~Application(void)
@@ -55,8 +56,8 @@ void Application::render(void)
 {
 	mWindow.clear();
 
-	mWindow.draw(mStatisticsText);
 	StateManager::get_instance().get_state()->render();
+	mWindow.draw(mStatisticsText);
 
 	mWindow.display();
 }
@@ -82,11 +83,11 @@ void Application::update_statistics(sf::Time elapsedTime)
 	mStatisticsUpdateTime += elapsedTime;
 	mStatisticsNumberOfFrames++;
 
-	if (mStatisticsUpdateTime >= sf::seconds(1.0))
+	if (mStatisticsUpdateTime >= sf::seconds(1.0f))
 	{
 		mStatisticsText.setString("FPS = " + to_string(mStatisticsNumberOfFrames) + "\n");
 
-		mStatisticsUpdateTime -= sf::seconds(1.0);
+		mStatisticsUpdateTime -= sf::seconds(1.0f);
 		mStatisticsNumberOfFrames = 0;
 	}
 }

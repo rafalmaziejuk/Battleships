@@ -27,10 +27,9 @@ public:
             }
         }
         else
-        {
             this->setNewCharSize(25);
-            return ButtonID::NONE;
-        }
+
+		return ButtonID::NONE;
     }
 
     MenuButton(const sf::Texture& texture, const std::string& bText, const sf::Vector2f& pos, const sf::Font &font, int fontSize)

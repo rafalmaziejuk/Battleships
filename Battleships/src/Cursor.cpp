@@ -25,7 +25,7 @@ void Cursor::update(sf::Vector2i mousePosition)
 		mousePosition.x /= CELL_SIZE;
 		mousePosition.y /= CELL_SIZE;
 
-		mCursorSprite.setPosition(sf::Vector2f(mousePosition.x * CELL_SIZE, mousePosition.y * CELL_SIZE));
+		mCursorSprite.setPosition(sf::Vector2f(float(mousePosition.x * CELL_SIZE), float(mousePosition.y * CELL_SIZE)));
 		mDraw = true;
 	}
 	else
