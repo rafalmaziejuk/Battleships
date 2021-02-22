@@ -27,6 +27,6 @@ public:
 	void move_ship(void);
 	void draw_ship(sf::RenderWindow* window);
 	void update_grid_fields(sf::Vector2i&& shipSegment, bool** gridFields);
-	void update_unavailable_fields(sf::Vector2i&& shipSegment, bool** gridFields);
+	void update_unavailable_fields(sf::Vector2i&& shipSegment, bool** unavailableFields);
 };
 

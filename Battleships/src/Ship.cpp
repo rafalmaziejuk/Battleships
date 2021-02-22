@@ -95,12 +95,18 @@ void Ship::update_grid_fields(sf::Vector2i&& shipSegment, bool** gridFields)
 	gridFields[(int)(vec.x)][(int)(vec.y)] = true;
 }
 
-void Ship::update_unavailable_fields(sf::Vector2i&& shipSegment, bool** gridFields)
+void Ship::update_unavailable_fields(sf::Vector2i&& shipSegment, bool** unavailableFields)
 {
-	sf::Vector2i vec(shipSegment);
+	sf::Vector2i v(shipSegment);
+	v = invert_vector(v);
 
-	// x-1,y-1 
-	//
-	//
-	//gridFields[vec.x-1]
+	// x-1,y-1	x-1 y	x-1 y+1
+	// x ,y-1	x y		x y+1
+	//x+1,y-1	x+1,y	x+1,y+1
+	
+	unavailableFields[(v.x-1 >=0 && v.x-1 <=FIELDS)?v.x - 1 : v.x][(v.y - 1 >= 0 && v.y - 1 <= FIELDS)?v.y - 1 : v.y] = true;	unavailableFields[(v.x - 1 >= 0 && v.x - 1 <= FIELDS) ? v.x - 1 : v.x][v.y] = true;	unavailableFields[(v.x - 1 >= 0 && v.x - 1 <= FIELDS) ? v.x - 1 : v.x][(v.y + 1 >= 0 && v.y + 1 <= FIELDS) ? v.y + 1 : v.y] = true;
+	unavailableFields[v.x][(v.y - 1 >= 0 && v.y - 1 <= FIELDS) ? v.y - 1 : v.y] = true;	unavailableFields[v.x][v.y] = true;	unavailableFields[v.x][(v.y + 1 >= 0 && v.y + 1 <= FIELDS) ? v.y + 1 : v.y] = true;
+	unavailableFields[(v.x + 1 >= 0 && v.x + 1 <= FIELDS) ? v.x + 1 : v.x][(v.y - 1 >= 0 && v.y - 1 <= FIELDS) ? v.y - 1 : v.y] = true;	unavailableFields[(v.x + 1 >= 0 && v.x + 1 <= FIELDS) ? v.x + 1 : v.x][v.y] = true;	unavailableFields[(v.x + 1 >= 0 && v.x + 1 <= FIELDS) ? v.x + 1 : v.x][(v.y + 1 >= 0 && v.y + 1 <= FIELDS) ? v.y + 1 : v.y] = true;
+		
+
 }
