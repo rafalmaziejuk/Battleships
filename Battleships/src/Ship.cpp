@@ -70,7 +70,7 @@ void Ship::draw_ship(sf::RenderWindow* window)
 	//window->draw(mTiles[3]);
 }
 
-void Ship::updateGridFields(void)
+void Ship::updateGridFields(sf::Vector2i shipSegment)
 {
 
 }

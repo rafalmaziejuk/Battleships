@@ -26,6 +26,6 @@ public:
 
 	void move_ship(void);
 	void draw_ship(sf::RenderWindow* window);
-	void updateGridFields(void);
+	void updateGridFields(sf::Vector2i shipSegment);
 };
 
