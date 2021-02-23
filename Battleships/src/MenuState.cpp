@@ -2,6 +2,7 @@
 
 #include "MenuState.h"
 #include "GameState.h"
+#include "ConnectState.h" 
 #include "StateManager.h"
 
 MenuState::MenuState(Context context) :
@@ -43,7 +44,7 @@ void MenuState::update(sf::Time elapsedTime)
 			switch (mButtonClicked)
 			{
 				case ButtonID::M_HOST: clicked = true; StateManager::get_instance().change_state<GameState>(get_context()); break;
-				case ButtonID::M_CONNECT:  break;
+				case ButtonID::M_CONNECT:  clicked = true; StateManager::get_instance().change_state<ConnectState>(get_context()); break;
 				case ButtonID::M_EXIT: break;
 			}
 

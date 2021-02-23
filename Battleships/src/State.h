@@ -16,7 +16,7 @@ public:
 
 		Context(sf::RenderWindow &window, TextureManager &textures, FontManager &fonts) :
 			mWindow(&window),
-			mTextures(&textures), 
+			mTextures(&textures),
 			mFonts(&fonts)
 		{
 			
