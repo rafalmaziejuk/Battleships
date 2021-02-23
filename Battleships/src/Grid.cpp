@@ -49,7 +49,7 @@ void Grid::draw(sf::RenderWindow *window) const
 }
 
 
-void Grid::update(const Ship &ship)
+void Grid::update(Ship &ship)
 {
 	if (this->mType == Type::PLAYER)
 	{

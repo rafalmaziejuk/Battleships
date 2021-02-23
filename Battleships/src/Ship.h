@@ -3,22 +3,24 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
+enum class Orientation
+{
+	Horizontal, Vertical
+};
+
 class Ship
 {
 private:
 
 	sf::Vector2i mStart;
 	sf::Vector2i mEnd;
+	Orientation mOrientation;
 
 private:
 	uint8_t mLength = 0;
 	bool mIsOnGrid = false;
+	std::vector<sf::Sprite>mTiles;
 
-
-	void update_grid_fields(sf::Vector2i&& shipSegment, bool** gridFields);
-	void update_unavailable_fields(sf::Vector2i&& shipSegment, bool** gridFields, bool** unavailableFields);
-	void update_unavailable_fields(bool** gridFields, bool** unavailableFields);
-	void update_tile_area(const sf::Vector2i& pos, bool** unavailableFields);
 public:
 	Ship(void);
 
@@ -30,6 +32,6 @@ public:
 	sf::Vector2i get_end(void) const;
 	uint8_t get_length(void) const;
 	bool is_on_grid(void) const;
-
+	bool contain_tile(const sf::Vector2i& cursorPos) const;
 };
 

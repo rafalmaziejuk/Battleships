@@ -1,6 +1,11 @@
 #include "World.h"
 #include <iostream>
 
+static sf::Vector2f map_cursor_to_world(const sf::Vector2i mousePos)
+{
+	return sf::Vector2f((mousePos.x / 50.0f)-2, (mousePos.y / 50.0f)-2);
+}
+
 World::World(sf::RenderWindow *window) :
 	mWindow(window),
 	mTextures(),
@@ -70,42 +75,90 @@ void World::update(void)
 
 void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPressed)
 {
-	if (mouse.x > 100 && mouse.y > 100 && mouse.x < 600 && mouse.y < 600)
+	//left button
+	if (mouse.button == sf::Mouse::Left)
 	{
-		if (isPressed == true)
-			mStart = mPlayerGrid.get_grid_coordinates(sf::Vector2i(mouse.x, mouse.y));
 
-		if (isPressed == false)
+		if (mouse.x > 100 && mouse.y > 100 && mouse.x < 600 && mouse.y < 600)
 		{
-			mEnd = mPlayerGrid.get_grid_coordinates(sf::Vector2i(mouse.x, mouse.y));
+			add_new_ship(mouse, isPressed);
+		}
+		else if (mouse.x > 700 && mouse.y > 100 && mouse.x < 1200 && mouse.y < 600)
+		{
+			//TODO(rm): Right grid functionality based of input
+		}
+	}
+	else if (mouse.button == sf::Mouse::Right)
+	{
+		if (isPressed)
+		{
+			sf::Vector2f cursorPos = map_cursor_to_world(sf::Vector2i(mouse.x, mouse.y));
+			Ship* clickedShip = is_ship_choosen((sf::Vector2i)cursorPos);
+			if (clickedShip)
+				remove_ship();
+		}
+	}
+}
 
-			if (mPlayerGrid.is_field_free(mEnd) == true)
+void World::add_new_ship(const sf::Event::MouseButtonEvent& mouse, bool isPressed)
+{
+	if (isPressed == true)
+		mStart = mPlayerGrid.get_grid_coordinates(sf::Vector2i(mouse.x, mouse.y));
+
+	if (isPressed == false)
+	{
+		mEnd = mPlayerGrid.get_grid_coordinates(sf::Vector2i(mouse.x, mouse.y));
+
+		if (mPlayerGrid.is_field_free(mEnd) == true)
+		{
+			uint8_t length = 1;
+
+			if (mEnd.x == mStart.x)
+				length += abs(mEnd.y - mStart.y);
+			else if (mEnd.y == mStart.y)
+				length += abs(mEnd.x - mStart.x);
+
+			if (length <= 4)
 			{
-				uint8_t length = 1;
-
-				if (mEnd.x == mStart.x)
-					length += abs(mEnd.y - mStart.y);
-				else if (mEnd.y == mStart.y)
-					length += abs(mEnd.x - mStart.x);
-
-				if (length <= 4)
+				for (int i = 0; i < NUM_OF_SHIPS; i++)
 				{
-					for (int i = 0; i < NUM_OF_SHIPS; i++)
+					if (mPlayerShips[i].get_length() == length && mPlayerShips[i].is_on_grid() == false)
 					{
-						if (mPlayerShips[i].get_length() == length && mPlayerShips[i].is_on_grid() == false)
-						{
-							mPlayerShips[i].set_position(mStart, mEnd);
-							mPlayerGrid.update(mPlayerShips[i]);
-							break;
-						}
+						mPlayerShips[i].set_position(mStart, mEnd);
+						mPlayerGrid.update(mPlayerShips[i]);
+						break;
 					}
 				}
 			}
 		}
 	}
-	else if (mouse.x > 700 && mouse.y > 100 && mouse.x < 1200 && mouse.y < 600)
+}
+
+void World::remove_ship(void)
+{
+	std::cout << "Usuwamy\n";
+}
+
+Ship* World::is_ship_choosen(const sf::Vector2i& cursorPos)
+{
+	//bool** shipGrid = mPlayerGrid->get_grid_fields();
+	if (mPlayerGrid.is_field_free(cursorPos) == false)
 	{
-		//TODO(rm): Right grid functionality based of input
+		//std::cout << "TRUE";
+		return get_this_ship_head(cursorPos);
 	}
+	else
+		return nullptr;
+}
+
+Ship* World::get_this_ship_head(const sf::Vector2i& cursorPos)
+{
+	for (unsigned i = 0 ; i < 10 ; i++ )
+		if (mPlayerShips[i].contain_tile(cursorPos))
+		{
+			return &mPlayerShips[i];
+			std::cout << "mam";
+		}
+	return nullptr;
 
 }

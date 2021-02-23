@@ -21,7 +21,6 @@ private:
 	sf::Vector2i mEnd;
 
 private:
-
 	Grid mPlayerGrid;
 	Grid mEnemyGrid;
 	Cursor mCursor;
@@ -30,6 +29,10 @@ private:
 private:
 	void load_textures(void);
 	void set_ships(void);
+	Ship* is_ship_choosen(const sf::Vector2i& cursorPos);
+	Ship* get_this_ship_head(const sf::Vector2i& cursorPos);
+	void add_new_ship(const sf::Event::MouseButtonEvent& mouse, bool isPressed);
+	void remove_ship(void);
 
 public:
 	explicit World(sf::RenderWindow *window);
@@ -37,7 +40,5 @@ public:
 
 	void draw(void) const;
 	void update(void);
-
 	void handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPressed);
-
 };
