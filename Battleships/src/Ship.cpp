@@ -10,8 +10,9 @@ Ship::Ship(void) :
 	mEnd(),
 	mDirection(Direction::Null)
 {
-
-
+	static int id = 0;
+	mId = id;
+	id++;
 }
 
 Ship::~Ship(void) 

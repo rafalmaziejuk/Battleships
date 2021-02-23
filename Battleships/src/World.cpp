@@ -17,7 +17,9 @@ World::World(sf::RenderWindow* window) :
 	load_textures();
 	set_ships();
 
-	mPlayerGrid.set_texture(mTextures.get_resource(Textures::ID::SHIP_TILE));
+	mPlayerGrid.set_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE));
+	mPlayerGrid.set_hint_ship_texture(mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_I), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_A));
+
 	mBackgroundSprite.setTexture(mTextures.get_resource(Textures::ID::GAME_BACKGROUND));
 
 	mGridSprites[0].setTexture(mTextures.get_resource(Textures::ID::GRID));
@@ -40,6 +42,8 @@ void World::load_textures(void)
 	mTextures.load_resource(Textures::ID::GRID, "assets/grid.png");
 	mTextures.load_resource(Textures::ID::SELECTED_TILE, "assets/selectedtile.png");
 	mTextures.load_resource(Textures::ID::SHIP_TILE, "assets/shiptile.png");
+	mTextures.load_resource(Textures::ID::HINT_SHIP_TILE_A, "assets/hinttile.png");
+	mTextures.load_resource(Textures::ID::HINT_SHIP_TILE_I, "assets/innactivehinttile.png");
 }
 
 
@@ -126,6 +130,11 @@ void World::add_new_ship(const sf::Event::MouseButtonEvent& mouse, bool isPresse
 				length += abs(mEnd.y - mStart.y);
 			else if (mEnd.y == mStart.y)
 				length += abs(mEnd.x - mStart.x);
+			else
+			{
+				mIsGood = false;
+				return;
+			}
 
 			if (length <= 4)
 			{
@@ -134,7 +143,7 @@ void World::add_new_ship(const sf::Event::MouseButtonEvent& mouse, bool isPresse
 					if (mPlayerShips[i].get_length() == length && mPlayerShips[i].is_on_grid() == false)
 					{
 						mPlayerShips[i].set_position(mStart, mEnd);
-						mPlayerGrid.update(mPlayerShips[i],Action::ADD);
+						mPlayerGrid.update(mPlayerShips[i],ShipAction::ADD);
 						break;
 					}
 				}
@@ -148,7 +157,7 @@ void World::add_new_ship(const sf::Event::MouseButtonEvent& mouse, bool isPresse
 void World::remove_ship(Ship* ship)
 {
 	//std::cout << "Usuwamy\n";
-	mPlayerGrid.update(*ship, Action::REMOVE);
+	mPlayerGrid.update(*ship, ShipAction::REMOVE);
 }
 
 Ship* World::is_ship_choosen(const sf::Vector2i& cursorPos)

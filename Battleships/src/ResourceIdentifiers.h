@@ -17,7 +17,9 @@ namespace Textures
 		GAME_BACKGROUND,
 		GRID,
 		SELECTED_TILE,
-		SHIP_TILE
+		SHIP_TILE,
+		HINT_SHIP_TILE_A,
+		HINT_SHIP_TILE_I
 	};
 }
 

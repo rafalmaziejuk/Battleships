@@ -25,8 +25,8 @@ private:
 	std::vector<sf::Sprite>mTiles;
 
 public:
+	unsigned mId;
 	bool mIsOnGrid = false;
-
 	Orientation mOrientation;
 	Direction mDirection;
 

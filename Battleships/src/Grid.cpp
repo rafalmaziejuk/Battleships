@@ -8,9 +8,10 @@
 Grid::Grid(Type type, sf::Vector2i gridStart) :
 	mTileTexture(),
 	mGridStart(gridStart),
-	mType(type)
+	mType(type),
+	mShipHint()
 {
-
+	
 
 }
 
@@ -52,8 +53,9 @@ void Grid::draw(sf::RenderWindow *window) const
 
 	// for debugging purpose only
 		//////////////////////////////////////////////////
-
+	mShipHint.draw_ship_hints(window);
 	
+	/*
 	console_cursor(false);
 	std::cout << "GridFields\n";
 	std::cout << "  0 1 2 3 4 5 6 7 8 9\n";
@@ -79,21 +81,21 @@ void Grid::draw(sf::RenderWindow *window) const
 		std::cout << "\n";
 	}
 	cls();
-	
+	*/
 	//////////////////////////////////////////////////
 }
 
 
-void Grid::update(Ship &ship,Action action)
+void Grid::update(Ship &ship,ShipAction action)
 {
 	if (this->mType == Type::PLAYER)
 	{
-		if (action == Action::ADD)
+		if (action == ShipAction::ADD)
 		{
 			add_ship_to_grid(ship);
 
 		}
-		else if (action == Action::REMOVE)
+		else if (action == ShipAction::REMOVE)
 		{
 			delete_ship_from_grid(ship);
 		}
@@ -105,6 +107,14 @@ void Grid::update(Ship &ship,Action action)
 		// { }
 		//TODO(rm): Right grid update functionality
 	}
+}
+
+void Grid::update_ship_hint(const int shipId,HintAction action)
+{
+	if(action == HintAction::ADD)
+		mShipHint.update_ship_hints(shipId, HintAction::ADD);
+	else if(action == HintAction::REMOVE)
+		mShipHint.update_ship_hints(shipId, HintAction::REMOVE);
 }
 
 void Grid::add_ship_to_grid(Ship& ship)
@@ -167,6 +177,7 @@ void Grid::add_ship_to_grid(Ship& ship)
 			}
 		}
 	}
+	update_ship_hint(ship.mId, HintAction::ADD);
 }
 
 void Grid::delete_ship_from_grid(Ship& ship)
@@ -174,7 +185,6 @@ void Grid::delete_ship_from_grid(Ship& ship)
 	ship.mIsOnGrid = false;
 	ship.remove_tiles();
 
-	//mShipFields[][] = false;
 	sf::Vector2i shift(0, 0);
 
 	for (unsigned i = 0; i < ship.get_length(); i++)
@@ -205,6 +215,7 @@ void Grid::delete_ship_from_grid(Ship& ship)
 				update_fields(sf::Vector2i(j, i),false);
 			
 	}
+	update_ship_hint(ship.mId, HintAction::REMOVE);
 }
 
 void Grid::set_new_ship_segment(sf::Vector2i position, Ship& ship)
@@ -215,9 +226,15 @@ void Grid::set_new_ship_segment(sf::Vector2i position, Ship& ship)
 	ship.getShipTiles().push_back(newTile);
 }
 
-void Grid::set_texture(const sf::Texture &texture)
+void Grid::set_ship_texture(const sf::Texture &texture)
 {
 	mTileTexture = texture;
+}
+
+void Grid::set_hint_ship_texture(sf::Texture& texture, sf::Texture& texture2)
+{
+	//mHintTileTexture = texture;
+	mShipHint = ShipHint(texture,texture2);
 }
 
 Type Grid::get_type(void) const

@@ -4,7 +4,7 @@
 
 #include "ResourceIdentifiers.h"
 #include "Defines.h"
-
+#include "ShipHint.h"
 
 class Ship;
 
@@ -14,7 +14,7 @@ enum class Type
 	ENEMY
 };
 
-enum class Action
+enum class ShipAction
 {
 	ADD,
 	REMOVE
@@ -25,6 +25,7 @@ class Grid
 private:
 
 	sf::Texture mTileTexture;
+	//sf::Texture mHintTileTexture;
 	//std::vector<sf::Sprite> mTileSprites;
 	sf::Vector2i mGridStart;
 
@@ -32,6 +33,7 @@ private:
 	bool mFields[FIELDS][FIELDS] = { false }; //fields taken overall
 	bool mShipFields[FIELDS][FIELDS] = { false }; //fields occupied by ships only
 	Type mType;
+	ShipHint mShipHint;
 
 private:
 	void update_fields(sf::Vector2i position, bool somethingAdded);
@@ -45,9 +47,11 @@ public:
 	~Grid(void);
 
 	void draw(sf::RenderWindow *window) const;
-	void update(Ship &ship,Action action);
+	void update(Ship &ship,ShipAction action);
+	void update_ship_hint(const int shipId, HintAction action);
 
-	void set_texture(const sf::Texture &texture);
+	void set_ship_texture(const sf::Texture &texture);
+	void set_hint_ship_texture(sf::Texture &texture, sf::Texture& texture2);
 	Type get_type(void) const;
 	sf::Vector2i get_grid_coordinates(sf::Vector2i mousePosition) const;
 	bool is_field_free(sf::Vector2i position) const;

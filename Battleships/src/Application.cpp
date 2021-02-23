@@ -21,7 +21,7 @@ namespace
 const sf::Time Application::TIME_PER_FRAME = sf::seconds(1.0f / FPS);
 
 Application::Application(void) :
-	mWindow(sf::RenderWindow(sf::VideoMode(SCREEN_HEIGHT, SCREEN_WIDTH), "Battleships")),
+	mWindow(sf::RenderWindow(sf::VideoMode(SCREEN_HEIGHT, SCREEN_WIDTH), "Battleships", sf::Style::Titlebar | sf::Style::Close)),
 	mTextures(),
 	mFonts(),
 	mStatisticsText(),
@@ -30,7 +30,6 @@ Application::Application(void) :
 {
 	mWindow.setKeyRepeatEnabled(false);
 	mWindow.setFramerateLimit(unsigned int(FPS));
-
 	mFonts.load_resource(Fonts::ID::SANSATION, "assets/Sansation.ttf");
 	mFonts.load_resource(Fonts::ID::VIKING, "assets/VIKING-FONT.ttf");
 	mTextures.load_resource(Textures::ID::BUTTON1, "assets/button1.png");
