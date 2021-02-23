@@ -28,7 +28,6 @@ Application::Application(void) :
 	mStatisticsUpdateTime(),
 	mStatisticsNumberOfFrames(0)
 {
-	mWindow.setKeyRepeatEnabled(false);
 	mWindow.setFramerateLimit(unsigned int(FPS));
 	mFonts.load_resource(Fonts::ID::SANSATION, "assets/Sansation.ttf");
 	mFonts.load_resource(Fonts::ID::VIKING, "assets/VIKING-FONT.ttf");
@@ -36,6 +35,7 @@ Application::Application(void) :
 	mTextures.load_resource(Textures::ID::BUTTON2, "assets/button2.png");
 	mTextures.load_resource(Textures::ID::BUTTON3, "assets/button3.png");
 	mTextures.load_resource(Textures::ID::MENU_BACKGROUND, "assets/menubg.jpg");
+	mTextures.load_resource(Textures::ID::CONNECT_SCREEN, "assets/connectstate.png");
 
 	State::Context context(mWindow, mTextures, mFonts);
 	StateManager::get_instance().change_state<MenuState>(context);

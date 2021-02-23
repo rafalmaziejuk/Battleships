@@ -1,5 +1,4 @@
-#ifndef BOOK_RESOURCEHOLDER_HPP
-#define BOOK_RESOURCEHOLDER_HPP
+#pragma once
 
 #include <map>
 #include <string>
@@ -23,4 +22,3 @@ public:
 };
 
 #include "ResourceManager.inl"
-#endif
