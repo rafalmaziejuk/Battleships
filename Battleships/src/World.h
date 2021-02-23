@@ -15,24 +15,21 @@ class World : sf::NonCopyable
 private:
 	sf::RenderWindow *mWindow;
 	TextureManager mTextures;
-	sf::Sprite mBackground;
+	sf::Sprite mBackgroundSprite;
+	sf::Sprite mGridSprites[2];
+	sf::Vector2i mStart;
+	sf::Vector2i mEnd;
+
+private:
+
+	Grid mPlayerGrid;
+	Grid mEnemyGrid;
+	Cursor mCursor;
+	Ship mPlayerShips[NUM_OF_SHIPS];
 
 private:
 	void load_textures(void);
-	void init_ships(void);
-	bool clicked_on_ships_grid(const sf::Vector2f position);
-	Ship* is_ship_choosen(const sf::Vector2i& cursorPos);
-	Ship* get_this_ship_head(const sf::Vector2i& cursorPos);
-
-private:
-	Grid* mShipsGrid;
-	Grid* mTargetsGrid;
-	Cursor mCursor;
-	std::vector<Ship> mShips;
-	bool** mUnavailableFields;
-	bool mShipPicked;
-	Ship* mActuallyPickedShip;
-	sf::Vector2i mMousePositionWindow;
+	void set_ships(void);
 
 public:
 	explicit World(sf::RenderWindow *window);
@@ -40,5 +37,7 @@ public:
 
 	void draw(void) const;
 	void update(void);
-	void handle_input(sf::Vector2i mousePosition, const sf::Event& event);
+
+	void handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPressed);
+
 };

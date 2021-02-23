@@ -1,117 +1,143 @@
 #include "Grid.h"
-#include "ResourceManager.h"
+
+#include "Ship.h"
 #include <iostream>
-#include <windows.h>
 
-/////////////////////////////////////////////////////////////////
-// for debugging purpose only
-inline static void cls(void)
-{
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), COORD());
-}
-
-inline static void console_cursor(bool flag)
-{
-	CONSOLE_CURSOR_INFO cursorInfo;
-	GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
-	cursorInfo.bVisible = flag; 
-	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
-}
-
-/////////////////////////////////////////////////////////////////
-
-Grid::Grid(void) :
-	mGridOrigin(),
-	mGridSprite()
+Grid::Grid(Type type, sf::Vector2i gridStart) :
+	mTileTexture(),
+	mTileSprites(),
+	mGridStart(gridStart),
+	mType(type)
 {
 
-}
 
-Grid::Grid(sf::Vector2i &gridOrigin, const TextureManager &textures) :
-	mGridOrigin(gridOrigin),
-	mGridSprite(textures.get_resource(Textures::ID::GRID))
-{
-	mGridSprite.setPosition(float(gridOrigin.x), float(gridOrigin.y));
-
-	// grid fields allocation
-	mGridFields = new bool* [FIELDS];
-
-	//mUnavailableFields = new bool* [FIELDS];
-
-	for (unsigned i = 0; i < FIELDS; i++)
-	{
-		mGridFields[i] = new bool[FIELDS];
-
-		//mUnavailableFields[i] = new bool[FIELDS];
-		for (unsigned j = 0; j < FIELDS; j++)
-		{
-			mGridFields[i][j] = false;
-			//mUnavailableFields[i][j] = false;
-		}
-	}
 }
 
 Grid::~Grid(void)
 {
-	for (unsigned i = 0; i < FIELDS; i++)
-	{
-		delete mGridFields[i];
 
-		//delete mUnavailableFields[i];
-	}
-	delete mGridFields;
-	//delete mUnavailableFields;
-
+	
 }
 
-
-void Grid::draw(sf::RenderWindow *window, bool consoleDebug,bool** unavailableFields) const
+void Grid::update_fields(sf::Vector2i position)
 {
-	window->draw(mGridSprite);
+	mFields[position.y - 1 < 0 ? position.y : position.y - 1][position.x - 1 < 0 ? position.x : position.x - 1] = true;
+	mFields[position.y - 1 < 0 ? position.y : position.y - 1][position.x] = true;
+	mFields[position.y - 1 < 0 ? position.y : position.y - 1][position.x + 1 == FIELDS ? position.x : position.x + 1] = true;
+	mFields[position.y][position.x - 1 < 0 ? position.x : position.x - 1] = true;
+	mFields[position.y][position.x] = true;
+	mShipFields[position.y][position.x] = true;
+	mFields[position.y][position.x + 1 == FIELDS ? position.x : position.x + 1] = true;
+	mFields[position.y + 1 == FIELDS ? position.y : position.y + 1][position.x - 1 < 0 ? position.x : position.x - 1] = true;
+	mFields[position.y + 1 == FIELDS ? position.y : position.y + 1][position.x] = true;
+	mFields[position.y + 1 == FIELDS ? position.y : position.y + 1][position.x + 1 == FIELDS ? position.x : position.x + 1] = true;
+}
+
+sf::Vector2i Grid::get_window_coordinates(sf::Vector2i position) const
+{
+	position.x = position.x * CELL_SIZE + mGridStart.x;
+	position.y = position.y * CELL_SIZE + mGridStart.y;
+
+	return position;
+}
 
 
-	if (consoleDebug)
+void Grid::draw(sf::RenderWindow *window) const
+{
+	for (auto tile : mTileSprites)
+		window->draw(tile);
+}
+
+
+void Grid::update(const Ship &ship)
+{
+	if (this->mType == Type::PLAYER)
 	{
-		// for debugging purpose only
-		//////////////////////////////////////////////////
+		sf::Vector2i start = ship.get_start();
+		sf::Vector2i end = ship.get_end();
+		sf::Vector2i position = start;
+		sf::Sprite newTile(mTileTexture);
 
-		/*
->>>>>>> pm
-		console_cursor(false);
-		std::cout << "GridFields\n";
-		std::cout << "  0 1 2 3 4 5 6 7 8 9\n";
-		for (unsigned i = 0; i < FIELDS; i++)
+		if (start == end)
 		{
-			std::cout << i << " ";
-			for (unsigned j = 0; j < FIELDS; j++)
-			{
-				(mGridFields[i][j] == false) ? std::cout << ". " : std::cout << "x ";
-			}
-			std::cout << "\n";
+			newTile.setPosition(sf::Vector2f(get_window_coordinates(position)));
+			mTileSprites.push_back(newTile);
+			update_fields(position);
 		}
-		std::cout << "\n\n";
-		std::cout << "UnavaliableFields\n";
-		std::cout << "  0 1 2 3 4 5 6 7 8 9\n";
-		for (unsigned i = 0; i < FIELDS; i++)
+		else if (start.x == end.x)
 		{
-			std::cout << i << " ";
-			for (unsigned j = 0; j < FIELDS; j++)
+			if (start.y > end.y)
 			{
-				(unavailableFields[i][j] == false) ? std::cout << ". " : std::cout << "x ";
+				while (position.y >= end.y)
+				{
+					update_fields(position);
+					newTile.setPosition(sf::Vector2f(get_window_coordinates(position)));
+					mTileSprites.push_back(newTile);
+					position.y--;
+				}
 			}
-			std::cout << "\n";
+			else if (start.y < end.y)
+			{
+				while (position.y <= end.y)
+				{
+					update_fields(position);
+					newTile.setPosition(sf::Vector2f(get_window_coordinates(position)));
+					mTileSprites.push_back(newTile);
+					position.y++;
+				}
+			}
 		}
-		cls();
+		else if (start.y == end.y)
+		{
+			if (start.x > end.x)
+			{
+				while (position.x >= end.x)
+				{
+					update_fields(position);
+					newTile.setPosition(sf::Vector2f(get_window_coordinates(position)));
+					mTileSprites.push_back(newTile);
+					position.x--;
+				}
+			}
+			else if (start.x < end.x)
+			{
+				while (position.x <= end.x)
+				{
+					update_fields(position);
+					newTile.setPosition(sf::Vector2f(get_window_coordinates(position)));
+					mTileSprites.push_back(newTile);
+					position.x++;
+				}
+			}
+		}
+	}
 
-		*/
-
-		//////////////////////////////////////////////////
+	if (mType == Type::ENEMY)
+	{
+		//TODO(rm): Right grid update functionality
 	}
 }
 
-bool** Grid::get_grid_fields(void)
+void Grid::set_texture(const sf::Texture &texture)
 {
-	return mGridFields;
+	mTileTexture = texture;
 }
 
+Type Grid::get_type(void) const
+{
+	return mType;
+}
+
+sf::Vector2i Grid::get_grid_coordinates(sf::Vector2i mousePosition) const
+{
+	mousePosition.x = (mousePosition.x - mGridStart.x) / CELL_SIZE;
+	mousePosition.y = (mousePosition.y - mGridStart.y) / CELL_SIZE;
+
+	return mousePosition;
+}
+
+bool Grid::is_field_free(sf::Vector2i position) const
+{
+	return !mFields[position.y][position.x];
+}
 

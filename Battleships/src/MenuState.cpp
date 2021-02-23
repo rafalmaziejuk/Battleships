@@ -59,13 +59,10 @@ void MenuState::handle_event(const sf::Event &event)
 {
 	switch (event.type)
 	{
-		case sf::Event::MouseButtonPressed:
+		case sf::Event::MouseButtonReleased:
 		{
-			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-			{
+			if (event.mouseButton.button == sf::Mouse::Left)
 				mMouseClicked = true;
-				
-			}
 
 			break;
 		}

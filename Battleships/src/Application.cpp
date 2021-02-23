@@ -68,7 +68,7 @@ void Application::process_events(void)
 	while (mWindow.pollEvent(event))
 	{
 		StateManager::get_instance().get_state()->handle_event(event);
-
+		
 		switch (event.type)
 		{
 			case sf::Event::Closed:
