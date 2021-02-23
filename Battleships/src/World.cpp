@@ -6,10 +6,10 @@ static sf::Vector2f map_cursor_to_world(const sf::Vector2i mousePos)
 	return sf::Vector2f((mousePos.x / 50.0f)-2, (mousePos.y / 50.0f)-2);
 }
 
-World::World(sf::RenderWindow *window) :
+World::World(sf::RenderWindow* window) :
 	mWindow(window),
 	mTextures(),
-
+	mIsGood(false),
 	mPlayerGrid(Grid(Type::PLAYER, sf::Vector2i(100, 100))),
 	mEnemyGrid(Grid(Type::ENEMY, sf::Vector2i(700, 100)))
 
@@ -64,6 +64,8 @@ void World::draw(void) const
 	mWindow->draw(mGridSprites[0]);
 	mWindow->draw(mGridSprites[1]);
 	mPlayerGrid.draw(mWindow);
+	for (unsigned i = 0; i < NUM_OF_SHIPS; i++)
+		mPlayerShips[i].draw_ship(mWindow);
 	mCursor.draw(mWindow);
 }
 
@@ -95,7 +97,7 @@ void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPresse
 			sf::Vector2f cursorPos = map_cursor_to_world(sf::Vector2i(mouse.x, mouse.y));
 			Ship* clickedShip = is_ship_choosen((sf::Vector2i)cursorPos);
 			if (clickedShip)
-				remove_ship();
+				remove_ship(clickedShip);
 		}
 	}
 }
@@ -103,13 +105,20 @@ void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPresse
 void World::add_new_ship(const sf::Event::MouseButtonEvent& mouse, bool isPressed)
 {
 	if (isPressed == true)
+	{
 		mStart = mPlayerGrid.get_grid_coordinates(sf::Vector2i(mouse.x, mouse.y));
+
+		if (mPlayerGrid.is_field_free(mStart) == true)
+			mIsGood = true;
+		else
+			mIsGood = false;
+	}
 
 	if (isPressed == false)
 	{
 		mEnd = mPlayerGrid.get_grid_coordinates(sf::Vector2i(mouse.x, mouse.y));
 
-		if (mPlayerGrid.is_field_free(mEnd) == true)
+		if (mPlayerGrid.is_field_free(mEnd) == true && mIsGood == true)
 		{
 			uint8_t length = 1;
 
@@ -125,18 +134,21 @@ void World::add_new_ship(const sf::Event::MouseButtonEvent& mouse, bool isPresse
 					if (mPlayerShips[i].get_length() == length && mPlayerShips[i].is_on_grid() == false)
 					{
 						mPlayerShips[i].set_position(mStart, mEnd);
-						mPlayerGrid.update(mPlayerShips[i]);
+						mPlayerGrid.update(mPlayerShips[i],Action::ADD);
 						break;
 					}
 				}
 			}
+
+			mIsGood = false;
 		}
 	}
 }
 
-void World::remove_ship(void)
+void World::remove_ship(Ship* ship)
 {
-	std::cout << "Usuwamy\n";
+	//std::cout << "Usuwamy\n";
+	mPlayerGrid.update(*ship, Action::REMOVE);
 }
 
 Ship* World::is_ship_choosen(const sf::Vector2i& cursorPos)
@@ -154,10 +166,10 @@ Ship* World::is_ship_choosen(const sf::Vector2i& cursorPos)
 Ship* World::get_this_ship_head(const sf::Vector2i& cursorPos)
 {
 	for (unsigned i = 0 ; i < 10 ; i++ )
-		if (mPlayerShips[i].contain_tile(cursorPos))
+		if (mPlayerShips[i].is_on_grid() == true && mPlayerShips[i].contain_tile(cursorPos))
 		{
 			return &mPlayerShips[i];
-			std::cout << "mam";
+			//std::cout << "mam";
 		}
 	return nullptr;
 

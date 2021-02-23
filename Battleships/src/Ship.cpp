@@ -4,21 +4,32 @@
 #include "Grid.h"
 #include <iostream>
 
+
 Ship::Ship(void) :
 	mStart(),
-	mEnd()
+	mEnd(),
+	mDirection(Direction::Null)
 {
-	if (mLength == 1)
-		mOrientation = Orientation::Horizontal;
-	else if (get_start().x == get_end().x)
-		mOrientation = Orientation::Vertical;
-	else mOrientation = Orientation::Horizontal;
+
 
 }
 
 Ship::~Ship(void) 
 {
 
+}
+
+void Ship::remove_tiles(void)
+{
+	mTiles.clear();
+}
+
+void Ship::draw_ship(sf::RenderWindow* window) const
+{
+	for(auto& i : mTiles)
+	{
+		window->draw(i);
+	}
 }
 
 void Ship::set_length(uint8_t length)
@@ -55,15 +66,16 @@ bool Ship::is_on_grid(void) const
 	return mIsOnGrid;
 }
 
+std::vector<sf::Sprite>& Ship::getShipTiles(void)
+{
+	return mTiles;
+}
+
 bool Ship::contain_tile(const sf::Vector2i& cursorPos) const
 {
 	sf::Vector2i shift(0, 0);
-	sf::Vector2i tilePos = (sf::Vector2i)mStart;
-	//tilePos = invert_vector(tilePos);
-
-	std::cout << "Curr:" << cursorPos.x << " " << cursorPos.y << "\n";
-	std::cout << "tilePos:" << tilePos.x << " " << tilePos.y << "\n";
-
+	sf::Vector2i tilePos = sf::Vector2i(mStart.x,mStart.y);
+	
 	if (mLength == 1)
 	{
 		if (tilePos == cursorPos)
@@ -71,15 +83,25 @@ bool Ship::contain_tile(const sf::Vector2i& cursorPos) const
 		else return false;
 	}
 
-	(mOrientation == Orientation::Horizontal) ? shift.y += 1 : shift.x += 1;
+	switch (mDirection)
+	{
+		case Direction::Left:	shift.x -= 1;	break;
+		case Direction::Right:	shift.x += 1;	break;
+		case Direction::Up:		shift.y -= 1;	break;
+		case Direction::Down:	shift.y += 1;	break;
+	}
 
 	for (unsigned i = 0; i < mLength; i++)
 	{
-		//std::cout << "Curr:" << cursorPos.x << " " << cursorPos.y << "\n";
-		//std::cout << "tilePos:" << tilePos.x << " " << tilePos.y << "\n";
 		if (tilePos == cursorPos)
 			return true;
 		tilePos += shift;
+		
 	}
 	return false;
+}
+
+Orientation Ship::get_orientation(void) const
+{
+	return mOrientation;
 }

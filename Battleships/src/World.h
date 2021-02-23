@@ -19,6 +19,7 @@ private:
 	sf::Sprite mGridSprites[2];
 	sf::Vector2i mStart;
 	sf::Vector2i mEnd;
+	bool mIsGood;
 
 private:
 	Grid mPlayerGrid;
@@ -32,7 +33,7 @@ private:
 	Ship* is_ship_choosen(const sf::Vector2i& cursorPos);
 	Ship* get_this_ship_head(const sf::Vector2i& cursorPos);
 	void add_new_ship(const sf::Event::MouseButtonEvent& mouse, bool isPressed);
-	void remove_ship(void);
+	void remove_ship(Ship* ship);
 
 public:
 	explicit World(sf::RenderWindow *window);
