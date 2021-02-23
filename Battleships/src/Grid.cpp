@@ -23,6 +23,7 @@ void Grid::update_fields(sf::Vector2i position)
 	mFields[position.y - 1 < 0 ? position.y : position.y - 1][position.x + 1 == FIELDS ? position.x : position.x + 1] = true;
 	mFields[position.y][position.x - 1 < 0 ? position.x : position.x - 1] = true;
 	mFields[position.y][position.x] = true;
+	mShipFields[position.y][position.x] = true;
 	mFields[position.y][position.x + 1 == FIELDS ? position.x : position.x + 1] = true;
 	mFields[position.y + 1 == FIELDS ? position.y : position.y + 1][position.x - 1 < 0 ? position.x : position.x - 1] = true;
 	mFields[position.y + 1 == FIELDS ? position.y : position.y + 1][position.x] = true;
@@ -104,6 +105,11 @@ void Grid::update(const Ship &ship)
 				}
 			}
 		}
+	}
+
+	if (mType == Type::ENEMY)
+	{
+		//TODO(rm): Right grid update functionality
 	}
 }
 

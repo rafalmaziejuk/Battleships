@@ -100,6 +100,6 @@ void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPresse
 	}
 	else if (mouse.x > 700 && mouse.y > 100 && mouse.x < 1200 && mouse.y < 600)
 	{
-		;//Target grid
+		//TODO(rm): Right grid functionality based of input
 	}
 }

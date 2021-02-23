@@ -21,7 +21,8 @@ private:
 	sf::Vector2i mGridStart;
 
 private:
-	bool mFields[FIELDS][FIELDS] = { false };
+	bool mFields[FIELDS][FIELDS] = { false }; //fields taken overall
+	bool mShipFields[FIELDS][FIELDS] = { false }; //fields occupied by ships only
 	Type mType;
 
 private:
