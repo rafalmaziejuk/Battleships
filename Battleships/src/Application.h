@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+#include <SFML/Audio.hpp>
 
 #include "ResourceManager.h"
 #include "ResourceIdentifiers.h"
@@ -15,6 +16,7 @@ private:
 	sf::RenderWindow mWindow;
 	TextureManager mTextures;
 	FontManager mFonts;
+	SoundManager mSounds;
 
 private:
 	sf::Text mStatisticsText;

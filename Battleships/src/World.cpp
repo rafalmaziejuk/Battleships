@@ -19,9 +19,10 @@ World::World(sf::RenderWindow* window) :
 
 	mPlayerGrid.set_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE));
 	mPlayerGrid.set_hint_ship_texture(mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_I), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_A));
-
+	mHintBackgroundSprite.setTexture(mTextures.get_resource(Textures::ID::HINT_BOARD_BACKGROUND));
+	mHintBackgroundSprite.setPosition(sf::Vector2f(75, 607));
+	
 	mBackgroundSprite.setTexture(mTextures.get_resource(Textures::ID::GAME_BACKGROUND));
-
 	mGridSprites[0].setTexture(mTextures.get_resource(Textures::ID::GRID));
 	mGridSprites[0].setPosition(sf::Vector2f(50.0f, 50.0f));
 	mGridSprites[1].setTexture(mTextures.get_resource(Textures::ID::GRID));
@@ -44,6 +45,7 @@ void World::load_textures(void)
 	mTextures.load_resource(Textures::ID::SHIP_TILE, "assets/shiptile.png");
 	mTextures.load_resource(Textures::ID::HINT_SHIP_TILE_A, "assets/hinttile.png");
 	mTextures.load_resource(Textures::ID::HINT_SHIP_TILE_I, "assets/innactivehinttile.png");
+	mTextures.load_resource(Textures::ID::HINT_BOARD_BACKGROUND, "assets/hintbackground.png");
 }
 
 
@@ -59,7 +61,6 @@ void World::set_ships(void)
 	mPlayerShips[7].set_length(3);
 	mPlayerShips[8].set_length(3);
 	mPlayerShips[9].set_length(4);
-
 }
 
 void World::draw(void) const
@@ -67,6 +68,8 @@ void World::draw(void) const
 	mWindow->draw(mBackgroundSprite);
 	mWindow->draw(mGridSprites[0]);
 	mWindow->draw(mGridSprites[1]);
+	mWindow->draw(mHintBackgroundSprite);
+
 	mPlayerGrid.draw(mWindow);
 	for (unsigned i = 0; i < NUM_OF_SHIPS; i++)
 		mPlayerShips[i].draw_ship(mWindow);

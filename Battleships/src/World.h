@@ -16,6 +16,7 @@ private:
 	sf::RenderWindow *mWindow;
 	TextureManager mTextures;
 	sf::Sprite mBackgroundSprite;
+	sf::Sprite mHintBackgroundSprite;
 	sf::Sprite mGridSprites[2];
 	sf::Vector2i mStart;
 	sf::Vector2i mEnd;

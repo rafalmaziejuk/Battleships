@@ -21,7 +21,7 @@ namespace
 const sf::Time Application::TIME_PER_FRAME = sf::seconds(1.0f / FPS);
 
 Application::Application(void) :
-	mWindow(sf::RenderWindow(sf::VideoMode(SCREEN_HEIGHT, SCREEN_WIDTH), "Battleships", sf::Style::Titlebar | sf::Style::Close)),
+	mWindow(sf::RenderWindow(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Battleships", sf::Style::Titlebar | sf::Style::Close)),
 	mTextures(),
 	mFonts(),
 	mStatisticsText(),
@@ -36,6 +36,7 @@ Application::Application(void) :
 	mTextures.load_resource(Textures::ID::BUTTON2, "assets/button2.png");
 	mTextures.load_resource(Textures::ID::BUTTON3, "assets/button3.png");
 	mTextures.load_resource(Textures::ID::MENU_BACKGROUND, "assets/menubg.jpg");
+	mSounds.load_resource(Sounds::ID::SOUND1, "assets/song.wav");
 
 	State::Context context(mWindow, mTextures, mFonts);
 	StateManager::get_instance().change_state<MenuState>(context);
@@ -95,6 +96,15 @@ void Application::run(void)
 {
 	sf::Clock clock;
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
+
+	//sf::Sound sound;
+	//sound.setBuffer(mSounds.get_resource(Sounds::ID::SOUND1));
+	//sound.play();
+	//
+	//sf::Music music;
+	//music.openFromFile("assets/song.wav");
+	//music.play();
+	//
 
 	while (mWindow.isOpen())
 	{
