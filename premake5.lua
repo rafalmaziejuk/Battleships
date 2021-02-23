@@ -19,8 +19,9 @@ project "Battleships"
 
 	files
 	{
-		"%{prj.name}/**.h",
-		"%{prj.name}/**.cpp"
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/src/**.inl"
 	}
 
 	includedirs

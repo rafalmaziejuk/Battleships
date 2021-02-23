@@ -3,23 +3,27 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
+#include "ResourceManager.h"
+#include "ResourceIdentifiers.h"
+
 class Application : private sf::NonCopyable
 {
 private:
 	static const sf::Time TIME_PER_FRAME;
 
-	//sf::Thread mRenderingThread;
-	sf::RenderWindow *mWindow;
-
-	void render(void);
-	void process_events(void);
+private:
+	sf::RenderWindow mWindow;
+	TextureManager mTextures;
+	FontManager mFonts;
 
 private:
 	sf::Text mStatisticsText;
-	sf::Font mStatisticsFont;
 	sf::Time mStatisticsUpdateTime;
 	std::size_t mStatisticsNumberOfFrames;
 	void update_statistics(sf::Time elapsedTime);
+
+	void render(void);
+	void process_events(void);
 
 public:
 	Application(void);

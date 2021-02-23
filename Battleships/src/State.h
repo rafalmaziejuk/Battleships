@@ -1,20 +1,39 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include <SFML/System/Time.hpp>
+#include <SFML/Window/Event.hpp>
+
+#include "ResourceIdentifiers.h"
 
 class State
 {
+public:
+	struct Context
+	{
+		sf::RenderWindow *mWindow;
+		TextureManager *mTextures;
+		FontManager *mFonts;
+
+		Context(sf::RenderWindow &window, TextureManager &textures, FontManager &fonts) :
+			mWindow(&window),
+			mTextures(&textures), 
+			mFonts(&fonts)
+		{
+			
+		}
+	};
+
 private:
-	sf::RenderWindow *mWindow;
+	Context mContext;
 
 protected:
-	sf::RenderWindow * get_window(void) { return mWindow; }
+	Context get_context(void) const { return mContext; }
 
 public:
-	State(sf::RenderWindow *window = nullptr) : mWindow(window) { }
+	State(Context context) : mContext(context) { }
 	virtual ~State(void) { };
 
 	virtual void render(void) = 0;
 	virtual void update(sf::Time elapsedTime) = 0;
-	virtual void handle_input(void) = 0;
+	virtual void handle_event(const sf::Event &event) = 0;
 };

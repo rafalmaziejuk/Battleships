@@ -21,12 +21,12 @@ public:
 	}
 
 	template <typename T>
-	void change_state(sf::RenderWindow *window)
+	void change_state(State::Context &context)
 	{
 		if (mCurrentState != nullptr)
 			delete mCurrentState;
 
-		State *newState = new T(window);
+		State *newState = new T(context);
 		mCurrentState = newState;
 	}
 	
