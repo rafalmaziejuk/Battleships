@@ -8,9 +8,12 @@ ConnectState::ConnectState(Context context) :
 	mIP(),
 	mPort()
 {
+	
+	mConnectButton = new ConnectButton(get_context().mTextures->get_resource(Textures::ID::CONNECTBUTTON1), "Connect", sf::Vector2f(523, 480), get_context().mFonts->get_resource(Fonts::ID::VIKING), 25);
+	mConnectButton->set_color(sf::Color::Black);
 	mScreen.setTexture(get_context().mTextures->get_resource(Textures::ID::CONNECT_SCREEN));
 	sf::Font &font = get_context().mFonts->get_resource(Fonts::ID::VIKING);
-	sf::Texture &texture = get_context().mTextures->get_resource(Textures::ID::BUTTON1);
+	sf::Texture &texture = get_context().mTextures->get_resource(Textures::ID::MENUBUTTON1);
 
 	mIP = TextBox(sf::Vector2f(485.0f, 325.0f), 200.0f, 25, font, 14);
 	//mPort = TextBox(sf::Vector2f(50.0f, 50.0f), sf::Vector2f(20.0f, 20.0f), font);
@@ -26,11 +29,12 @@ void ConnectState::render(void)
 	get_context().mWindow->draw(mScreen);
 	mIP.draw(get_context().mWindow);
 	//mPort.draw(get_context().mWindow);
+	mConnectButton->drawButton(get_context().mWindow);
 }
 
 void ConnectState::update(sf::Time elapsedTime)
 {
-
+	mConnectButton->update(get_context().mWindow, mIsPressed);
 }
 
 void ConnectState::handle_event(const sf::Event &event)
@@ -39,7 +43,14 @@ void ConnectState::handle_event(const sf::Event &event)
 	{
 		case sf::Event::MouseButtonPressed:
 		{
+			mIsPressed = true;
 			std::cout << event.mouseButton.x << " " << event.mouseButton.y << std::endl;
+			break;
+		}
+		
+		case sf::Event::MouseButtonReleased:
+		{
+			mIsPressed = false;
 			break;
 		}
 

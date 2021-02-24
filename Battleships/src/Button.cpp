@@ -89,3 +89,8 @@ std::string Button::getString(void)
 {
     return text_string;
 }
+
+void Button::set_color(const sf::Color& color)
+{
+    button_signature.setColor(color);
+}

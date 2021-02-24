@@ -11,7 +11,8 @@ enum class ButtonID : uint8_t
 	NONE,
 	M_HOST,
 	M_CONNECT,
-	M_EXIT
+	M_EXIT,
+    C_CONNECT
 };
 
 class Button : public sf::Sprite
@@ -20,14 +21,15 @@ private:
     sf::Vector2f size = { 0,0 };    // object(sprite) size
     sf::Texture mTexture;           // sprite texture
     sf::Font text_font;             // font
-    sf::Text button_signature;      // button signature
     std::string text_string;        // text string
     int font_size;                  // font size
 
     void initText(const std::string& b_text);
     void initButtonTexture(const sf::Texture& texture);
+    sf::Text button_signature;      // button signature
 
 public:
+   
 
 	/* constructor/ destructor */
 	/* constructor should be called with the child class constructor like that : YourButton(T a, T b, T c, T d) : Button(a,b,c,d) */
@@ -45,4 +47,5 @@ public:
     sf::Vector2f getSize(void);                     // returns button size
     void setSize(const sf::FloatRect& newSize);
     std::string getString(void);
+    void set_color(const sf::Color& color);
 };

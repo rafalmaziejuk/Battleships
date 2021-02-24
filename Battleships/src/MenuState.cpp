@@ -3,6 +3,7 @@
 #include "MenuState.h"
 #include "GameState.h"
 #include "ConnectState.h" 
+#include "HostState.h"
 #include "StateManager.h"
 
 MenuState::MenuState(Context context) :
@@ -14,9 +15,9 @@ MenuState::MenuState(Context context) :
 	mMouseClicked = false;
 
 	sf::Font &font = get_context().mFonts->get_resource(Fonts::ID::VIKING);
-	mButtons.push_back(new MenuButton(get_context().mTextures->get_resource(Textures::ID::BUTTON1), "Host", sf::Vector2f(100, 200), font, 25));
-	mButtons.push_back(new MenuButton(get_context().mTextures->get_resource(Textures::ID::BUTTON2), "Connect", sf::Vector2f(100, 350), font, 25));
-	mButtons.push_back(new MenuButton(get_context().mTextures->get_resource(Textures::ID::BUTTON3), "Exit", sf::Vector2f(100, 500), font, 25));
+	mButtons.push_back(new MenuButton(get_context().mTextures->get_resource(Textures::ID::MENUBUTTON1), "Host", sf::Vector2f(100, 200), font, 25));
+	mButtons.push_back(new MenuButton(get_context().mTextures->get_resource(Textures::ID::MENUBUTTON2), "Connect", sf::Vector2f(100, 350), font, 25));
+	mButtons.push_back(new MenuButton(get_context().mTextures->get_resource(Textures::ID::MENUBUTTON3), "Exit", sf::Vector2f(100, 500), font, 25));
 	mButtonClicked = ButtonID::NONE;
 }
 
@@ -43,7 +44,7 @@ void MenuState::update(sf::Time elapsedTime)
 		{
 			switch (mButtonClicked)
 			{
-				case ButtonID::M_HOST: clicked = true; StateManager::get_instance().change_state<GameState>(get_context()); break;
+				case ButtonID::M_HOST: clicked = true; StateManager::get_instance().change_state<HostState>(get_context()); break;
 				case ButtonID::M_CONNECT:  clicked = true; StateManager::get_instance().change_state<ConnectState>(get_context()); break;
 				case ButtonID::M_EXIT: break;
 			}

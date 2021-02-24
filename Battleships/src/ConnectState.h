@@ -2,6 +2,7 @@
 
 #include "TextBox.h"
 #include "State.h"
+#include "ConnectUIComponents.h"
 
 class ConnectState : public State
 {
@@ -11,6 +12,7 @@ private:
 private:
 	TextBox mIP;
 	TextBox mPort;
+	Button* mConnectButton;
 	bool mIsPressed = false;
 
 public:
