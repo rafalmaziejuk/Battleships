@@ -92,5 +92,5 @@ std::string Button::getString(void)
 
 void Button::set_color(const sf::Color& color)
 {
-    button_signature.setColor(color);
+    button_signature.setFillColor(color);
 }
