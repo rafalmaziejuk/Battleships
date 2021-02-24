@@ -67,7 +67,8 @@ project "Battleships"
 			"sfml-audio-s-d.lib", 
 			"sfml-graphics-s-d.lib", 
 			"sfml-system-s-d.lib", 
-			"sfml-window-s-d.lib"
+			"sfml-window-s-d.lib",
+			"sfml-network-s-d.lib"
 		}
 
 	filter "configurations:Release"
@@ -79,5 +80,6 @@ project "Battleships"
 			"sfml-audio-s.lib", 
 			"sfml-graphics-s.lib", 
 			"sfml-system-s.lib", 
-			"sfml-window-s.lib"
+			"sfml-window-s.lib",
+			"sfml-network-s.lib"
 		}

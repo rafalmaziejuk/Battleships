@@ -4,6 +4,8 @@
 
 #include "State.h"
 #include "MenuUIComponents.h"
+#include "Client.h"
+#include "Server.h"
 
 class MenuState : public State
 {

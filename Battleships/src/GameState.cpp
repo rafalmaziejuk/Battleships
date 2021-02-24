@@ -12,6 +12,15 @@ GameState::~GameState(void)
 	
 }
 
+template <typename T>
+void GameState::establish_remote(RemoteType remote, T* remotePointer)
+{
+	if (remote == RemoteType::CLIENT)
+		mClient = remotePointer;
+	else if (remote == RemoteType::SERVER)
+		mServer = remotePointer;
+}
+
 void GameState::render(void)
 {
 	mWorld.draw();
