@@ -36,7 +36,6 @@ Application::Application(void) :
 	mTextures.load_resource(Textures::ID::BUTTON3, "assets/button3.png");
 	mTextures.load_resource(Textures::ID::MENU_BACKGROUND, "assets/menubg.jpg");
 	mTextures.load_resource(Textures::ID::CONNECT_SCREEN, "assets/connectstate.png");
-	mSounds.load_resource(Sounds::ID::SOUND1, "assets/song.wav");
 
 	State::Context context(mWindow, mTextures, mFonts);
 	StateManager::get_instance().change_state<MenuState>(context);
@@ -96,15 +95,6 @@ void Application::run(void)
 {
 	sf::Clock clock;
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
-
-	//sf::Sound sound;
-	//sound.setBuffer(mSounds.get_resource(Sounds::ID::SOUND1));
-	//sound.play();
-	//
-	//sf::Music music;
-	//music.openFromFile("assets/song.wav");
-	//music.play();
-	//
 
 	while (mWindow.isOpen())
 	{

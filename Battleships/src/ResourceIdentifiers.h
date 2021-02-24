@@ -5,7 +5,6 @@ namespace sf
 {
 	class Texture;
 	class Font;
-	class SoundBuffer;
 }
 
 namespace Textures
@@ -27,14 +26,6 @@ namespace Textures
 	};
 }
 
-namespace Sounds
-{
-	enum class ID : uint8_t
-	{
-		SOUND1
-	};
-}
-
 namespace Fonts
 {
 	enum class ID : uint8_t
@@ -52,4 +43,3 @@ class ResourceManager;
 
 typedef ResourceManager<sf::Texture, Textures::ID> TextureManager;
 typedef ResourceManager<sf::Font, Fonts::ID> FontManager;
-typedef ResourceManager<sf::SoundBuffer, Sounds::ID> SoundManager;
