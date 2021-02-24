@@ -43,9 +43,21 @@ void MenuState::update(sf::Time elapsedTime)
 		{
 			switch (mButtonClicked)
 			{
-				case ButtonID::M_HOST: clicked = true; StateManager::get_instance().change_state<GameState>(get_context()); break;
-				case ButtonID::M_CONNECT:  clicked = true; StateManager::get_instance().change_state<ConnectState>(get_context()); break;
-				case ButtonID::M_EXIT: break;
+				case ButtonID::M_HOST: 
+					clicked = true; 
+					StateManager::get_instance().change_state<ConnectState>(get_context()); 
+					static_cast<ConnectState*>(StateManager::get_instance().get_state())->set_type(RemoteType::SERVER);
+					break;
+				case ButtonID::M_CONNECT:  
+					clicked = true; 
+					StateManager::get_instance().change_state<ConnectState>(get_context()); 
+					static_cast<ConnectState*>(StateManager::get_instance().get_state())->set_type(RemoteType::CLIENT);
+
+					break;
+				case ButtonID::M_EXIT: 
+					StateManager::get_instance().delete_current_state();
+
+					break;
 			}
 
 			if (clicked) 

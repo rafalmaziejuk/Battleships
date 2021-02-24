@@ -9,6 +9,7 @@ Button::Button(const sf::Texture& texture, const std::string& bText, const sf::V
 	text_string = bText;
 	text_font = font;
 	font_size = fontSize;
+    signature_visible = true;
 	initText(bText);
 }
 
@@ -54,7 +55,8 @@ void Button::initButtonTexture(const sf::Texture& tex)
 bool Button::isCovered(sf::RenderWindow* window)
 {
     sf::Vector2i mouse_pos = sf::Mouse::getPosition(*window);
-    if ((mouse_pos.x >= getPosition().x && mouse_pos.x <= getPosition().x + getSize().x) && (mouse_pos.y >= getPosition().y && mouse_pos.y <= getPosition().y + getSize().y))
+    sf::Vector2f position = { getPosition().x-getOrigin().x,getPosition().y -getOrigin().y };
+    if ((mouse_pos.x >= position.x && mouse_pos.x <= position.x + getSize().x) && (mouse_pos.y >= position.y && mouse_pos.y <= position.y + getSize().y))
         return true;
     else return false;
 }
@@ -62,7 +64,8 @@ bool Button::isCovered(sf::RenderWindow* window)
 void Button::drawButton(sf::RenderWindow* window)
 {
     window->draw(*this);
-    window->draw(button_signature);
+    if(signature_visible)
+        window->draw(button_signature);
 }
 
 void Button::setNewCharSize(int font_size)
@@ -90,7 +93,19 @@ std::string Button::getString(void)
     return text_string;
 }
 
+void Button::setString(std::string str)
+{
+    text_string = str;
+    button_signature.setString(str);
+    setNewCharSize(font_size);
+}
+
 void Button::set_color(const sf::Color& color)
 {
     button_signature.setFillColor(color);
+}
+
+void Button::set_signature_visiblity(bool flag)
+{
+    signature_visible = flag;
 }

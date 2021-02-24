@@ -30,5 +30,12 @@ public:
 		mCurrentState = newState;
 	}
 	
+	void delete_current_state(void)
+	{
+		if (mCurrentState != nullptr)
+			delete mCurrentState;
+		mCurrentState = nullptr;
+	}
+
 	State * get_state(void) { return mCurrentState; }
 };

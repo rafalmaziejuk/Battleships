@@ -23,6 +23,7 @@ public:
 	TextBox(sf::Vector2f position, sf::Vector2f size, const sf::Font &font, uint8_t maxSymbols);
 	~TextBox(void);
 
+	void set_entered_text(std::string text);
 	void enter_symbol(char symbol);
 	void delete_symbol(void);
 	void on_click(sf::Vector2i mousePosition);

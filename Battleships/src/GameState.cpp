@@ -2,7 +2,9 @@
 
 GameState::GameState(Context context) :
 	State(context),
-	mWorld(context.mWindow)
+	mWorld(context.mWindow),
+	mClient(nullptr),
+	mServer(nullptr)
 {
 	
 }

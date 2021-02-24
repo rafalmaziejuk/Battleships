@@ -4,14 +4,11 @@
 
 #include "State.h"
 #include "World.h"
-#include "Client.h"
 #include "Server.h"
+#include "Client.h"
 #include <thread>
 
-enum class RemoteType
-{
-	SERVER,CLIENT
-};
+
 
 class GameState : public State
 {

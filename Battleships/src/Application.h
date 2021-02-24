@@ -15,6 +15,7 @@ private:
 	sf::RenderWindow mWindow;
 	TextureManager mTextures;
 	FontManager mFonts;
+	bool mExit;
 
 private:
 	sf::Text mStatisticsText;

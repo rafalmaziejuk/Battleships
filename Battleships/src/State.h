@@ -31,6 +31,7 @@ protected:
 
 public:
 	State(Context context) : mContext(context) { }
+
 	virtual ~State(void) { };
 
 	virtual void render(void) = 0;

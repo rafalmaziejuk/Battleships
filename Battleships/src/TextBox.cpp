@@ -30,6 +30,12 @@ TextBox::~TextBox(void)
 
 }
 
+void TextBox::set_entered_text(std::string text)
+{
+	mEnteredText = text;
+	mDrawnText.setString(mEnteredText);
+}
+
 void TextBox::enter_symbol(char symbol)
 {
 	if (mEnteredText.length() <= mMaxSymbols)

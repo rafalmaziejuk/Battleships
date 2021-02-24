@@ -26,7 +26,8 @@ Application::Application(void) :
 	mFonts(),
 	mStatisticsText(),
 	mStatisticsUpdateTime(),
-	mStatisticsNumberOfFrames(0)
+	mStatisticsNumberOfFrames(0),
+	mExit(false)
 {
 	mWindow.setFramerateLimit(unsigned int(FPS));
 	mFonts.load_resource(Fonts::ID::SANSATION, "assets/Sansation.ttf");
@@ -37,6 +38,7 @@ Application::Application(void) :
 	mTextures.load_resource(Textures::ID::MENU_BACKGROUND, "assets/menubg.jpg");
 	mTextures.load_resource(Textures::ID::CONNECT_SCREEN, "assets/connectstate.png");
 	mTextures.load_resource(Textures::ID::CONNECTBUTTON1, "assets/connectbutton1.png");
+	mTextures.load_resource(Textures::ID::BACKBUTTON, "assets/backbutton.png");
 
 	State::Context context(mWindow, mTextures, mFonts);
 	StateManager::get_instance().change_state<MenuState>(context);
@@ -56,7 +58,9 @@ void Application::render(void)
 {
 	mWindow.clear();
 
-	StateManager::get_instance().get_state()->render();
+	if(StateManager::get_instance().get_state() != nullptr)
+		StateManager::get_instance().get_state()->render();
+
 	mWindow.draw(mStatisticsText);
 
 	mWindow.display();
@@ -64,18 +68,26 @@ void Application::render(void)
 
 void Application::process_events(void)
 {
+	if (StateManager::get_instance().get_state() == nullptr)
+	{
+		mExit = true;
+	}
+
 	sf::Event event;
 	while (mWindow.pollEvent(event))
 	{
 		StateManager::get_instance().get_state()->handle_event(event);
-		
+
 		switch (event.type)
 		{
 			case sf::Event::Closed:
-				mWindow.close();
+				mExit = true;
 				break;
 		}
 	}
+	
+	if(mExit)
+		mWindow.close();
 }
 
 void Application::update_statistics(sf::Time elapsedTime)
@@ -97,7 +109,7 @@ void Application::run(void)
 	sf::Clock clock;
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 
-	while (mWindow.isOpen())
+	while (mWindow.isOpen() && !mExit)
 	{
 		sf::Time elapsedTime = clock.restart();
 		timeSinceLastUpdate += elapsedTime;
@@ -107,7 +119,8 @@ void Application::run(void)
 			timeSinceLastUpdate -= TIME_PER_FRAME;
 
 			process_events();
-			StateManager::get_instance().get_state()->update(TIME_PER_FRAME);
+			if (StateManager::get_instance().get_state() != nullptr)
+				StateManager::get_instance().get_state()->update(TIME_PER_FRAME);
 		}
 
 		update_statistics(elapsedTime);

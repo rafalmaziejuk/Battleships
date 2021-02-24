@@ -2,7 +2,7 @@
 #include <iostream>
 
 Client::Client()
-    : mListener(), mSocket()//, mServerThread(&run_thread, this)
+    : mListener(), mSocket(), mIsRunning(false)
 {
 
 }
@@ -10,6 +10,16 @@ Client::Client()
 Client::~Client()
 {
 
+}
+
+bool Client::is_connected_with_remote(void) const
+{
+    return mIsConnectedWithRemote;
+}
+
+bool Client::is_running(void) const
+{
+    return mIsRunning;
 }
 
 void Client::set_port(const int port)
@@ -20,6 +30,12 @@ void Client::set_port(const int port)
 void Client::set_ip(sf::IpAddress ip)
 {
     mRemoteIp = ip;
+}
+
+void Client::start(void)
+{
+    mClientThread = new std::thread(&Client::run_client, this);
+    mIsRunning = true;
 }
 
 void Client::run_client(void)

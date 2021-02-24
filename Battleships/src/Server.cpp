@@ -1,7 +1,7 @@
 #include "Server.h"
 
 Server::Server()
-    : mListener(), mSocket() //, mServerThread(&run_thread, this)
+    : mListener(), mSocket(), mIsRunning(false)
 {
 
 }
@@ -11,9 +11,25 @@ Server::~Server()
 
 }
 
+bool Server::is_connected_with_remote(void) const
+{
+    return mIsConnectedWithRemote;
+}
+
+bool Server::is_running(void) const
+{
+    return mIsRunning;
+}
+
 void Server::set_port(const int port)
 {
     mPort = port;
+}
+
+void Server::start(void)
+{
+    mServerThread = new std::thread(&Server::run_server, this);
+    mIsRunning = true;
 }
 
 void Server::run_server(void)

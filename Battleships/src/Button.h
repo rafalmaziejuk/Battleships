@@ -12,7 +12,9 @@ enum class ButtonID : uint8_t
 	M_HOST,
 	M_CONNECT,
 	M_EXIT,
-    C_CONNECT
+    C_CONNECT,
+    C_HOST,
+    C_BACK
 };
 
 class Button : public sf::Sprite
@@ -23,7 +25,7 @@ private:
     sf::Font text_font;             // font
     std::string text_string;        // text string
     int font_size;                  // font size
-
+    bool signature_visible;         // is signature visible
     void initText(const std::string& b_text);
     void initButtonTexture(const sf::Texture& texture);
     sf::Text button_signature;      // button signature
@@ -47,5 +49,7 @@ public:
     sf::Vector2f getSize(void);                     // returns button size
     void setSize(const sf::FloatRect& newSize);
     std::string getString(void);
+    void setString(std::string);
     void set_color(const sf::Color& color);
+    void set_signature_visiblity(bool flag);
 };
