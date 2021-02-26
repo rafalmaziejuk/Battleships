@@ -12,7 +12,9 @@
 *	- Figure out how when mServer and mClient pointers can be deleted, they will be forwarded to GameState so that they cant be just deleted in destructor when chanche_state is called
 *	
 *
-*/
+*/ 
+
+extern RemoteType mRemoteType;
 
 namespace States
 {
@@ -51,6 +53,8 @@ namespace States
 			delete_state();
 			add_state(ID::MAIN_MENU);
 		});
+
+		set_type();
 	}
 
 	ConnectState::~ConnectState(void)
@@ -58,21 +62,22 @@ namespace States
 
 	}
 
-	void ConnectState::set_type(RemoteType remote)
+	void ConnectState::set_type(void)
 	{
-		mRemoteType = remote;
-		if (remote == RemoteType::CLIENT)
+		if (mRemoteType == RemoteType::CLIENT)
 		{
 			//mClient = new Client();
 			//mIP.set_entered_text(mMyIp.toString());
+
+			std::cout << "Client\n";
 		}
-		else if (remote == RemoteType::SERVER)
+		else if (mRemoteType == RemoteType::SERVER)
 		{
 			mServer = new Server();
 			mIpInputBox.set_entered_text(mMyIp.toString());
 			//mButton->setString("Host");
+			std::cout << "Server\n";
 		}
-
 	}
 
 	void ConnectState::render(void)
