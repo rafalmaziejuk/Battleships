@@ -1,7 +1,7 @@
 #include "Server.h"
 
 Server::Server()
-    : mListener(), mSocket(), mIsRunning(false)
+    : Remote(), mPort(0),mServerThread(nullptr)
 {
 
 }
@@ -9,16 +9,6 @@ Server::Server()
 Server::~Server()
 {
 
-}
-
-bool Server::is_connected_with_remote(void) const
-{
-    return mIsConnectedWithRemote;
-}
-
-bool Server::is_running(void) const
-{
-    return mIsRunning;
 }
 
 void Server::set_port(const int port)

@@ -27,7 +27,8 @@ namespace GUI
 				const sf::Texture &texture = sf::Texture(),
 				const std::string &text = std::string(),
 				uint8_t fontSize = 0,
-				const sf::Font &font = sf::Font());
+				const sf::Font &font = sf::Font(),
+				sf::Color color = sf::Color::White);
 		
 		virtual ~Button();
 

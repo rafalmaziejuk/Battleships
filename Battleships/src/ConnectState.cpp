@@ -63,9 +63,8 @@ namespace States
 		mRemoteType = remote;
 		if (remote == RemoteType::CLIENT)
 		{
-			mClient = new Client();
+			//mClient = new Client();
 			//mIP.set_entered_text(mMyIp.toString());
-
 		}
 		else if (remote == RemoteType::SERVER)
 		{

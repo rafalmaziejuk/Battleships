@@ -17,8 +17,8 @@ namespace States
 		sf::Sprite mScreen;			// Screen image
 
 	private:
-		GUI::InputBox mIpInputBox;				// IP textbox
-		GUI::InputBox mPortInputBox;				// Port textbox
+		GUI::InputBox mIpInputBox;		// IP textbox
+		GUI::InputBox mPortInputBox;	// Port textbox
 		GUI::Button mButton;			// Host/Connect button
 		GUI::Button mBackButton;		// Back to menu button
 

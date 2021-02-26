@@ -2,7 +2,7 @@
 #include <iostream>
 
 Client::Client()
-    : mListener(), mSocket(), mIsRunning(false)
+    : Remote(), mPort(0), mClientThread(nullptr)
 {
 
 }
@@ -10,16 +10,6 @@ Client::Client()
 Client::~Client()
 {
 
-}
-
-bool Client::is_connected_with_remote(void) const
-{
-    return mIsConnectedWithRemote;
-}
-
-bool Client::is_running(void) const
-{
-    return mIsRunning;
 }
 
 void Client::set_port(const int port)
