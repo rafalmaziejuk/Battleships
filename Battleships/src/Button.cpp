@@ -33,7 +33,7 @@ namespace GUI
 
 		sf::FloatRect bounds = mSprite.getLocalBounds();
 		mDrawnText.setPosition(position.x + bounds.width / 2.0f, position.y + bounds.height / 2.0f);
-		Utility::align_text_center(mDrawnText);
+		Utility::align_center(mDrawnText);
 		mDrawnText.setFillColor(color);
 	}
 
@@ -66,7 +66,7 @@ namespace GUI
 			else
 				mDrawnText.setCharacterSize(mDefaultFontSize);
 
-			Utility::align_text_center(mDrawnText);
+			Utility::align_center(mDrawnText);
 		}
 	}
 

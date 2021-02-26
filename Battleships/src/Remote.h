@@ -1,16 +1,21 @@
 #pragma once
 
 #include <SFML/Network.hpp>
+#include <atomic>
+#include <iostream>
 
 enum class RemoteType
 {
 	SERVER, CLIENT
 };
 
+
+
 class Remote
 {
 
 public:
+    std::atomic_bool mDone;
     sf::TcpSocket mSocket;
     sf::Packet mPacketSent;
     sf::Packet mPacketReceived;
@@ -18,11 +23,12 @@ public:
     bool mIsConnectedWithRemote;
 
     Remote()
-        : mSocket(), 
-          mPacketSent(), 
-          mPacketReceived(),
-          mIsRunning(false),
-          mIsConnectedWithRemote(false) 
+        : mSocket(),
+        mPacketSent(),
+        mPacketReceived(),
+        mIsRunning(false),
+        mIsConnectedWithRemote(false),
+        mDone(false)
     {
     }
     ~Remote() 

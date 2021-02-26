@@ -15,18 +15,24 @@ namespace States
 	{
 	private:
 		sf::Sprite mScreen;			// Screen image
+		sf::Sprite mConnectionStatus;
 
 	private:
 		GUI::InputBox mIpInputBox;		// IP textbox
 		GUI::InputBox mPortInputBox;	// Port textbox
 		GUI::Button mButton;			// Host/Connect button
 		GUI::Button mBackButton;		// Back to menu button
+		GUI::Button mCancelButton;		// Cancel connection button
 
 	private:
 		sf::IpAddress mMyIp;		// User's IP
 		
 		Server* mServer;			// Server
 		Client* mClient;			// Client
+		bool mIsRemoteThreadRunning;
+
+		void init_GUI(Context context);
+		void init_button_callbacks(void);
 
 	public:
 		ConnectState(StateManager &stateManager, Context context);

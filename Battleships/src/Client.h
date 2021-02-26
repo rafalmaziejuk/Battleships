@@ -14,7 +14,7 @@ private:
     unsigned mPort;
 
     void run_client(void);
-
+    bool establish_connection(void);
 
 public:
     Client();
@@ -23,4 +23,5 @@ public:
     void set_port(const int port);
     void set_ip(const sf::IpAddress ip);
     void start(void);
+    void stop(void);
 };

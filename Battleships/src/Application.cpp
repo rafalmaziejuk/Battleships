@@ -29,7 +29,8 @@ Application::Application(void) :
 	mTextures.load_resource(Textures::ID::CONNECT_SCREEN, "assets/connectstate.png");
 	mTextures.load_resource(Textures::ID::CONNECTBUTTON1, "assets/connectbutton1.png");
 	mTextures.load_resource(Textures::ID::BACKBUTTON, "assets/backbutton.png");
-
+	mTextures.load_resource(Textures::ID::CONNECT_STATUS, "assets/connectstatus.png");
+	mTextures.load_resource(Textures::ID::CANCELBUTTON, "assets/cancelbutton.png");
 	mStatisticsText.setFont(mFonts.get_resource(Fonts::ID::SANSATION));
 	mStatisticsText.setPosition(5.0f, 5.0f);
 	mStatisticsText.setCharacterSize(10);

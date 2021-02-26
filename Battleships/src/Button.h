@@ -36,6 +36,11 @@ namespace GUI
 		{
 			mCallback = std::move(callback);
 		}
+		
+		inline void set_text(std::string string)
+		{
+			mDrawnText.setString(string);
+		}
 
 		virtual void draw(sf::RenderWindow *window) const override;
 		virtual void update(sf::Vector2i mousePosition) override;
