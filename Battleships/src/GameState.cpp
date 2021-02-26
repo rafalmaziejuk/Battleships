@@ -1,6 +1,6 @@
 #include "GameState.h"
 
-GameState::GameState(Context context) :
+States::GameState::GameState(Context context) :
 	State(context),
 	mWorld(context.mWindow),
 	mClient(nullptr),
@@ -9,13 +9,13 @@ GameState::GameState(Context context) :
 	
 }
 
-GameState::~GameState(void)
+States::GameState::~GameState(void)
 {
 	
 }
 
 template <typename T>
-void GameState::establish_remote(RemoteType remote, T* remotePointer)
+void States::GameState::establish_remote(RemoteType remote, T* remotePointer)
 {
 	if (remote == RemoteType::CLIENT)
 		mClient = remotePointer;
@@ -23,18 +23,18 @@ void GameState::establish_remote(RemoteType remote, T* remotePointer)
 		mServer = remotePointer;
 }
 
-void GameState::render(void)
+void States::GameState::render(void)
 {
 	mWorld.draw();
 }
 
-void GameState::update(sf::Time elapsedTime)
+void States::GameState::update(sf::Time elapsedTime)
 {
 	mMousePosition = sf::Mouse::getPosition(*get_context().mWindow);
 	mWorld.update();
 }
 
-void GameState::handle_event(const sf::Event &event)
+void States::GameState::handle_event(const sf::Event &event)
 {
 	switch (event.type)
 	{

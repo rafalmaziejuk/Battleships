@@ -1,22 +1,9 @@
-#include <sstream>
-#include <iostream>
 #include "Application.h"
+#include "Utility.h"
 #include "StateManager.h"
 #include "MenuState.h"
 #include "ResourceManager.h"
 #include "Defines.h"
-
-namespace
-{
-	template <typename T>
-	std::string to_string(const T &value)
-	{
-		std::stringstream stream;
-		stream << value;
-
-		return stream.str();
-	}
-}
 
 const sf::Time Application::TIME_PER_FRAME = sf::seconds(1.0f / FPS);
 
@@ -26,10 +13,11 @@ Application::Application(void) :
 	mFonts(),
 	mStatisticsText(),
 	mStatisticsUpdateTime(),
-	mStatisticsNumberOfFrames(0),
-	mExit(false)
+	mStatisticsNumberOfFrames(0)
 {
+	mWindow.setKeyRepeatEnabled(false);
 	mWindow.setFramerateLimit(unsigned int(FPS));
+
 	mFonts.load_resource(Fonts::ID::SANSATION, "assets/Sansation.ttf");
 	mFonts.load_resource(Fonts::ID::VIKING, "assets/VIKING-FONT.ttf");
 	mTextures.load_resource(Textures::ID::MENUBUTTON1, "assets/button1.png");
@@ -40,26 +28,26 @@ Application::Application(void) :
 	mTextures.load_resource(Textures::ID::CONNECTBUTTON1, "assets/connectbutton1.png");
 	mTextures.load_resource(Textures::ID::BACKBUTTON, "assets/backbutton.png");
 
-	State::Context context(mWindow, mTextures, mFonts);
-	StateManager::get_instance().change_state<MenuState>(context);
-
 	mStatisticsText.setFont(mFonts.get_resource(Fonts::ID::SANSATION));
 	mStatisticsText.setPosition(5.0f, 5.0f);
 	mStatisticsText.setCharacterSize(10);
 	mStatisticsText.setFillColor(sf::Color::Black);
+
+	States::State::Context context(mWindow, mTextures, mFonts);
+	States::StateManager::get_instance().change_state<States::MenuState>(context);
 }
 
 Application::~Application(void)
 {
-
+	
 }
 
 void Application::render(void)
 {
 	mWindow.clear();
 
-	if(StateManager::get_instance().get_state() != nullptr)
-		StateManager::get_instance().get_state()->render();
+	if (!States::StateManager::get_instance().is_empty())
+		States::StateManager::get_instance().get_state()->render();
 
 	mWindow.draw(mStatisticsText);
 
@@ -68,26 +56,21 @@ void Application::render(void)
 
 void Application::process_events(void)
 {
-	if (StateManager::get_instance().get_state() == nullptr)
-	{
-		mExit = true;
-	}
-
 	sf::Event event;
 	while (mWindow.pollEvent(event))
 	{
-		StateManager::get_instance().get_state()->handle_event(event);
+		if (!States::StateManager::get_instance().is_empty())
+			States::StateManager::get_instance().get_state()->handle_event(event);
 
-		switch (event.type)
-		{
-			case sf::Event::Closed:
-				mExit = true;
-				break;
-		}
+		if (event.type == sf::Event::Closed)
+			mWindow.close();
 	}
-	
-	if(mExit)
-		mWindow.close();
+}
+
+void Application::update(sf::Time elapsedTime)
+{
+	if (!States::StateManager::get_instance().is_empty())
+		States::StateManager::get_instance().get_state()->update(elapsedTime);
 }
 
 void Application::update_statistics(sf::Time elapsedTime)
@@ -97,7 +80,7 @@ void Application::update_statistics(sf::Time elapsedTime)
 
 	if (mStatisticsUpdateTime >= sf::seconds(1.0f))
 	{
-		mStatisticsText.setString("FPS = " + to_string(mStatisticsNumberOfFrames) + "\n");
+		mStatisticsText.setString("FPS = " + Utility::to_string(mStatisticsNumberOfFrames) + "\n");
 
 		mStatisticsUpdateTime -= sf::seconds(1.0f);
 		mStatisticsNumberOfFrames = 0;
@@ -109,7 +92,7 @@ void Application::run(void)
 	sf::Clock clock;
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 
-	while (mWindow.isOpen() && !mExit)
+	while (mWindow.isOpen())
 	{
 		sf::Time elapsedTime = clock.restart();
 		timeSinceLastUpdate += elapsedTime;
@@ -119,8 +102,10 @@ void Application::run(void)
 			timeSinceLastUpdate -= TIME_PER_FRAME;
 
 			process_events();
-			if (StateManager::get_instance().get_state() != nullptr)
-				StateManager::get_instance().get_state()->update(TIME_PER_FRAME);
+			update(TIME_PER_FRAME);
+
+			if (States::StateManager::get_instance().is_empty())
+				mWindow.close();			
 		}
 
 		update_statistics(elapsedTime);

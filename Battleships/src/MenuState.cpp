@@ -5,77 +5,79 @@
 #include "ConnectState.h" 
 #include "StateManager.h"
 
-MenuState::MenuState(Context context) :
+States::MenuState::MenuState(Context context) :
 	State(context),
 	mBackground()
 {
 	mBackground.setTexture(get_context().mTextures->get_resource(Textures::ID::MENU_BACKGROUND));
-	//mBackground.setScale(0.95f, 0.95f);
-	mMouseClicked = false;
 
 	sf::Font &font = get_context().mFonts->get_resource(Fonts::ID::VIKING);
-	mButtons.push_back(new MenuButton(get_context().mTextures->get_resource(Textures::ID::MENUBUTTON1), "Host", sf::Vector2f(100, 200), font, 25));
-	mButtons.push_back(new MenuButton(get_context().mTextures->get_resource(Textures::ID::MENUBUTTON2), "Connect", sf::Vector2f(100, 350), font, 25));
-	mButtons.push_back(new MenuButton(get_context().mTextures->get_resource(Textures::ID::MENUBUTTON3), "Exit", sf::Vector2f(100, 500), font, 25));
-	mButtonClicked = ButtonID::NONE;
+
+	mHostButton = GUI::Button(sf::Vector2f(100.0f, 200.0f), get_context().mTextures->get_resource(Textures::ID::MENUBUTTON1), "Host", 25, font);
+	mConnectButton = GUI::Button(sf::Vector2f(100.0f, 350.0f), get_context().mTextures->get_resource(Textures::ID::MENUBUTTON2), "Connect", 25, font);
+	mExitButton = GUI::Button(sf::Vector2f(100.0f, 500.0f), get_context().mTextures->get_resource(Textures::ID::MENUBUTTON3), "Exit", 25, font);
+
+	mHostButton.set_callback([this](void) 
+	{ 
+		StateManager::get_instance().change_state<ConnectState>(get_context());
+		static_cast<ConnectState *>(StateManager::get_instance().get_state())->set_type(RemoteType::SERVER);
+	});
+
+	mConnectButton.set_callback([this](void)
+	{
+		StateManager::get_instance().change_state<ConnectState>(get_context());
+		static_cast<ConnectState *>(StateManager::get_instance().get_state())->set_type(RemoteType::CLIENT);
+	});
+
+	mExitButton.set_callback([this](void)
+	{
+		StateManager::get_instance().delete_state();
+	});
 }
 
-MenuState::~MenuState(void)
+States::MenuState::~MenuState(void)
 {
 	
 }
 
-void MenuState::render(void)
+void States::MenuState::render(void)
 {
-	get_context().mWindow->draw(mBackground);
-	for (auto& i : mButtons)
-		i->drawButton(get_context().mWindow);
+	sf::RenderWindow *window = get_context().mWindow;
+
+	window->draw(mBackground);
+	mHostButton.draw(window);
+	mConnectButton.draw(window);
+	mExitButton.draw(window);
 }
 
-void MenuState::update(sf::Time elapsedTime)
+void States::MenuState::update(sf::Time elapsedTime)
 {
-	bool clicked = false;
-	 
-	for (auto& i : mButtons)
-	{
-		mButtonClicked = i->update(get_context().mWindow, mMouseClicked);
-		if (mButtonClicked != ButtonID::NONE)
-		{
-			switch (mButtonClicked)
-			{
-				case ButtonID::M_HOST: 
-					clicked = true; 
-					StateManager::get_instance().change_state<ConnectState>(get_context()); 
-					static_cast<ConnectState*>(StateManager::get_instance().get_state())->set_type(RemoteType::SERVER);
-					break;
-				case ButtonID::M_CONNECT:  
-					clicked = true; 
-					StateManager::get_instance().change_state<ConnectState>(get_context()); 
-					static_cast<ConnectState*>(StateManager::get_instance().get_state())->set_type(RemoteType::CLIENT);
+	sf::Vector2i mousePosition = sf::Mouse::getPosition(*get_context().mWindow);
 
-					break;
-				case ButtonID::M_EXIT: 
-					StateManager::get_instance().delete_current_state();
-
-					break;
-			}
-
-			if (clicked) 
-				break;
-		}
-	}
-
-	mMouseClicked = false;
+	mHostButton.update(mousePosition);
+	mConnectButton.update(mousePosition);
+	mExitButton.update(mousePosition);
 }
 
-void MenuState::handle_event(const sf::Event &event)
+void States::MenuState::handle_event(const sf::Event &event)
 {
 	switch (event.type)
 	{
 		case sf::Event::MouseButtonReleased:
 		{
 			if (event.mouseButton.button == sf::Mouse::Left)
-				mMouseClicked = true;
+			{
+				sf::Vector2i mousePosition(event.mouseButton.x, event.mouseButton.y);
+				
+				if (mHostButton.is_mouse_over(mousePosition))
+					mHostButton.on_click(true);
+
+				if (mConnectButton.is_mouse_over(mousePosition))
+					mConnectButton.on_click(true);
+
+				if (mExitButton.is_mouse_over(mousePosition))
+					mExitButton.on_click(true);
+			}
 
 			break;
 		}

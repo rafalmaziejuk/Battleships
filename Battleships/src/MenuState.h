@@ -3,25 +3,28 @@
 #include <SFML/Graphics.hpp>
 
 #include "State.h"
-#include "MenuUIComponents.h"
+#include "Button.h"
 #include "Client.h"
 #include "Server.h"
-#
 
-
-class MenuState : public State
+namespace States
 {
-private:
-	std::vector<Button *> mButtons;
-	sf::Sprite mBackground;
-	bool mMouseClicked;
-	ButtonID mButtonClicked;
+	class MenuState : public State
+	{
+	private:
+		sf::Sprite mBackground;
 
-public:
-	MenuState(Context context);
-	virtual ~MenuState(void);
+	private:
+		GUI::Button mHostButton;
+		GUI::Button mConnectButton;
+		GUI::Button mExitButton;
 
-	virtual void render(void) override;
-	virtual void update(sf::Time elapsedTime) override;
-	virtual void handle_event(const sf::Event &event) override;
-};
+	public:
+		MenuState(Context context);
+		virtual ~MenuState(void);
+
+		virtual void render(void) override;
+		virtual void update(sf::Time elapsedTime) override;
+		virtual void handle_event(const sf::Event &event) override;
+	};
+}

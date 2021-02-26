@@ -1,7 +1,6 @@
 #include "Grid.h"
 
 #include "Ship.h"
-#include "ConsoleDebug.h"
 
 #include <iostream>
 

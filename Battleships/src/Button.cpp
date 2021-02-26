@@ -1,111 +1,71 @@
 #include "Button.h"
+#include "Utility.h"
 
-/* constructor/ destructor */
-
-Button::Button(const sf::Texture& texture, const std::string& bText, const sf::Vector2f& pos, const sf::Font& font, int fontSize)
-{
-	initButtonTexture(texture);
-	setPosition(pos);
-	text_string = bText;
-	text_font = font;
-	font_size = fontSize;
-    signature_visible = true;
-	initText(bText);
-}
-
-Button::~Button()
+GUI::Button::Button(void) :
+	Widget(),
+	mSprite(),
+	mDrawnText(),
+	mCallback(),
+	mDefaultFontSize(0),
+	mIsTextDisabled(false)
 {
 
 }
 
-/* functions used to getting character and string size in pixels */
-
-static int getLetterSize(char letter, sf::Font& font, int font_size)
+GUI::Button::Button(sf::Vector2f position,
+					const sf::Texture &texture,
+					const std::string &text,
+					uint8_t fontSize,
+					const sf::Font &font) :
+					Widget(Utility::to_vector2i(position), Utility::to_vector2i(texture.getSize())),
+					mSprite(texture),
+					mDrawnText(text, font, fontSize),
+					mCallback(),
+					mDefaultFontSize(fontSize),
+					mIsTextDisabled(text.empty())
 {
-    return int(font.getGlyph(int(letter), font_size, false).advance);
+	mSprite.setPosition(position);
+
+	sf::FloatRect bounds = mSprite.getLocalBounds();
+	mDrawnText.setPosition(position.x + bounds.width / 2.0f, position.y + bounds.height / 2.0f);
+	Utility::align_text_center(mDrawnText);
+	mDrawnText.setFillColor(sf::Color::Black);
 }
 
-static int getTextLenghtInPixel(const std::string& b_text, int letter_size)
+GUI::Button::~Button()
 {
-    return letter_size * b_text.length();
+	
 }
 
-/* initialization */
-
-void Button::initText(const std::string& b_text)
+void GUI::Button::draw(sf::RenderWindow *window) const
 {
-    button_signature.setString(b_text);
-    button_signature.setFont(text_font);
-    setNewCharSize(font_size);
+	window->draw(mSprite);
+
+	if (!mIsTextDisabled)
+		window->draw(mDrawnText);
 }
 
-
-void Button::initButtonTexture(const sf::Texture& tex)
+void GUI::Button::update(sf::Vector2i mousePosition)
 {
-    mTexture = tex;
-    setTexture(mTexture);
+	if (mIsTextDisabled)
+	{
+		if (is_mouse_over(mousePosition) == true)
+			mSprite.setScale(1.05f, 1.05f);
+		else
+			mSprite.setScale(1.00f, 1.00f);
+	}
+	else
+	{
+		if (is_mouse_over(mousePosition) == true)
+			mDrawnText.setCharacterSize(mDefaultFontSize + 2);
+		else
+			mDrawnText.setCharacterSize(mDefaultFontSize);
 
-    sf::Vector2f sprite_size = { getLocalBounds().width,getLocalBounds().height };
-    size = sprite_size;
+		Utility::align_text_center(mDrawnText);
+	}
 }
 
-
-/* methods */
-
-bool Button::isCovered(sf::RenderWindow* window)
+void GUI::Button::on_click(bool clickedOn)
 {
-    sf::Vector2i mouse_pos = sf::Mouse::getPosition(*window);
-    sf::Vector2f position = { getPosition().x-getOrigin().x,getPosition().y -getOrigin().y };
-    if ((mouse_pos.x >= position.x && mouse_pos.x <= position.x + getSize().x) && (mouse_pos.y >= position.y && mouse_pos.y <= position.y + getSize().y))
-        return true;
-    else return false;
-}
-
-void Button::drawButton(sf::RenderWindow* window)
-{
-    window->draw(*this);
-    if(signature_visible)
-        window->draw(button_signature);
-}
-
-void Button::setNewCharSize(int font_size)
-{
-    button_signature.setCharacterSize(font_size);
-    int letter_size_x = getLetterSize(text_string[0], text_font, font_size);
-    int text_size_x = getTextLenghtInPixel(text_string, letter_size_x);
-    int letter_size_y = (int)button_signature.getLocalBounds().height;
-
-    button_signature.setPosition(getPosition().x + getSize().x / 2.0f - text_size_x / 2.0f, getPosition().y + getSize().y / 2.0f - letter_size_y/2.0f);
-}
-
-sf::Vector2f Button::getSize(void)
-{
-    return size;
-}
-
-void Button::setSize(const sf::FloatRect& newSize)
-{
-    size = {newSize.width, newSize.height};
-}
-
-std::string Button::getString(void)
-{
-    return text_string;
-}
-
-void Button::setString(std::string str)
-{
-    text_string = str;
-    button_signature.setString(str);
-    setNewCharSize(font_size);
-}
-
-void Button::set_color(const sf::Color& color)
-{
-    button_signature.setFillColor(color);
-}
-
-void Button::set_signature_visiblity(bool flag)
-{
-    signature_visible = flag;
+	mCallback();
 }

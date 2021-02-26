@@ -15,7 +15,6 @@ private:
 	sf::RenderWindow mWindow;
 	TextureManager mTextures;
 	FontManager mFonts;
-	bool mExit;
 
 private:
 	sf::Text mStatisticsText;
@@ -25,6 +24,7 @@ private:
 
 	void render(void);
 	void process_events(void);
+	void update(sf::Time elapsedTime);
 
 public:
 	Application(void);

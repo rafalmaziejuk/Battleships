@@ -1,55 +1,48 @@
 #pragma once
 
-#include <iostream>
-#include <windows.h>
+#include <functional>
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Text.hpp>
 
-enum class ButtonID : uint8_t
+#include "Widget.h"
+
+namespace GUI
 {
-	NONE,
-	M_HOST,
-	M_CONNECT,
-	M_EXIT,
-    C_CONNECT,
-    C_HOST,
-    C_BACK
-};
+	class Button : public Widget
+	{
+	private:
+		sf::Sprite mSprite;
+		sf::Text mDrawnText;
 
-class Button : public sf::Sprite
-{
-private:
-    sf::Vector2f size = { 0,0 };    // object(sprite) size
-    sf::Texture mTexture;           // sprite texture
-    sf::Font text_font;             // font
-    std::string text_string;        // text string
-    int font_size;                  // font size
-    bool signature_visible;         // is signature visible
-    void initText(const std::string& b_text);
-    void initButtonTexture(const sf::Texture& texture);
-    sf::Text button_signature;      // button signature
+	private:
+		std::function<void(void)> mCallback;
+		uint8_t mDefaultFontSize;
+		bool mIsTextDisabled;
 
-public:
-   
+	public:
+		Button(void);
+		Button(	sf::Vector2f position,
+				const sf::Texture &texture = sf::Texture(),
+				const std::string &text = std::string(),
+				uint8_t fontSize = 0,
+				const sf::Font &font = sf::Font());
+		
+		virtual ~Button();
 
-	/* constructor/ destructor */
-	/* constructor should be called with the child class constructor like that : YourButton(T a, T b, T c, T d) : Button(a,b,c,d) */
-	Button(const sf::Texture &texture, const std::string& bText, const sf::Vector2f& pos, const sf::Font& font, int fontSize);
-	virtual ~Button();
+		inline void set_callback(std::function<void(void)> callback)
+		{
+			mCallback = std::move(callback);
+		}
 
-    /* virtual methods that have to be overrided, onclick and update actions need to be handled in child class */
-    virtual void onClick(sf::RenderWindow* window) = 0;
-    virtual ButtonID update(sf::RenderWindow* window, bool mouseClicked) = 0;
+		inline bool is_mouse_over(sf::Vector2i mousePosition) const
+		{
+			return Widget::is_mouse_over(mousePosition);
+		}
 
-    /* methods */
-    bool isCovered(sf::RenderWindow* window);       // checks if button is covered by mouse
-    void drawButton(sf::RenderWindow* window);      // draws sprite and text
-    void setNewCharSize(int font_size);             // sets new font size and shifts text to the button center
-    sf::Vector2f getSize(void);                     // returns button size
-    void setSize(const sf::FloatRect& newSize);
-    std::string getString(void);
-    void setString(std::string);
-    void set_color(const sf::Color& color);
-    void set_signature_visiblity(bool flag);
-};
+		virtual void draw(sf::RenderWindow *window) const override;
+		virtual void update(sf::Vector2i mousePosition) override;
+		virtual void on_click(bool clickedOn) override;
+	};
+}
