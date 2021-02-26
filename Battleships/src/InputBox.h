@@ -1,11 +1,11 @@
 #pragma once
 
-#include <string>
+#include "Widget.h"
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
 
-#include "Widget.h"
+#include <string>
 
 namespace GUI
 {

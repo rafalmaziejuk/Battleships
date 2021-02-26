@@ -1,52 +1,67 @@
 #pragma once
 
-#include <iostream>
+#include "State.h"
+#include "StateIdentifiers.h"
 
 #include <SFML/System/NonCopyable.hpp>
 
-#include "State.h"
+#include <functional>
+#include <utility>
+#include <cstdint>
+#include <vector>
+#include <map>
 
 namespace States
 {
 	class StateManager : private sf::NonCopyable
 	{
-	private:
-		State *mCurrentState;
+	public:
+		enum class Action : uint8_t
+		{
+			ADD,
+			DELETE
+		};
 
 	private:
-		StateManager(void) : mCurrentState(nullptr) {  }
-		~StateManager(void) { delete mCurrentState; }
+		State::statePointer create_state(ID stateID);
+		void do_pending_actions(void);
+
+	private:
+		struct PendingAction
+		{
+			Action mAction;
+			ID mStateID;
+			
+			explicit PendingAction(Action action, ID stateID = ID::NONE);
+		};
+
+	private:
+		std::vector<State::statePointer> mStates;
+		std::map<States::ID, std::function<State::statePointer()>> mStateConstructors;
+		std::vector<PendingAction> mPendingActions;
+		States::State::Context mContext;
 
 	public:
-		static StateManager & get_instance(void)
-		{
-			static StateManager stateManager;
-			return stateManager;
-		}
-
-		inline bool is_empty(void) const
-		{
-			return (mCurrentState == nullptr) ? true : false;
-		}
-
-		inline void delete_state(void)
-		{
-			delete mCurrentState;
-			mCurrentState = nullptr;
-		}
+		explicit StateManager(State::Context context);
 
 		template <typename T>
-		inline void change_state(State::Context &context)
-		{
-			if (!is_empty())
-				delete mCurrentState;
+		inline void register_state(ID stateID);
 
-			mCurrentState = new T(context);
-		}
+		void render(void);
+		void update(sf::Time elapsedTime);
+		void handle_event(const sf::Event &event);
 
-		inline State * get_state(void) const
-		{
-			return mCurrentState;
-		}
+		void add_state(ID stateID);
+		void delete_state(void);
+		bool is_empty(void) const;
 	};
+
+	template<typename T>
+	inline void StateManager::register_state(ID stateID)
+	{
+		mStateConstructors[stateID] = [this]()
+		{
+			return State::statePointer(new T(*this, mContext));
+		};
+	}
 }

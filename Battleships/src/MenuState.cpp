@@ -1,87 +1,89 @@
 #include <iostream>
 
 #include "MenuState.h"
-#include "GameState.h"
-#include "ConnectState.h" 
-#include "StateManager.h"
+#include "ResourceManager.h"
 
-States::MenuState::MenuState(Context context) :
-	State(context),
-	mBackground()
+namespace States
 {
-	mBackground.setTexture(get_context().mTextures->get_resource(Textures::ID::MENU_BACKGROUND));
-
-	sf::Font &font = get_context().mFonts->get_resource(Fonts::ID::VIKING);
-
-	mHostButton = GUI::Button(sf::Vector2f(100.0f, 200.0f), get_context().mTextures->get_resource(Textures::ID::MENUBUTTON1), "Host", 25, font);
-	mConnectButton = GUI::Button(sf::Vector2f(100.0f, 350.0f), get_context().mTextures->get_resource(Textures::ID::MENUBUTTON2), "Connect", 25, font);
-	mExitButton = GUI::Button(sf::Vector2f(100.0f, 500.0f), get_context().mTextures->get_resource(Textures::ID::MENUBUTTON3), "Exit", 25, font);
-
-	mHostButton.set_callback([this](void) 
-	{ 
-		StateManager::get_instance().change_state<ConnectState>(get_context());
-		static_cast<ConnectState *>(StateManager::get_instance().get_state())->set_type(RemoteType::SERVER);
-	});
-
-	mConnectButton.set_callback([this](void)
+	MenuState::MenuState(StateManager &stateManager, Context context) :
+		State(stateManager, context),
+		mBackground()
 	{
-		StateManager::get_instance().change_state<ConnectState>(get_context());
-		static_cast<ConnectState *>(StateManager::get_instance().get_state())->set_type(RemoteType::CLIENT);
-	});
+		mBackground.setTexture(context.mTextures->get_resource(Textures::ID::MENU_BACKGROUND));
 
-	mExitButton.set_callback([this](void)
-	{
-		StateManager::get_instance().delete_state();
-	});
-}
+		sf::Font &font = context.mFonts->get_resource(Fonts::ID::VIKING);
 
-States::MenuState::~MenuState(void)
-{
-	
-}
+		mButtons.push_back(new GUI::Button(sf::Vector2f(100.0f, 200.0f), context.mTextures->get_resource(Textures::ID::MENUBUTTON1), "Host", 25, font));
+		mButtons.push_back(new GUI::Button(sf::Vector2f(100.0f, 350.0f), context.mTextures->get_resource(Textures::ID::MENUBUTTON2), "Connect", 25, font));
+		mButtons.push_back(new GUI::Button(sf::Vector2f(100.0f, 500.0f), context.mTextures->get_resource(Textures::ID::MENUBUTTON3), "Exit", 25, font));
 
-void States::MenuState::render(void)
-{
-	sf::RenderWindow *window = get_context().mWindow;
-
-	window->draw(mBackground);
-	mHostButton.draw(window);
-	mConnectButton.draw(window);
-	mExitButton.draw(window);
-}
-
-void States::MenuState::update(sf::Time elapsedTime)
-{
-	sf::Vector2i mousePosition = sf::Mouse::getPosition(*get_context().mWindow);
-
-	mHostButton.update(mousePosition);
-	mConnectButton.update(mousePosition);
-	mExitButton.update(mousePosition);
-}
-
-void States::MenuState::handle_event(const sf::Event &event)
-{
-	switch (event.type)
-	{
-		case sf::Event::MouseButtonReleased:
+		static_cast<GUI::Button *>(mButtons[0])->set_callback([this](void)
 		{
-			if (event.mouseButton.button == sf::Mouse::Left)
+			delete_state();
+			add_state(ID::CONNECT_STATE);
+		});
+
+		static_cast<GUI::Button *>(mButtons[1])->set_callback([this](void)
+		{
+			delete_state();
+			add_state(ID::CONNECT_STATE);
+		});
+
+		static_cast<GUI::Button *>(mButtons[2])->set_callback([this](void)
+		{
+			delete_state();
+		});
+	}
+
+	MenuState::~MenuState(void)
+	{
+		for (auto &button : mButtons)
+			delete button;
+	}
+
+	void MenuState::render(void)
+	{
+		sf::RenderWindow *window = get_context().mWindow;
+
+		window->draw(mBackground);
+
+		for (auto &button : mButtons)
+			button->draw(window);
+	}
+
+	bool MenuState::update(sf::Time elapsedTime)
+	{
+		sf::Vector2i mousePosition = sf::Mouse::getPosition(*get_context().mWindow);
+
+		for (auto &button : mButtons)
+			button->update(mousePosition);
+
+		return true;
+	}
+
+	bool MenuState::handle_event(const sf::Event &event)
+	{
+		switch (event.type)
+		{
+			case sf::Event::MouseButtonReleased:
 			{
-				sf::Vector2i mousePosition(event.mouseButton.x, event.mouseButton.y);
-				
-				if (mHostButton.is_mouse_over(mousePosition))
-					mHostButton.on_click(true);
+				if (event.mouseButton.button == sf::Mouse::Left)
+				{
+					sf::Vector2i mousePosition(event.mouseButton.x, event.mouseButton.y);
 
-				if (mConnectButton.is_mouse_over(mousePosition))
-					mConnectButton.on_click(true);
+					for (auto &button : mButtons)
+					{
+						if (button->is_mouse_over(mousePosition))
+							button->on_click(true);
+					}
+				}
 
-				if (mExitButton.is_mouse_over(mousePosition))
-					mExitButton.on_click(true);
+				break;
 			}
 
-			break;
+			default: break;
 		}
 
-		default: break;
+		return true;
 	}
 }

@@ -1,10 +1,12 @@
 #pragma once
 
-#include "InputBox.h"
 #include "State.h"
+#include "InputBox.h"
 #include "Button.h"
 #include "Server.h"
 #include "Client.h"
+
+#include <SFML/Graphics/Sprite.hpp>
 
 namespace States
 {
@@ -27,13 +29,13 @@ namespace States
 		Client* mClient;			// Client
 
 	public:
-		ConnectState(Context context);
+		ConnectState(StateManager &stateManager, Context context);
 		virtual ~ConnectState(void);
 
 		void set_type(RemoteType remote);
 
 		virtual void render(void) override;
-		virtual void update(sf::Time elapsedTime) override;
-		virtual void handle_event(const sf::Event &event) override;
+		virtual bool update(sf::Time elapsedTime) override;
+		virtual bool handle_event(const sf::Event &event) override;
 	};
 }

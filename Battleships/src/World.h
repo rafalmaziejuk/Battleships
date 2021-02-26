@@ -1,17 +1,19 @@
 #pragma once
 
-#include <SFML/System/NonCopyable.hpp>
-#include <SFML/Graphics/Texture.hpp>
-
 #include "ResourceManager.h"
 #include "ResourceIdentifiers.h"
-#include "Defines.h"
 #include "Grid.h"
 #include "Cursor.h"
 #include "Ship.h"
 
+#include <SFML/System/NonCopyable.hpp>
+#include <SFML/Graphics/Texture.hpp>
+
 class World : sf::NonCopyable
 {
+private:
+	enum { NUM_OF_SHIPS = 10 };
+
 private:
 	sf::RenderWindow *mWindow;
 	TextureManager mTextures;

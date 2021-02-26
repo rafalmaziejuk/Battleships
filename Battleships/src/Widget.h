@@ -1,9 +1,9 @@
 #pragma once
 
-#include <string>
-
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Rect.hpp>
+
+#include <string>
 
 namespace GUI
 {
@@ -13,11 +13,6 @@ namespace GUI
 		sf::IntRect mTriggerArea;
 
 	protected:
-		inline bool is_mouse_over(sf::Vector2i mousePosition) const
-		{
-			return mTriggerArea.contains(mousePosition);
-		}
-
 		inline sf::IntRect get_trigger_area(void) const
 		{
 			return mTriggerArea;
@@ -39,6 +34,11 @@ namespace GUI
 		virtual ~Widget(void) 
 		{
 
+		}
+
+		inline bool is_mouse_over(sf::Vector2i mousePosition) const
+		{
+			return mTriggerArea.contains(mousePosition);
 		}
 
 		virtual void draw(sf::RenderWindow *window) const = 0;

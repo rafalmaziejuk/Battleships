@@ -1,13 +1,13 @@
 #pragma once
 
-#include <thread>
-
-#include <SFML/Graphics.hpp>
-
 #include "State.h"
 #include "World.h"
 #include "Server.h"
 #include "Client.h"
+
+#include <SFML/Graphics.hpp>
+
+#include <thread>
 
 namespace States
 {
@@ -22,13 +22,12 @@ namespace States
 		sf::Vector2i mMousePosition;
 
 	public:
-		GameState(Context context);
-		virtual ~GameState(void);
+		GameState(StateManager &stateManager, Context context);
 
 		template <typename T>
 		void establish_remote(RemoteType remote, T* remotePointer);
 		virtual void render(void) override;
-		virtual void update(sf::Time elapsedTime) override;
-		virtual void handle_event(const sf::Event &event) override;
+		virtual bool update(sf::Time elapsedTime) override;
+		virtual bool handle_event(const sf::Event &event) override;
 	};
 }

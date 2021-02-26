@@ -1,7 +1,8 @@
 #pragma once
 
-#include <iostream>
 #include <SFML/Network.hpp>
+
+#include <iostream>
 #include <thread>
 
 enum class RemoteType

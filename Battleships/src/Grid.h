@@ -1,10 +1,9 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-
 #include "ResourceIdentifiers.h"
-#include "Defines.h"
 #include "ShipHint.h"
+
+#include <SFML/Graphics.hpp>
 
 class Ship;
 
@@ -23,7 +22,8 @@ enum class ShipAction
 class Grid
 {
 private:
-
+	enum { FIELDS = 10, CELL_SIZE = 50 };
+private:
 	sf::Texture mTileTexture;
 	//sf::Texture mHintTileTexture;
 	//std::vector<sf::Sprite> mTileSprites;

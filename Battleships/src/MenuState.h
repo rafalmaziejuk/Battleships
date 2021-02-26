@@ -1,11 +1,11 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-
 #include "State.h"
 #include "Button.h"
 #include "Client.h"
 #include "Server.h"
+
+#include <SFML/Graphics/Sprite.hpp>
 
 namespace States
 {
@@ -15,16 +15,14 @@ namespace States
 		sf::Sprite mBackground;
 
 	private:
-		GUI::Button mHostButton;
-		GUI::Button mConnectButton;
-		GUI::Button mExitButton;
+		std::vector<GUI::Widget *> mButtons;
 
 	public:
-		MenuState(Context context);
+		MenuState(StateManager &stateManager, Context context);
 		virtual ~MenuState(void);
 
 		virtual void render(void) override;
-		virtual void update(sf::Time elapsedTime) override;
-		virtual void handle_event(const sf::Event &event) override;
+		virtual bool update(sf::Time elapsedTime) override;
+		virtual bool handle_event(const sf::Event &event) override;
 	};
 }

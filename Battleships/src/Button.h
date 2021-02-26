@@ -1,12 +1,12 @@
 #pragma once
 
-#include <functional>
+#include "Widget.h"
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
 
-#include "Widget.h"
+#include <functional>
 
 namespace GUI
 {
@@ -34,11 +34,6 @@ namespace GUI
 		inline void set_callback(std::function<void(void)> callback)
 		{
 			mCallback = std::move(callback);
-		}
-
-		inline bool is_mouse_over(sf::Vector2i mousePosition) const
-		{
-			return Widget::is_mouse_over(mousePosition);
 		}
 
 		virtual void draw(sf::RenderWindow *window) const override;

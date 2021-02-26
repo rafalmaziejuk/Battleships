@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Network.hpp>
+
 #include <thread>
 
 class Client

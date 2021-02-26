@@ -1,0 +1,14 @@
+#pragma once
+
+#include <cstdint>
+
+namespace States
+{
+	enum class ID : uint8_t
+	{
+		NONE,
+		MAIN_MENU,
+		CONNECT_STATE,
+		GAME_STATE
+	};
+}

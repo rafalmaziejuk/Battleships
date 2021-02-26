@@ -1,9 +1,7 @@
 #include "Ship.h"
-#include "Defines.h"
-
 #include "Grid.h"
-#include <iostream>
 
+#include <iostream>
 
 Ship::Ship(void) :
 	mStart(),
