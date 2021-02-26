@@ -2,6 +2,7 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
 #include <sstream>
 #include <iostream>
@@ -16,7 +17,8 @@ namespace Utility
 	template <typename T>
 	sf::Vector2i to_vector2i(sf::Vector2<T> vector);
 
-	void align_text_center(sf::Text &text);
+	void align_center(sf::Text &text);
+	void align_center(sf::Sprite &sprite);
 	
 	void cls(void);
 	void console_cursor(bool flag);

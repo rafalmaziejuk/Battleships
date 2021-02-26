@@ -24,7 +24,7 @@ namespace States
 
 	private:
 		sf::IpAddress mMyIp;		// User's IP
-		RemoteType mRemoteType;		// Remote type c {HOST,CLIENT}
+		
 		Server* mServer;			// Server
 		Client* mClient;			// Client
 
@@ -32,7 +32,7 @@ namespace States
 		ConnectState(StateManager &stateManager, Context context);
 		virtual ~ConnectState(void);
 
-		void set_type(RemoteType remote);
+		void set_type(void);
 
 		virtual void render(void) override;
 		virtual bool update(sf::Time elapsedTime) override;
