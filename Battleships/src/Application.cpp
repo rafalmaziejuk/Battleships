@@ -5,6 +5,7 @@
 #include "MenuState.h"
 #include "ConnectState.h"
 #include "GameState.h"
+#include "Remote.h"
 
 const sf::Time Application::TIME_PER_FRAME = sf::seconds(1.0f / 60.0f);
 
@@ -84,7 +85,8 @@ void Application::update_statistics(sf::Time elapsedTime)
 void Application::register_states(void)
 {
 	mStateManager.register_state<States::MenuState>(States::ID::MAIN_MENU);
-	mStateManager.register_state<States::ConnectState>(States::ID::CONNECT_STATE);
+	mStateManager.register_state<States::ConnectState>(States::ID::CONNECT_HOST, RemoteType::SERVER);
+	mStateManager.register_state<States::ConnectState>(States::ID::CONNECT_JOIN, RemoteType::CLIENT);
 	mStateManager.register_state<States::GameState>(States::ID::GAME_STATE);
 }
 

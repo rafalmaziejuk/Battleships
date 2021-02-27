@@ -1,14 +1,17 @@
 #pragma once
 
-#include "GameState.h"
-#include "Server.h"
-#include "Client.h"
 #include "State.h"
-#include "Widget.h"
-#include "Server.h"
-#include "Client.h"
+#include "Remote.h"
 
 #include <SFML/Graphics/Sprite.hpp>
+
+class Server;
+class Client;
+
+namespace GUI
+{
+	class Widget;
+}
 
 namespace States
 {
@@ -16,15 +19,23 @@ namespace States
 	{
 	private:
 		sf::Sprite mScreen;
+		sf::Sprite mConnectionStatus;
 
 	private:
 		std::vector<GUI::Widget *> mWidgets;
 
 	private:
+		sf::IpAddress mMyIp;
+		Server* mServer;
+		Client* mClient;
+		RemoteType mRemoteType;
+		bool mIsRemoteThreadRunning;
+
+	private:
 		void set_gui(Context context);
 
 	public:
-		ConnectState(StateManager &stateManager, Context context);
+		ConnectState(StateManager &stateManager, Context context, RemoteType type);
 		virtual ~ConnectState(void);
 
 		virtual void render(void) override;

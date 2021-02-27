@@ -9,8 +9,6 @@
 
 #include <thread>
 
-extern RemoteType mRemoteType;
-
 namespace States
 {
 	class GameState : public State

@@ -46,6 +46,9 @@ namespace States
 
 		template <typename T>
 		inline void register_state(ID stateID);
+		
+		template <typename T1, typename T2>
+		inline void register_state(ID stateID, T2 t2);
 
 		void render(void);
 		void update(sf::Time elapsedTime);
@@ -59,9 +62,18 @@ namespace States
 	template<typename T>
 	inline void StateManager::register_state(ID stateID)
 	{
-		mStateConstructors[stateID] = [this]()
+		mStateConstructors[stateID] = [this](void)
 		{
 			return State::statePointer(new T(*this, mContext));
+		};
+	}
+
+	template<typename T1, typename T2>
+	inline void StateManager::register_state(ID stateID, T2 t2)
+	{
+		mStateConstructors[stateID] = [this, t2](void)
+		{
+			return State::statePointer(new T1(*this, mContext, t2));
 		};
 	}
 }

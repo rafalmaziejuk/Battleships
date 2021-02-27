@@ -1,25 +1,46 @@
 #include "ConnectState.h"
+#include "GameState.h"
 #include "ResourceManager.h"
+#include "Widget.h"
 #include "InputBox.h"
 #include "Button.h"
+#include "Server.h"
+#include "Client.h"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
-extern RemoteType mRemoteType;
-
-
 namespace States
 {
-	ConnectState::ConnectState(StateManager &stateManager, Context context) :
+	ConnectState::ConnectState(StateManager &stateManager, Context context, RemoteType type) :
 		State(stateManager, context),
-		mScreen()
+		mScreen(),
+		mConnectionStatus(),
+		mMyIp(sf::IpAddress::getLocalAddress()),
+		mServer(nullptr),
+		mClient(nullptr),
+		mRemoteType(type),
+		mIsRemoteThreadRunning(false)
 	{
 		mScreen.setTexture(context.mTextures->get_resource(Textures::ID::CONNECT_SCREEN));
 		set_gui(context);
+
+		if (mRemoteType == RemoteType::CLIENT)
+		{
+			GameState::mRemote = new Client();
+			mClient = static_cast<Client*>(GameState::mRemote);
+		}
+		else if (mRemoteType == RemoteType::SERVER)
+		{
+			GameState::mRemote = new Server();
+			mServer = static_cast<Server*>(GameState::mRemote);
+		}
 	}
 
 	ConnectState::~ConnectState(void)
 	{
+		if (!GameState::mRemote->is_connected_with_remote())
+			delete GameState::mRemote;
+
 		for (auto &widget : mWidgets)
 			delete widget;
 	}
@@ -34,11 +55,34 @@ namespace States
 
 		mWidgets.push_back(new GUI::InputBox(sf::Vector2f(475.0f, 315.0f), sf::Vector2i(300, 50), font, 25, 14));
 		mWidgets.push_back(new GUI::InputBox(sf::Vector2f(475.0f, 412.0f), sf::Vector2i(300, 50), font, 25, 5));
-		mWidgets.push_back(new GUI::Button(sf::Vector2f(523.0f, 480.0f), context.mTextures->get_resource(Textures::ID::CONNECTBUTTON1), "Connect", font, 25));
-		mWidgets.push_back(new GUI::Button(sf::Vector2f(360.0f, 560.0f), context.mTextures->get_resource(Textures::ID::BACKBUTTON)));
-		
 		mWidgets[0]->set_align_mode(GUI::Widget::AlignOptions::LEFT);
 		mWidgets[1]->set_align_mode(GUI::Widget::AlignOptions::LEFT);
+
+		mWidgets.push_back(new GUI::Button(sf::Vector2f(523.0f, 480.0f), context.mTextures->get_resource(Textures::ID::CONNECTBUTTON1), "Connect", font, 25));
+		mWidgets.push_back(new GUI::Button(sf::Vector2f(360.0f, 560.0f), context.mTextures->get_resource(Textures::ID::BACKBUTTON)));
+
+		static_cast<GUI::Button *>(mWidgets[2])->set_callback([this](void)
+		{
+			if (mRemoteType == RemoteType::SERVER)
+			{
+				if (mWidgets[1]->get_text().length() > 0 && !mServer->is_running())
+				{
+					mServer->set_port(std::stoi(mWidgets[1]->get_text()));
+					mServer->start();
+					mIsRemoteThreadRunning = true;
+				}
+			}
+			else if (mRemoteType == RemoteType::CLIENT)
+			{
+				if (mWidgets[1]->get_text().length() > 0 && !mClient->is_running())
+				{
+					mClient->set_port(std::stoi(mWidgets[1]->get_text()));
+					mClient->set_ip(sf::IpAddress(mWidgets[0]->get_text()));
+					mClient->start();
+					mIsRemoteThreadRunning = true;
+				}
+			}
+		});
 		
 		static_cast<GUI::Button *>(mWidgets[3])->set_callback([this](void)
 		{
@@ -52,9 +96,12 @@ namespace States
 		sf::RenderWindow *window = get_context().mWindow;
 
 		window->draw(mScreen);
-		
+
 		for (auto &widget : mWidgets)
 			widget->draw(window);
+
+		if (mIsRemoteThreadRunning)
+			window->draw(mConnectionStatus);
 	}
 
 	bool ConnectState::update(sf::Time elapsedTime)
@@ -63,6 +110,20 @@ namespace States
 
 		for (auto &widget : mWidgets)
 			widget->update(mousePosition);
+
+		if (mIsRemoteThreadRunning)
+		{
+			if (mRemoteType == RemoteType::SERVER && mServer->is_connected_with_remote())
+			{
+				delete_state();
+				add_state(ID::GAME_STATE);
+			}
+			else if (mRemoteType == RemoteType::CLIENT && mClient->is_connected_with_remote())
+			{
+				delete_state();
+				add_state(ID::GAME_STATE);
+			}
+		}
 
 		return true;
 	}

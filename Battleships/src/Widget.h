@@ -81,6 +81,11 @@ namespace GUI
 			mText.setString(text);
 		}
 
+		inline std::string get_text(void)
+		{
+			return mText.getString();
+		}
+
 		inline void change_text_visibility(bool isTextVisible)
 		{
 			mIsTextVisible = isTextVisible;

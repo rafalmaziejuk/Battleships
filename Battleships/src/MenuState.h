@@ -7,15 +7,25 @@
 
 #include <SFML/Graphics/Sprite.hpp>
 
+#include "WidgetContainer.h"
+
 namespace States
 {
 	class MenuState : public State
 	{
 	private:
+		enum class Widgets : uint8_t
+		{
+			HOST,
+			CONNECT,
+			EXIT
+		};
+
+	private:
 		sf::Sprite mBackground;
 
 	private:
-		std::vector<GUI::Widget *> mButtons;
+		GUI::WidgetContainer<Widgets> mWidgets;
 		void set_gui(Context context);
 
 	public:

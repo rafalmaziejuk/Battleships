@@ -8,7 +8,8 @@ namespace States
 	{
 		NONE,
 		MAIN_MENU,
-		CONNECT_STATE,
+		CONNECT_HOST,
+		CONNECT_JOIN,
 		GAME_STATE
 	};
 }
