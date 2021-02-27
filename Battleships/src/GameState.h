@@ -5,8 +5,10 @@
 #include "Server.h"
 #include "Client.h"
 
-#include <SFML/Graphics.hpp>
+#include "Button.h"
+#include "ResourceManager.h"
 
+#include <SFML/Graphics.hpp>
 #include <thread>
 
 namespace States
@@ -14,15 +16,14 @@ namespace States
 	class GameState : public State
 	{
 	private:
+		sf::RenderWindow* mWindow;
 		World mWorld;
 		sf::Vector2i mMousePosition;
-		bool mGameOver;
-		bool mPlayAgain;
-		bool mIsWon;
-		bool mMyTurn;
 
+		GUI::Button mButtonReady;
+		GUI::Button mButtonLeave;
 	public:
-		static Remote* mRemote;
+		static Net::Remote* mRemote;
 
 		GameState(StateManager &stateManager, Context context);
 

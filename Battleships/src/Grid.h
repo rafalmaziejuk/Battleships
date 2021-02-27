@@ -19,13 +19,6 @@ enum class ShipAction
 	REMOVE
 };
 
-enum class PlayerAction
-{
-	DISCONNECT,
-	MISSILE,
-	READY
-};
-
 class Grid
 {
 private:
@@ -35,7 +28,7 @@ private:
 	//sf::Texture mHintTileTexture;
 	//std::vector<sf::Sprite> mTileSprites;
 	sf::Vector2i mGridStart;
-
+	
 private:
 	bool mFields[FIELDS][FIELDS] = { false }; //fields taken overall
 	bool mShipFields[FIELDS][FIELDS] = { false }; //fields occupied by ships only
@@ -50,6 +43,8 @@ private:
 	void delete_ship_from_grid(Ship& ship);
 
 public:
+	unsigned mPlacedShips;
+
 	Grid(Type type, sf::Vector2i gridStart);
 	~Grid(void);
 

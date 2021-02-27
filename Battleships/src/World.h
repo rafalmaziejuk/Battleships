@@ -6,8 +6,10 @@
 #include "Cursor.h"
 #include "Ship.h"
 
+
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/Texture.hpp>
+
 
 class World : sf::NonCopyable
 {
@@ -31,6 +33,7 @@ private:
 	Ship mPlayerShips[NUM_OF_SHIPS];
 
 private:
+	
 	void load_textures(void);
 	void set_ships(void);
 	Ship* is_ship_choosen(const sf::Vector2i& cursorPos);
@@ -44,5 +47,6 @@ public:
 
 	void draw(void) const;
 	void update(void);
-	void handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPressed);
+	void handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPressed, bool playerReady);
+	bool all_ships_placed(void);
 };

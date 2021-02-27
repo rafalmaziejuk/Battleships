@@ -1,7 +1,7 @@
 #include "MenuState.h"
 #include "ResourceManager.h"
 
-#include <SFML/Graphics/RenderWindow.hpp>
+RemoteType mRemoteType;
 
 namespace States
 {

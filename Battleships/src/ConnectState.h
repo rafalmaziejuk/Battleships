@@ -25,10 +25,11 @@ namespace States
 		std::vector<GUI::Widget *> mWidgets;
 
 	private:
-		sf::IpAddress mMyIp;
-		Server* mServer;
-		Client* mClient;
 		RemoteType mRemoteType;
+		sf::IpAddress mMyIp;		// User's IP
+		
+		Net::Server* mServer;			// Server
+		Net::Client* mClient;			// Client
 		bool mIsRemoteThreadRunning;
 
 	private:

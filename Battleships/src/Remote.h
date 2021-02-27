@@ -4,63 +4,97 @@
 #include <atomic>
 #include <iostream>
 
-enum class RemoteType
+namespace Net
 {
-	SERVER, CLIENT
-};
+    void decode_status(sf::Socket::Status status);
 
-inline void decode_status(sf::Socket::Status status)
-{
-    switch (status)
+    enum class RemoteType
     {
-    case sf::Socket::Done:          std::cout << "\nDONE";            break;
-    case sf::Socket::NotReady:      std::cout << "\nNOTREADY";        break;
-    case sf::Socket::Partial:       std::cout << "\nPARTIAL";         break;
-    case sf::Socket::Disconnected:  std::cout << "\nDISCONNECTED";    break;
-    case sf::Socket::Error:         std::cout << "\nERROR";           break;
-    }
+        SERVER, CLIENT
+    };
+
+    enum class PlayerAction
+    {
+        NUL,
+        DISCONNECT,
+        MISSILE,
+        READY
+    };
+
+    struct message
+    {
+        PlayerAction ID;
+        sf::Vector2f coord;
+
+        message() : ID(PlayerAction::NUL), coord(sf::Vector2f(-1, -1)) 
+        {
+        }
+        
+        void clear(void)
+        {
+            ID = PlayerAction::NUL;
+            coord = sf::Vector2f(0, 0);
+        }
+
+        bool is_clear(void)
+        {
+            return (ID == PlayerAction::NUL) ? true : false;
+        }
+    };
+
+    class Remote
+    {
+    private:
+
+        virtual bool establish_connection(void) = 0;
+
+    public:
+        std::atomic_bool mDone;
+        sf::TcpSocket mSocket;
+        sf::Packet mPacketSent;
+        sf::Packet mPacketReceived;
+        message mMsg;
+
+        bool mIsRunning;
+        bool mIsConnectedWithRemote;
+
+        bool mGameOver;
+        bool mPlayAgain;
+        bool mIsWon;
+        bool mMyTurn;
+        bool mReady;
+
+        Remote()
+            : mSocket(),
+            mPacketSent(),
+            mPacketReceived(),
+            mIsRunning(false),
+            mIsConnectedWithRemote(false),
+            mDone(false),
+            mGameOver(false),
+            mPlayAgain(false),
+            mIsWon(false),
+            mMyTurn(false),
+            mReady(false)
+        {
+        }
+        ~Remote()
+        {
+        }
+
+        inline bool is_connected_with_remote(void) const
+        {
+            return mIsConnectedWithRemote;
+        }
+
+        inline bool is_running(void) const
+        {
+            return mIsRunning;
+        }
+
+        virtual void start(void) = 0;
+        virtual void stop(void) = 0;
+
+    };
+
 }
-
-class Remote
-{
-private:
-
-    virtual bool establish_connection(void) = 0;
-
-public:
-    std::atomic_bool mDone;
-    sf::TcpSocket mSocket;
-    sf::Packet mPacketSent;
-    sf::Packet mPacketReceived;
-    bool mIsRunning;
-    bool mIsConnectedWithRemote;
-
-    Remote()
-        : mSocket(),
-        mPacketSent(),
-        mPacketReceived(),
-        mIsRunning(false),
-        mIsConnectedWithRemote(false),
-        mDone(false)
-    {
-    }
-    ~Remote() 
-    {
-    }
-
-    inline bool is_connected_with_remote(void) const
-    {
-        return mIsConnectedWithRemote;
-    }
-
-    inline bool is_running(void) const
-    {
-        return mIsRunning;
-    }
-
-    virtual void start(void) = 0;
-    virtual void stop(void) = 0;
-    
-};
-
-
