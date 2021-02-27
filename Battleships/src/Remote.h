@@ -9,10 +9,23 @@ enum class RemoteType
 	SERVER, CLIENT
 };
 
-
+inline void decode_status(sf::Socket::Status status)
+{
+    switch (status)
+    {
+    case sf::Socket::Done:          std::cout << "\nDONE";            break;
+    case sf::Socket::NotReady:      std::cout << "\nNOTREADY";        break;
+    case sf::Socket::Partial:       std::cout << "\nPARTIAL";         break;
+    case sf::Socket::Disconnected:  std::cout << "\nDISCONNECTED";    break;
+    case sf::Socket::Error:         std::cout << "\nERROR";           break;
+    }
+}
 
 class Remote
 {
+private:
+
+    virtual bool establish_connection(void) = 0;
 
 public:
     std::atomic_bool mDone;
@@ -45,6 +58,9 @@ public:
         return mIsRunning;
     }
 
+    virtual void start(void) = 0;
+    virtual void stop(void) = 0;
+    
 };
 
 

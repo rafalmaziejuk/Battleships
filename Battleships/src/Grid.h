@@ -19,6 +19,13 @@ enum class ShipAction
 	REMOVE
 };
 
+enum class PlayerAction
+{
+	DISCONNECT,
+	MISSILE,
+	READY
+};
+
 class Grid
 {
 private:

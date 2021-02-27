@@ -5,6 +5,9 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
+extern RemoteType mRemoteType;
+
+
 namespace States
 {
 	ConnectState::ConnectState(StateManager &stateManager, Context context) :
@@ -23,6 +26,10 @@ namespace States
 
 	void ConnectState::set_gui(Context context)
 	{
+		mScreen.setTexture(context.mTextures->get_resource(Textures::ID::CONNECT_SCREEN));
+		mConnectionStatus.setTexture(context.mTextures->get_resource(Textures::ID::CONNECT_STATUS));
+		mConnectionStatus.setPosition(sf::Vector2f(238.5f, 355.0f));
+
 		sf::Font& font = context.mFonts->get_resource(Fonts::ID::VIKING);
 
 		mWidgets.push_back(new GUI::InputBox(sf::Vector2f(475.0f, 315.0f), sf::Vector2i(300, 50), font, 25, 14));

@@ -7,19 +7,24 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <thread>
+
+extern RemoteType mRemoteType;
+
 namespace States
 {
 	class GameState : public State
 	{
 	private:
 		World mWorld;
-		Client* mClient;
-		Server* mServer;
-
 		sf::Vector2i mMousePosition;
+		bool mGameOver;
+		bool mPlayAgain;
+		bool mIsWon;
+		bool mMyTurn;
 
 	public:
-		Remote* mRemote;
+		static Remote* mRemote;
 
 		GameState(StateManager &stateManager, Context context);
 

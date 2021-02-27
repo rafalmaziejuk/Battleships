@@ -1,5 +1,8 @@
 #pragma once
 
+#include "GameState.h"
+#include "Server.h"
+#include "Client.h"
 #include "State.h"
 #include "Widget.h"
 #include "Server.h"

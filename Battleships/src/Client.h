@@ -9,12 +9,11 @@ class Client : public Remote
 private:
 
     std::thread* mClientThread;
-
     sf::IpAddress mRemoteIp;
     unsigned mPort;
 
     void run_client(void);
-    bool establish_connection(void);
+    virtual bool establish_connection(void) override;
 
 public:
     Client();
@@ -22,6 +21,7 @@ public:
 
     void set_port(const int port);
     void set_ip(const sf::IpAddress ip);
-    void start(void);
-    void stop(void);
+
+    virtual void start(void) override;
+    virtual void stop(void) override;
 };
