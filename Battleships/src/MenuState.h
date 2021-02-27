@@ -16,6 +16,7 @@ namespace States
 
 	private:
 		std::vector<GUI::Widget *> mButtons;
+		void set_gui(Context context);
 
 	public:
 		MenuState(StateManager &stateManager, Context context);

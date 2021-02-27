@@ -7,8 +7,6 @@
 
 #include <SFML/Graphics.hpp>
 
-#include <thread>
-
 namespace States
 {
 	class GameState : public State

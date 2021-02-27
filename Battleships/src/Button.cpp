@@ -1,78 +1,98 @@
 #include "Button.h"
 #include "Utility.h"
 
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Event.hpp>
+
 namespace GUI
 {
-
-
 	Button::Button(void) :
 		Widget(),
 		mSprite(),
-		mDrawnText(),
-		mCallback(),
-		mDefaultFontSize(0),
-		mIsTextDisabled(false)
+		mCallback()
 	{
 
 	}
 
-	Button::Button(sf::Vector2f position,
-						const sf::Texture &texture,
-						const std::string &text,
-						uint8_t fontSize,
-						const sf::Font &font,
-						sf::Color color) :
-						Widget(Utility::to_vector2i(position), Utility::to_vector2i(texture.getSize())),
-						mSprite(texture),
-						mDrawnText(text, font, fontSize),
-						mCallback(),
-						mDefaultFontSize(fontSize),
-						mIsTextDisabled(text.empty())
+	Button::Button(	sf::Vector2f position, 
+					const sf::Texture &texture, 
+					const std::string &text, 
+					const sf::Font &font,
+					uint8_t fontSize) :
+		Widget(Utility::to_vector2i(position), Utility::to_vector2i(texture.getSize()), text, font, fontSize),
+		mSprite(texture),
+		mCallback()
 	{
-		mSprite.setPosition(position);
+		change_text_visibility(!text.empty());
 
-		sf::FloatRect bounds = mSprite.getLocalBounds();
-		mDrawnText.setPosition(position.x + bounds.width / 2.0f, position.y + bounds.height / 2.0f);
-		Utility::align_center(mDrawnText);
-		mDrawnText.setFillColor(color);
+		if (!is_text_visible())
+		{
+			Utility::set_origin_to_center(mSprite);
+
+			sf::FloatRect spriteBounds = mSprite.getLocalBounds();
+			sf::Vector2f spritePosition(position.x + spriteBounds.width / 2.0f, position.y + spriteBounds.height / 2.0f);
+			mSprite.setPosition(spritePosition);
+		}
+		else
+			mSprite.setPosition(position);
 	}
 
-	Button::~Button()
+	Button::~Button(void)
 	{
-	
+		
 	}
 
 	void Button::draw(sf::RenderWindow *window) const
 	{
-		window->draw(mSprite);
-
-		if (!mIsTextDisabled)
-			window->draw(mDrawnText);
+		if (is_active())
+		{
+			window->draw(mSprite);
+			Widget::draw(window);
+		}
 	}
 
 	void Button::update(sf::Vector2i mousePosition)
 	{
-		if (mIsTextDisabled)
+		if (is_active())
 		{
-			if (is_mouse_over(mousePosition) == true)
-				mSprite.setScale(1.05f, 1.05f);
+			if (!is_text_visible())
+			{
+				if (is_mouse_over(mousePosition))
+					mSprite.setScale(1.05f, 1.05f);
+				else
+					mSprite.setScale(1.00f, 1.00f);
+			}
 			else
-				mSprite.setScale(1.00f, 1.00f);
-		}
-		else
-		{
-			if (is_mouse_over(mousePosition) == true)
-				mDrawnText.setCharacterSize(mDefaultFontSize + 2);
-			else
-				mDrawnText.setCharacterSize(mDefaultFontSize);
-
-			Utility::align_center(mDrawnText);
+			{
+				if (is_mouse_over(mousePosition))
+					change_text_size(2);
+				else
+					change_text_size(-2);
+			}
 		}
 	}
 
-	void Button::on_click(bool clickedOn)
+	void Button::handle_event(const sf::Event &event)
 	{
-		mCallback();
-	}
+		if (is_active())
+		{
+			switch (event.type)
+			{
+				case sf::Event::MouseButtonReleased:
+				{
+					if (event.mouseButton.button == sf::Mouse::Left)
+					{
+						sf::Vector2i mousePosition(event.mouseButton.x, event.mouseButton.y);
 
+						if (is_mouse_over(mousePosition))
+							mCallback();
+					}
+
+					break;
+				}
+
+				default: break;
+			}
+		}
+	}
 }

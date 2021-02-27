@@ -17,8 +17,8 @@ namespace Utility
 	template <typename T>
 	sf::Vector2i to_vector2i(sf::Vector2<T> vector);
 
-	void align_center(sf::Text &text);
-	void align_center(sf::Sprite &sprite);
+	void set_origin_to_center(sf::Text &text);
+	void set_origin_to_center(sf::Sprite &sprite);
 	
 	void cls(void);
 	void console_cursor(bool flag);

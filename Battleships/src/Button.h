@@ -5,6 +5,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 #include <functional>
 
@@ -14,36 +15,26 @@ namespace GUI
 	{
 	private:
 		sf::Sprite mSprite;
-		sf::Text mDrawnText;
 
 	private:
 		std::function<void(void)> mCallback;
-		uint8_t mDefaultFontSize;
-		bool mIsTextDisabled;
 
 	public:
 		Button(void);
 		Button(	sf::Vector2f position,
-				const sf::Texture &texture = sf::Texture(),
+				const sf::Texture &texture,
 				const std::string &text = std::string(),
-				uint8_t fontSize = 0,
 				const sf::Font &font = sf::Font(),
-				sf::Color color = sf::Color::White);
-		
+				uint8_t fontSize = 0);
 		virtual ~Button();
 
 		inline void set_callback(std::function<void(void)> callback)
 		{
 			mCallback = std::move(callback);
 		}
-		
-		inline void set_text(std::string string)
-		{
-			mDrawnText.setString(string);
-		}
 
-		virtual void draw(sf::RenderWindow *window) const override;
+		virtual void draw(sf::RenderWindow *window) const;
 		virtual void update(sf::Vector2i mousePosition) override;
-		virtual void on_click(bool clickedOn) override;
+		virtual void handle_event(const sf::Event &event) override;
 	};
 }
