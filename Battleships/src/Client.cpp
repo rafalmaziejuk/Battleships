@@ -2,7 +2,7 @@
 #include <iostream>
 
 Client::Client()
-    : Remote(), mPort(0), mClientThread(nullptr)
+    : Remote(), mPort(0), mClientThread(nullptr), mGameState(nullptr)
 {
     mSocket.setBlocking(true);
 }
@@ -10,6 +10,11 @@ Client::Client()
 Client::~Client()
 {
 
+}
+
+void Client::set_game_state(States::State* state)
+{
+    mGameState = state;
 }
 
 void Client::set_port(const int port)
@@ -72,9 +77,13 @@ void Client::run_client(void)
     if (!connectionStatus)
         return;
 
+    // after this loop GameState pointer is set up correctly so that class attributes can be used
+    while (mGameState == nullptr) {}
+
     while (!mDone)
     {
         // data exhange appears every 0,5 s
+
 
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         std::cout << ".";

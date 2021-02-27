@@ -29,7 +29,6 @@ World::World(sf::RenderWindow* window) :
 	mGridSprites[1].setPosition(sf::Vector2f(650.0f, 50.0f));
 	
 	mCursor = Cursor(mTextures.get_resource(Textures::ID::SELECTED_TILE));
-
 }
 
 World::~World(void)
@@ -82,7 +81,7 @@ void World::update(void)
 
 }
 
-void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPressed)
+void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPressed, bool playerReady)
 {
 	//left button
 	if (mouse.button == sf::Mouse::Left)
@@ -90,7 +89,8 @@ void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPresse
 
 		if (mouse.x > 100 && mouse.y > 100 && mouse.x < 600 && mouse.y < 600)
 		{
-			add_new_ship(mouse, isPressed);
+			if(!playerReady)
+				add_new_ship(mouse, isPressed);
 		}
 		else if (mouse.x > 700 && mouse.y > 100 && mouse.x < 1200 && mouse.y < 600)
 		{
@@ -99,7 +99,7 @@ void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPresse
 	}
 	else if (mouse.button == sf::Mouse::Right)
 	{
-		if (isPressed)
+		if (isPressed && !playerReady)
 		{
 			sf::Vector2f cursorPos = map_cursor_to_world(sf::Vector2i(mouse.x, mouse.y));
 			Ship* clickedShip = is_ship_choosen((sf::Vector2i)cursorPos);
@@ -185,4 +185,9 @@ Ship* World::get_this_ship_head(const sf::Vector2i& cursorPos)
 		}
 	return nullptr;
 
+}
+
+bool World::all_ships_placed(void)
+{
+	return (mPlayerGrid.mPlacedShips == 10) ? true : false;
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+
+
 #include <SFML/Network.hpp>
 #include <atomic>
 #include <iostream>
@@ -35,18 +37,38 @@ public:
     bool mIsRunning;
     bool mIsConnectedWithRemote;
 
+    bool mGameOver;
+    bool mPlayAgain;
+    bool mIsWon;
+    bool mMyTurn;
+    bool mReady;
+
     Remote()
         : mSocket(),
         mPacketSent(),
         mPacketReceived(),
         mIsRunning(false),
         mIsConnectedWithRemote(false),
-        mDone(false)
+        mDone(false),
+        mGameOver(false),
+        mPlayAgain(false),
+        mIsWon(false),
+        mMyTurn(false),
+        mReady(false)
     {
     }
     ~Remote() 
     {
     }
+
+    /*
+    inline bool game_over(void) const               {   return (mGameOver) ? true : false;  }
+    inline bool want_to_play_again(void) const      {   return (mPlayAgain) ? true : false; }
+    inline bool is_game_won(void) const             {   return (mIsWon) ? true : false;     }
+    inline bool is_my_turn(void) const              {   return (mMyTurn) ? true : false;    }
+    inline bool is_ready(void) const                {   return (mReady) ? true : false;     }
+    */
+    
 
     inline bool is_connected_with_remote(void) const
     {

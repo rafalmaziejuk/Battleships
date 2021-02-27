@@ -1,7 +1,7 @@
 #include "Server.h"
 
 Server::Server()
-    : Remote(), mPort(0),mServerThread(nullptr)
+    : Remote(), mPort(0),mServerThread(nullptr), mGameState(nullptr)
 {
     mListener.setBlocking(false);
 }
@@ -9,6 +9,11 @@ Server::Server()
 Server::~Server()
 {
 
+}
+
+void Server::set_game_state(States::State* state)
+{
+    mGameState = state;
 }
 
 void Server::set_port(const int port)
@@ -76,6 +81,9 @@ void Server::run_server(void)
         return;
     }
     mListener.setBlocking(true);
+
+    // after this loop GameState pointer is set up correctly so that class attributes can be used
+    while(mGameState == nullptr) {}
 
     while (!mDone)
     {

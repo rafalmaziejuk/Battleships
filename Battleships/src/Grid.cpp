@@ -8,7 +8,8 @@ Grid::Grid(Type type, sf::Vector2i gridStart) :
 	mTileTexture(),
 	mGridStart(gridStart),
 	mType(type),
-	mShipHint()
+	mShipHint(),
+	mPlacedShips(0)
 {
 	
 
@@ -122,6 +123,8 @@ void Grid::add_ship_to_grid(Ship& ship)
 	sf::Vector2i end = ship.get_end();
 	sf::Vector2i position = start;
 
+	mPlacedShips++;
+
 	if (start == end)
 	{
 		set_new_ship_segment(position, ship);
@@ -183,6 +186,8 @@ void Grid::delete_ship_from_grid(Ship& ship)
 {
 	ship.mIsOnGrid = false;
 	ship.remove_tiles();
+
+	mPlacedShips--;
 
 	sf::Vector2i shift(0, 0);
 
