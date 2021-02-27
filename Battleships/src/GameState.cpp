@@ -2,7 +2,7 @@
 
 namespace States
 {
-	Remote* GameState::mRemote;
+	Net::Remote* GameState::mRemote;
 
 	GameState::GameState(StateManager &stateManager, Context context) :
 		State(stateManager, context),
@@ -13,10 +13,10 @@ namespace States
 		mButtonReady = GUI::Button(sf::Vector2f(90.0f, 730.f), context.mTextures->get_resource(Textures::ID::READYBUTTON), "Ready", 25, context.mFonts->get_resource(Fonts::ID::VIKING),sf::Color::White);
 		mButtonLeave = GUI::Button(sf::Vector2f(320.0f, 730.f), context.mTextures->get_resource(Textures::ID::READYBUTTON), "Leave", 25, context.mFonts->get_resource(Fonts::ID::VIKING), sf::Color::White);
 
-		if (mRemoteType == RemoteType::CLIENT)
-			static_cast<Client*>(mRemote)->set_game_state(this);
+		if (mRemoteType == Net::RemoteType::CLIENT)
+			static_cast<Net::Client*>(mRemote)->set_game_state(this);
 		else
-			static_cast<Server*>(mRemote)->set_game_state(this);
+			static_cast<Net::Server*>(mRemote)->set_game_state(this);
 
 		mButtonReady.set_callback([this](void)
 		{

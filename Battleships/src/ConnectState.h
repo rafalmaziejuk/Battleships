@@ -31,8 +31,8 @@ namespace States
 	private:
 		sf::IpAddress mMyIp;		// User's IP
 		
-		Server* mServer;			// Server
-		Client* mClient;			// Client
+		Net::Server* mServer;			// Server
+		Net::Client* mClient;			// Client
 		bool mIsRemoteThreadRunning;
 
 		void init_GUI(Context context);

@@ -14,7 +14,7 @@
 *
 */ 
 
-extern RemoteType mRemoteType;
+extern Net::RemoteType mRemoteType;
 
 
 namespace States
@@ -69,7 +69,7 @@ namespace States
 			add_state(ID::MAIN_MENU);
 		});
 
-		if (mRemoteType == RemoteType::SERVER)
+		if (mRemoteType == Net::RemoteType::SERVER)
 		{
 			mButton.set_callback([this](void)
 			{
@@ -91,7 +91,7 @@ namespace States
 				}
 			});
 		}
-		else if (mRemoteType == RemoteType::CLIENT)
+		else if (mRemoteType == Net::RemoteType::CLIENT)
 		{
 			mButton.set_callback([this](void)
 			{
@@ -119,19 +119,19 @@ namespace States
 
 	void ConnectState::set_type(void)
 	{
-		if (mRemoteType == RemoteType::CLIENT)
+		if (mRemoteType == Net::RemoteType::CLIENT)
 		{
-			GameState::mRemote = new Client();
-			mClient = static_cast<Client*>(GameState::mRemote);
+			GameState::mRemote = new Net::Client();
+			mClient = static_cast<Net::Client*>(GameState::mRemote);
 			//mClient= new Client();
 			mIpInputBox.set_entered_text(mMyIp.toString());
 			std::cout << "Client\n";
 		}
-		else if (mRemoteType == RemoteType::SERVER)
+		else if (mRemoteType == Net::RemoteType::SERVER)
 		{
 
-			States::GameState::mRemote = new Server();
-			mServer = static_cast<Server*>(GameState::mRemote);
+			States::GameState::mRemote = new Net::Server();
+			mServer = static_cast<Net::Server*>(GameState::mRemote);
 			//mServer = new Server();
 			mIpInputBox.set_entered_text(mMyIp.toString());
 			mButton.set_text("Host");
@@ -170,12 +170,12 @@ namespace States
 		else
 		{
 			mCancelButton.update(mousePosition);
-			if (mRemoteType == RemoteType::SERVER && mServer->is_connected_with_remote() )
+			if (mRemoteType == Net::RemoteType::SERVER && mServer->is_connected_with_remote() )
 			{
 				delete_state();
 				add_state(ID::GAME_STATE);
 			}
-			else if (mRemoteType == RemoteType::CLIENT &&mClient->is_connected_with_remote())
+			else if (mRemoteType == Net::RemoteType::CLIENT &&mClient->is_connected_with_remote())
 			{
 				delete_state();
 				add_state(ID::GAME_STATE);

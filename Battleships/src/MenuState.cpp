@@ -3,7 +3,7 @@
 #include "MenuState.h"
 #include "ResourceManager.h"
 
-RemoteType mRemoteType;
+Net::RemoteType mRemoteType;
 
 namespace States
 {
@@ -23,14 +23,14 @@ namespace States
 		{
 			delete_state();
 			add_state(ID::CONNECT_STATE);
-			mRemoteType = RemoteType::SERVER;
+			mRemoteType = Net::RemoteType::SERVER;
 		});
 
 		static_cast<GUI::Button *>(mButtons[1])->set_callback([this](void)
 		{
 			delete_state();
 			add_state(ID::CONNECT_STATE);
-			mRemoteType = RemoteType::CLIENT;
+			mRemoteType = Net::RemoteType::CLIENT;
 		});
 
 		static_cast<GUI::Button *>(mButtons[2])->set_callback([this](void)

@@ -11,7 +11,7 @@
 #include <SFML/Graphics.hpp>
 #include <thread>
 
-extern RemoteType mRemoteType;
+extern Net::RemoteType mRemoteType;
 
 namespace States
 {
@@ -25,7 +25,7 @@ namespace States
 		GUI::Button mButtonReady;
 		GUI::Button mButtonLeave;
 	public:
-		static Remote* mRemote;
+		static Net::Remote* mRemote;
 
 		GameState(StateManager &stateManager, Context context);
 
