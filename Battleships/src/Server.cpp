@@ -130,8 +130,14 @@ namespace Net
                 std::cout << "Data received! \n";
                 handle_message(mMsgReceived);
             }
+            else if (status == sf::Socket::Disconnected)
+            {
+                // disconnected
+                // end server 
+                // end state 
+                // back to main menu
+            }
 
-            
             if (mReady && !enemyKnowsThatImReady)
             {
                 mMsgSent.ID = PlayerAction::READY;
@@ -151,27 +157,6 @@ namespace Net
             }
             //update_game_status(static_cast<States::GameState*>(mGameState)->get_world());
 
-            /*
-            int x;
-            int y;
-            std::cin >> x >> y;
-            mPacketSent << x << y;
-
-            if ((status = mSocket.send(mPacketSent)) != sf::Socket::Done)
-                decode_status(status);
-            std::cout << "Wyslalem pakiet " << x << " " << y << " " << "\n";
-            //update_grid(mGrid, x, y);
-            mPacketSent.clear();
-            //x = -1; y = -1;
-
-            if ((status = mSocket.receive(mPacketReceived)) != sf::Socket::Done)
-                decode_status(status);
-
-            mPacketReceived >> x >> y;
-            std::cout << "Odebralem pakiet " << x << " " << y;
-
-            //update_grid(mGrid, x, y);
-            */
         }
         system("pause");
     }

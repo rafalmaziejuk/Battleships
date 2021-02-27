@@ -18,7 +18,9 @@ namespace Net
         NUL,
         DISCONNECT,
         MISSILE,
-        READY
+        READY,
+        HIT,
+        MISS
     };
 
     struct message

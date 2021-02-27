@@ -2,6 +2,7 @@
 
 #include "ResourceIdentifiers.h"
 #include "ShipHint.h"
+#include "Remote.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -24,6 +25,7 @@ class Grid
 private:
 	enum { FIELDS = 10, CELL_SIZE = 50 };
 private:
+	Net::Remote* mRemote;
 	sf::Texture mTileTexture;
 	//sf::Texture mHintTileTexture;
 	//std::vector<sf::Sprite> mTileSprites;
@@ -57,5 +59,6 @@ public:
 	Type get_type(void) const;
 	sf::Vector2i get_grid_coordinates(sf::Vector2i mousePosition) const;
 	bool is_field_free(sf::Vector2i position) const;
+	void set_remote(Net::Remote* remote);
 
 };

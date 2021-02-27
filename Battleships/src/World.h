@@ -5,6 +5,7 @@
 #include "Grid.h"
 #include "Cursor.h"
 #include "Ship.h"
+#include "Remote.h"
 
 
 #include <SFML/System/NonCopyable.hpp>
@@ -31,7 +32,7 @@ private:
 	Grid mEnemyGrid;
 	Cursor mCursor;
 	Ship mPlayerShips[NUM_OF_SHIPS];
-
+	Net::Remote* mRemote;
 private:
 	
 	void load_textures(void);
@@ -49,4 +50,5 @@ public:
 	void update(void);
 	void handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPressed, bool playerReady);
 	bool all_ships_placed(void);
+	void set_remote(Net::Remote* remote);
 };

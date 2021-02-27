@@ -11,7 +11,8 @@ World::World(sf::RenderWindow* window) :
 	mTextures(),
 	mIsGood(false),
 	mPlayerGrid(Grid(Type::PLAYER, sf::Vector2i(100, 100))),
-	mEnemyGrid(Grid(Type::ENEMY, sf::Vector2i(700, 100)))
+	mEnemyGrid(Grid(Type::ENEMY, sf::Vector2i(700, 100))),
+	mRemote(nullptr)
 
 {
 	load_textures();
@@ -190,4 +191,11 @@ Ship* World::get_this_ship_head(const sf::Vector2i& cursorPos)
 bool World::all_ships_placed(void)
 {
 	return (mPlayerGrid.mPlacedShips == 10) ? true : false;
+}
+
+void World::set_remote(Net::Remote* remote)
+{
+	mRemote = remote;
+	mPlayerGrid.set_remote(remote);
+	mEnemyGrid.set_remote(remote);
 }

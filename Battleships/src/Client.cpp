@@ -120,6 +120,7 @@ namespace Net
         size_t sent;
 
         bool enemyKnowsThatImReady = false;
+        bool readyButtonDisabled = false;
 
         while (!mDone)
         {
@@ -135,6 +136,14 @@ namespace Net
                 std::cout << "Data received! \n";
                 handle_message(mMsgReceived);
             }
+            else if (status == sf::Socket::Disconnected)
+            {
+                // disconnected
+                // end client
+                // end state 
+                // back to main menu
+            }
+
 
             if (mReady && !enemyKnowsThatImReady)
             {
@@ -150,31 +159,22 @@ namespace Net
 
             if (mReady && mEnemyReady)
             {
-                std::cout << "Im ready and enemy is ready too!";
-                static_cast<States::GameState*>(mGameState)->deactivate_ready_button();
+                if (!readyButtonDisabled)
+                {
+                    std::cout << "Im ready and enemy is ready too!";
+                    static_cast<States::GameState*>(mGameState)->deactivate_ready_button();
+                }
+
+                if (mMyTurn)
+                {
+
+                }
+                else
+                {
+
+                }
             }
 
-            /*
-            int x = -1;
-            int y = -1;
-
-        
-
-
-            mPacketReceived >> x >> y;
-            std::cout << "Odebralem pakiet " << x << " " << y << "\n";
-            //update_grid(mGrid, x, y);
-
-
-            std::cin >> x >> y;
-            mPacketSent << x << y;
-
-            if ((status = mSocket.send(mPacketSent)) != sf::Socket::Done)
-                decode_status(status);
-            std::cout << "Wyslalem pakiet \n" << x << " " << y << " " << "\n";
-            //update_grid(mGrid, x, y);
-            mPacketSent.clear();
-            */
         }
     }
 }

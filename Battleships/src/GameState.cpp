@@ -23,6 +23,8 @@ namespace States
 		else
 			static_cast<Net::Server*>(mRemote)->set_game_state(this);
 
+		mWorld.set_remote(mRemote);
+
 		mButtonReady->set_callback([this](void)
 		{
 			if (mWorld.all_ships_placed())

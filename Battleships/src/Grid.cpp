@@ -9,7 +9,8 @@ Grid::Grid(Type type, sf::Vector2i gridStart) :
 	mGridStart(gridStart),
 	mType(type),
 	mShipHint(),
-	mPlacedShips(0)
+	mPlacedShips(0),
+	mRemote(nullptr)
 {
 	
 
@@ -259,4 +260,8 @@ bool Grid::is_field_free(sf::Vector2i position) const
 	return !mFields[position.y][position.x];
 }
 
+void Grid::set_remote(Net::Remote* remote)
+{
+	mRemote = remote;
+}
 
