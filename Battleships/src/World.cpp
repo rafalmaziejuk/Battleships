@@ -10,8 +10,8 @@ World::World(sf::RenderWindow* window) :
 	mWindow(window),
 	mTextures(),
 	mIsGood(false),
-	mPlayerGrid(Grid(Type::PLAYER, sf::Vector2i(100, 100))),
-	mEnemyGrid(Grid(Type::ENEMY, sf::Vector2i(700, 100))),
+	mPlayerGrid(PlayerGrid(sf::Vector2i(100, 100))),
+	mEnemyGrid(EnemyGrid(sf::Vector2i(700, 100))),
 	mRemote(nullptr)
 
 {

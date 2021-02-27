@@ -2,7 +2,8 @@
 
 #include "ResourceManager.h"
 #include "ResourceIdentifiers.h"
-#include "Grid.h"
+#include "PlayerGrid.h"
+#include "EnemyGrid.h"
 #include "Cursor.h"
 #include "Ship.h"
 #include "Remote.h"
@@ -28,8 +29,8 @@ private:
 	bool mIsGood;
 
 private:
-	Grid mPlayerGrid;
-	Grid mEnemyGrid;
+	PlayerGrid mPlayerGrid;
+	EnemyGrid mEnemyGrid;
 	Cursor mCursor;
 	Ship mPlayerShips[NUM_OF_SHIPS];
 	Net::Remote* mRemote;
