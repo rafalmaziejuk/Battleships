@@ -23,6 +23,12 @@ namespace GUI
 		InputBox(sf::Vector2f position, sf::Vector2i size, const sf::Font &font, uint8_t fontSize, uint8_t maxSymbols);
 		virtual ~InputBox(void);
 
+		void set_entered_text(const std::string &text)
+		{
+			mEnteredText = text;
+			set_text(mEnteredText);
+		}
+
 		virtual void draw(sf::RenderWindow *window) const;
 		virtual void update(sf::Vector2i mousePosition) override;
 		virtual void handle_event(const sf::Event &event) override;

@@ -1,8 +1,6 @@
 #include "MenuState.h"
 #include "ResourceManager.h"
 
-RemoteType mRemoteType;
-
 namespace States
 {
 	MenuState::MenuState(StateManager &stateManager, Context context) :

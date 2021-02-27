@@ -5,8 +5,11 @@
 
 #include <SFML/Graphics/Sprite.hpp>
 
-class Server;
-class Client;
+namespace Net
+{
+	class Server;
+	class Client;
+}
 
 namespace GUI
 {
@@ -25,7 +28,7 @@ namespace States
 		std::vector<GUI::Widget *> mWidgets;
 
 	private:
-		RemoteType mRemoteType;
+		Net::RemoteType mRemoteType;
 		sf::IpAddress mMyIp;		// User's IP
 		
 		Net::Server* mServer;			// Server
@@ -36,7 +39,7 @@ namespace States
 		void set_gui(Context context);
 
 	public:
-		ConnectState(StateManager &stateManager, Context context, RemoteType type);
+		ConnectState(StateManager &stateManager, Context context, Net::RemoteType type);
 		virtual ~ConnectState(void);
 
 		virtual void render(void) override;

@@ -20,12 +20,12 @@ namespace States
 		World mWorld;
 		sf::Vector2i mMousePosition;
 
-		GUI::Button mButtonReady;
-		GUI::Button mButtonLeave;
+		GUI::Button *mButtonReady;
+		GUI::Button *mButtonLeave;
 	public:
 		static Net::Remote* mRemote;
 
-		GameState(StateManager &stateManager, Context context);
+		GameState(StateManager &stateManager, Context context, Net::RemoteType mRemoteType);
 
 		virtual void render(void) override;
 		virtual bool update(sf::Time elapsedTime) override;

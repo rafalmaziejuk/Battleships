@@ -11,7 +11,7 @@
 
 namespace States
 {
-	ConnectState::ConnectState(StateManager &stateManager, Context context, RemoteType type) :
+	ConnectState::ConnectState(StateManager &stateManager, Context context, Net::RemoteType type) :
 		State(stateManager, context),
 		mScreen(),
 		mConnectionStatus(),
@@ -24,16 +24,18 @@ namespace States
 		mScreen.setTexture(context.mTextures->get_resource(Textures::ID::CONNECT_SCREEN));
 		set_gui(context);
 
-		if (mRemoteType == RemoteType::CLIENT)
+		if (mRemoteType == Net::RemoteType::CLIENT)
 		{
-			GameState::mRemote = new Client();
-			mClient = static_cast<Client*>(GameState::mRemote);
+			GameState::mRemote = new Net::Client();
+			mClient = static_cast<Net::Client*>(GameState::mRemote);
 		}
-		else if (mRemoteType == RemoteType::SERVER)
+		else if (mRemoteType == Net::RemoteType::SERVER)
 		{
-			GameState::mRemote = new Server();
-			mServer = static_cast<Server*>(GameState::mRemote);
+			GameState::mRemote = new Net::Server();
+			mServer = static_cast<Net::Server*>(GameState::mRemote);
 		}
+
+		static_cast<GUI::InputBox *>(mWidgets[0])->set_entered_text(mMyIp.toString());
 	}
 
 	ConnectState::~ConnectState(void)
@@ -63,7 +65,7 @@ namespace States
 
 		static_cast<GUI::Button *>(mWidgets[2])->set_callback([this](void)
 		{
-			if (mRemoteType == RemoteType::SERVER)
+			if (mRemoteType == Net::RemoteType::SERVER)
 			{
 				if (mWidgets[1]->get_text().length() > 0 && !mServer->is_running())
 				{
@@ -72,7 +74,7 @@ namespace States
 					mIsRemoteThreadRunning = true;
 				}
 			}
-			else if (mRemoteType == RemoteType::CLIENT)
+			else if (mRemoteType == Net::RemoteType::CLIENT)
 			{
 				if (mWidgets[1]->get_text().length() > 0 && !mClient->is_running())
 				{
@@ -113,15 +115,15 @@ namespace States
 
 		if (mIsRemoteThreadRunning)
 		{
-			if (mRemoteType == RemoteType::SERVER && mServer->is_connected_with_remote())
+			if (mRemoteType == Net::RemoteType::SERVER && mServer->is_connected_with_remote())
 			{
 				delete_state();
-				add_state(ID::GAME_STATE);
+				add_state(ID::GAME_HOST);
 			}
-			else if (mRemoteType == RemoteType::CLIENT && mClient->is_connected_with_remote())
+			else if (mRemoteType == Net::RemoteType::CLIENT && mClient->is_connected_with_remote())
 			{
 				delete_state();
-				add_state(ID::GAME_STATE);
+				add_state(ID::GAME_JOIN);
 			}
 		}
 

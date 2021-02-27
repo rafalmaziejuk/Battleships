@@ -10,6 +10,7 @@ namespace States
 		MAIN_MENU,
 		CONNECT_HOST,
 		CONNECT_JOIN,
-		GAME_STATE
+		GAME_HOST,
+		GAME_JOIN
 	};
 }
