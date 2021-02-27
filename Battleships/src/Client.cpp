@@ -1,22 +1,10 @@
 #include "Client.h"
 #include <iostream>
 
-static void decode_status(sf::Socket::Status status)
-{
-    switch (status)
-    {
-    case sf::Socket::Done:          std::cout << "\nDONE";            break;
-    case sf::Socket::NotReady:      std::cout << "\nNOTREADY";        break;
-    case sf::Socket::Partial:       std::cout << "\nPARTIAL";         break;
-    case sf::Socket::Disconnected:  std::cout << "\nDISCONNECTED";    break;
-    case sf::Socket::Error:         std::cout << "\nERROR";           break;
-    }
-}
-
 Client::Client()
     : Remote(), mPort(0), mClientThread(nullptr)
 {
-    mSocket.setBlocking(false);
+    mSocket.setBlocking(true);
 }
 
 Client::~Client()
@@ -51,14 +39,17 @@ void Client::stop(void)
 
 bool Client::establish_connection(void)
 {
+    sf::Socket::Status status;
+
     std::cout << "Trying to connect with " << mRemoteIp << " on port " << mPort << "\n";
 
     // Connect to the server
 
     while (!mIsConnectedWithRemote)
     {
-        mSocket.connect(mRemoteIp, mPort);
-        if (mSocket.getRemotePort()) // when this function returs a valid value it means that conection is established
+        status = mSocket.connect(mRemoteIp, mPort);
+        //decode_status(status);
+        if (status == sf::Socket::Done) // when this function returs a valid value it means that conection is established
         {
             std::cout << "Connected to server " << mRemoteIp << "\n";
             mIsConnectedWithRemote = true;
@@ -75,9 +66,10 @@ bool Client::establish_connection(void)
 
 void Client::run_client(void)
 {
-    
-    bool status = establish_connection();
-    if (!status)
+    sf::Socket::Status status;
+
+    bool connectionStatus = establish_connection();
+    if (!connectionStatus)
         return;
 
     while (!mDone)
@@ -88,12 +80,12 @@ void Client::run_client(void)
         std::cout << ".";
         
         
-            /*
+            
         int x = -1;
         int y = -1;
 
-        if (mSocket.receive(mPacketSent) != sf::Socket::Done)
-            return;
+        if ((status = mSocket.receive(mPacketReceived)) != sf::Socket::Done)
+            decode_status(status);
 
 
         mPacketReceived >> x >> y;
@@ -104,11 +96,11 @@ void Client::run_client(void)
         std::cin >> x >> y;
         mPacketSent << x << y;
 
-        if (mSocket.send(mPacketSent) != sf::Socket::Done)
-            return;
+        if ((status = mSocket.send(mPacketSent)) != sf::Socket::Done)
+            decode_status(status);
         std::cout << "Wyslalem pakiet \n" << x << " " << y << " " << "\n";
         //update_grid(mGrid, x, y);
         mPacketSent.clear();
-        */
+        
     }
 }

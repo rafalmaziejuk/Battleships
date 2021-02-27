@@ -2,11 +2,11 @@
 
 namespace States
 {
+	Remote* GameState::mRemote;
+
 	GameState::GameState(StateManager &stateManager, Context context) :
 		State(stateManager, context),
-		mWorld(context.mWindow),
-		mClient(nullptr),
-		mServer(nullptr)
+		mWorld(context.mWindow)
 	{
 
 	}

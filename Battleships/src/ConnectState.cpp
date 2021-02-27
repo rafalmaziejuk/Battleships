@@ -8,13 +8,14 @@
 *	For host state : 
 *	
 *	done - Connection status info sprite and text, sth like "Waiting for a client on port xxx ..."
-*	- And when it is displayed, there should be a button "disconnect" to join listening thread and let go back to entering port again
+*	done - And when it is displayed, there should be a button "disconnect" to join listening thread and let go back to entering port again
 *	- Figure out how when mServer and mClient pointers can be deleted, they will be forwarded to GameState so that they cant be just deleted in destructor when chanche_state is called
 *	
 *
 */ 
 
 extern RemoteType mRemoteType;
+
 
 namespace States
 {
@@ -37,7 +38,10 @@ namespace States
 
 	ConnectState::~ConnectState(void)
 	{
-
+		if (!GameState::mRemote->is_connected_with_remote())
+		{
+			delete GameState::mRemote;
+		}
 	}
 
 	void ConnectState::init_GUI(Context context)
@@ -45,9 +49,8 @@ namespace States
 		mScreen.setTexture(context.mTextures->get_resource(Textures::ID::CONNECT_SCREEN));
 		mConnectionStatus.setTexture(context.mTextures->get_resource(Textures::ID::CONNECT_STATUS));
 		mConnectionStatus.setPosition(sf::Vector2f(238.5f, 355.0f));
-
 		sf::Font& font = context.mFonts->get_resource(Fonts::ID::VIKING);
-
+		
 		mIpInputBox = GUI::InputBox(sf::Vector2f(475.0f, 315.0f), sf::Vector2i(300, 50), font, 25, 14);
 		mPortInputBox = GUI::InputBox(sf::Vector2f(475.0f, 412.0f), sf::Vector2i(300, 50), font, 25, 5);
 
@@ -118,13 +121,18 @@ namespace States
 	{
 		if (mRemoteType == RemoteType::CLIENT)
 		{
-			mClient= new Client();
+			GameState::mRemote = new Client();
+			mClient = static_cast<Client*>(GameState::mRemote);
+			//mClient= new Client();
 			mIpInputBox.set_entered_text(mMyIp.toString());
 			std::cout << "Client\n";
 		}
 		else if (mRemoteType == RemoteType::SERVER)
 		{
-			mServer = new Server();
+
+			States::GameState::mRemote = new Server();
+			mServer = static_cast<Server*>(GameState::mRemote);
+			//mServer = new Server();
 			mIpInputBox.set_entered_text(mMyIp.toString());
 			mButton.set_text("Host");
 			std::cout << "Server\n";

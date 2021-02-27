@@ -1,10 +1,14 @@
 #pragma once
 
+#include "GameState.h"
+#include "Server.h"
+#include "Client.h"
 #include "State.h"
 #include "InputBox.h"
 #include "Button.h"
-#include "Server.h"
-#include "Client.h"
+
+
+
 
 #include <SFML/Graphics/Sprite.hpp>
 
