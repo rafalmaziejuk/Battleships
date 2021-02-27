@@ -5,7 +5,7 @@
 #include "Grid.h"
 
 #include "State.h"
-
+#include "GameState.h"
 #include <iostream>
 #include <thread>
 #include <atomic>

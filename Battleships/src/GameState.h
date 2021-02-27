@@ -27,6 +27,9 @@ namespace States
 
 		GameState(StateManager &stateManager, Context context, Net::RemoteType mRemoteType);
 
+		World& get_world(void);
+		void deactivate_ready_button(void);
+		void activate_ready_button(void);
 		virtual void render(void) override;
 		virtual bool update(sf::Time elapsedTime) override;
 		virtual bool handle_event(const sf::Event &event) override;

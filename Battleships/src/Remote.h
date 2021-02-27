@@ -53,7 +53,8 @@ namespace Net
         sf::TcpSocket mSocket;
         sf::Packet mPacketSent;
         sf::Packet mPacketReceived;
-        message mMsg;
+        message mMsgSent;
+        message mMsgReceived;
 
         bool mIsRunning;
         bool mIsConnectedWithRemote;
@@ -63,6 +64,7 @@ namespace Net
         bool mIsWon;
         bool mMyTurn;
         bool mReady;
+        bool mEnemyReady;
 
         Remote()
             : mSocket(),
@@ -75,7 +77,8 @@ namespace Net
             mPlayAgain(false),
             mIsWon(false),
             mMyTurn(false),
-            mReady(false)
+            mReady(false),
+            mEnemyReady(false)
         {
         }
         ~Remote()

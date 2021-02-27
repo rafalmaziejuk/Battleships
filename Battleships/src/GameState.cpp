@@ -37,6 +37,21 @@ namespace States
 		});
 	}
 
+	World& GameState::get_world(void)
+	{
+		return this->mWorld;
+	}
+
+	void GameState::deactivate_ready_button(void)
+	{
+		mButtonReady->deactivate();
+	}
+
+	void GameState::activate_ready_button(void)
+	{
+		mButtonReady->activate();
+	}
+
 	void GameState::render(void)
 	{
 		mWorld.draw();

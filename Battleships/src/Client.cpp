@@ -44,19 +44,36 @@ namespace Net
         mDone = false;
     }
 
-    void update_game_status(World& world)
+    void Client::update_game_status(World& world)
     {
 
     }
 
-    void update_grid(Grid& grid)
+    void Client::update_grid(Grid& grid)
     {
 
     }
 
-    void handle_message(message msg)
+    void Client::handle_message(message msg)
     {
-
+        std::cout << "msgID ("<<(int)msg.ID<<")\n";
+        
+        switch (msg.ID)
+        {
+        case PlayerAction::NUL:
+            std::cout << "NUL";
+            break;
+        case PlayerAction::READY:
+            std::cout << "READY";
+            mEnemyReady = true;
+            break;
+        case PlayerAction::MISSILE:
+            std::cout << "Odebralem -  "<< msg.coord.x << " " << msg.coord.y;
+            break;
+        case PlayerAction::DISCONNECT:
+            std::cout << "DISCONNECT";
+            break;
+        }
     }
 
     bool Client::establish_connection(void)
@@ -98,6 +115,11 @@ namespace Net
         while (mGameState == nullptr) {}
 
         mSocket.setBlocking(false);
+        
+        size_t received;
+        size_t sent;
+
+        bool enemyKnowsThatImReady = false;
 
         while (!mDone)
         {
@@ -106,15 +128,32 @@ namespace Net
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             std::cout << ".";
 
-            if ((status = mSocket.receive(mPacketReceived)) != sf::Socket::Done)
+            if ((status = mSocket.receive(&mMsgReceived, sizeof(message), received)) != sf::Socket::Done)
                 decode_status(status);
             else if (status == sf::Socket::Done)
             {
-                int x;
-                int y;
-                mPacketReceived >> x >> y;
-                std::cout << "Odebrano " << x << " " << y<<"\n";
+                std::cout << "Data received! \n";
+                handle_message(mMsgReceived);
             }
+
+            if (mReady && !enemyKnowsThatImReady)
+            {
+                mMsgSent.ID = PlayerAction::READY;
+                if ((status = mSocket.send(&mMsgSent, sizeof(mMsgSent), sent)) != sf::Socket::Done)
+                    decode_status(status);
+                else
+                {
+                    std::cout << "I sent information about being ready to battle!\n";
+                    enemyKnowsThatImReady = true;
+                }
+            }
+
+            if (mReady && mEnemyReady)
+            {
+                std::cout << "Im ready and enemy is ready too!";
+                static_cast<States::GameState*>(mGameState)->deactivate_ready_button();
+            }
+
             /*
             int x = -1;
             int y = -1;

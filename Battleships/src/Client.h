@@ -5,6 +5,8 @@
 #include "World.h"
 #include "Grid.h"
 #include "State.h"
+#include "GameState.h"
+
 #include <thread>
 
 namespace Net
