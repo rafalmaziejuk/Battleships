@@ -27,10 +27,13 @@ namespace GUI
 		{
 			mEnteredText = text;
 			set_text(mEnteredText);
+			set_align_mode(AlignOptions::LEFT);
+			set_text_position();
+			mIsTextSet = true;
 		}
 
 		virtual void draw(sf::RenderWindow *window) const;
 		virtual void update(sf::Vector2i mousePosition) override;
-		virtual void handle_event(const sf::Event &event) override;
+		virtual bool handle_event(const sf::Event &event) override;
 	};
 }

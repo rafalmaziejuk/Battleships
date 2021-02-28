@@ -67,7 +67,7 @@ namespace GUI
 		return;
 	}
 
-	void InputBox::handle_event(const sf::Event &event)
+	bool InputBox::handle_event(const sf::Event &event)
 	{
 		if (is_active())
 		{
@@ -110,5 +110,7 @@ namespace GUI
 				}
 			}
 		}
+
+		return false;
 	}
 }

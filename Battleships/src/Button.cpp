@@ -72,7 +72,7 @@ namespace GUI
 		}
 	}
 
-	void Button::handle_event(const sf::Event &event)
+	bool Button::handle_event(const sf::Event &event)
 	{
 		if (is_active())
 		{
@@ -85,7 +85,10 @@ namespace GUI
 						sf::Vector2i mousePosition(event.mouseButton.x, event.mouseButton.y);
 
 						if (is_mouse_over(mousePosition))
+						{
 							mCallback();
+							return true;
+						}
 					}
 
 					break;
@@ -94,5 +97,7 @@ namespace GUI
 				default: break;
 			}
 		}
+
+		return false;
 	}
 }

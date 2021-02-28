@@ -22,6 +22,22 @@ namespace GUI
 			mContainer.insert(std::pair<T, WidgetType *>(name, widget));
 		}
 
+		const Widget * get_widget(T index) const
+		{
+			return mContainer[index];
+		}
+		
+		Widget * get_widget(T index)
+		{
+			return mContainer[index];
+		}
+
+		template <typename WidgetType>
+		const WidgetType * get_widget(T index) const
+		{
+			return static_cast<WidgetType *>(mContainer[index]);
+		}
+		
 		template <typename WidgetType>
 		WidgetType * get_widget(T index)
 		{
@@ -48,7 +64,10 @@ namespace GUI
 		void handle_event(const sf::Event &event)
 		{
 			for (auto &[name, widget] : mContainer)
-				widget->handle_event(event);
+			{
+				if (widget->handle_event(event))
+					break;
+			}
 		}
 
 		void clear_widgets(void)

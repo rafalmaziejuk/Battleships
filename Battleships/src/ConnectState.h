@@ -2,6 +2,7 @@
 
 #include "State.h"
 #include "Remote.h"
+#include "WidgetContainer.h"
 
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -21,11 +22,22 @@ namespace States
 	class ConnectState : public State
 	{
 	private:
+		enum class Widgets : uint8_t
+		{
+			IB_IP,
+			IB_PORT,
+			B_CONNECT,
+			B_CANCEL,
+			B_BACK
+		};
+
+	private:
 		sf::Sprite mScreen;
 		sf::Sprite mConnectionStatus;
 
 	private:
-		std::vector<GUI::Widget *> mWidgets;
+		GUI::WidgetContainer<Widgets> mWidgets;
+		void set_gui(Context context);
 
 	private:
 		Net::RemoteType mRemoteType;
@@ -34,9 +46,6 @@ namespace States
 		Net::Server* mServer;			// Server
 		Net::Client* mClient;			// Client
 		bool mIsRemoteThreadRunning;
-
-	private:
-		void set_gui(Context context);
 
 	public:
 		ConnectState(StateManager &stateManager, Context context, Net::RemoteType type);

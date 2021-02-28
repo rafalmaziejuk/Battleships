@@ -23,15 +23,15 @@ Application::Application(void) :
 
 	mFonts.load_resource(Fonts::ID::SANSATION, "assets/Sansation.ttf");
 	mFonts.load_resource(Fonts::ID::VIKING, "assets/VIKING-FONT.ttf");
-	mTextures.load_resource(Textures::ID::MENUBUTTON1, "assets/button1.png");
-	mTextures.load_resource(Textures::ID::MENUBUTTON2, "assets/button2.png");
-	mTextures.load_resource(Textures::ID::MENUBUTTON3, "assets/button3.png");
-	mTextures.load_resource(Textures::ID::MENU_BACKGROUND, "assets/menubg.jpg");
+	mTextures.load_resource(Textures::ID::B_MENU1, "assets/button1.png");
+	mTextures.load_resource(Textures::ID::B_MENU2, "assets/button2.png");
+	mTextures.load_resource(Textures::ID::B_MENU3, "assets/button3.png");
+	mTextures.load_resource(Textures::ID::BG_MENU, "assets/menubg.jpg");
 	mTextures.load_resource(Textures::ID::CONNECT_SCREEN, "assets/connectstate.png");
-	mTextures.load_resource(Textures::ID::CONNECTBUTTON1, "assets/connectbutton1.png");
-	mTextures.load_resource(Textures::ID::BACKBUTTON, "assets/backbutton.png");
+	mTextures.load_resource(Textures::ID::B_CONNECT, "assets/connectbutton1.png");
+	mTextures.load_resource(Textures::ID::B_BACK, "assets/backbutton.png");
 	mTextures.load_resource(Textures::ID::CONNECT_STATUS, "assets/connectstatus.png");
-	mTextures.load_resource(Textures::ID::CANCELBUTTON, "assets/cancelbutton.png");
+	mTextures.load_resource(Textures::ID::B_CANCEL, "assets/cancelbutton.png");
 	mStatisticsText.setFont(mFonts.get_resource(Fonts::ID::SANSATION));
 	mStatisticsText.setPosition(5.0f, 5.0f);
 	mStatisticsText.setCharacterSize(10);

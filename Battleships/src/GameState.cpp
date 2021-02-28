@@ -9,23 +9,35 @@ namespace States
 		mWorld(context.mWindow),
 		mWindow(context.mWindow)
 	{
-		context.mTextures->load_resource(Textures::ID::READYBUTTON, "assets/readybutton.png");
-
-		sf::Font &font = context.mFonts->get_resource(Fonts::ID::VIKING);
-		mButtonReady = new GUI::Button(sf::Vector2f(90.0f, 730.f), context.mTextures->get_resource(Textures::ID::READYBUTTON), "Ready", font, 25);
-		mButtonLeave = new GUI::Button(sf::Vector2f(320.0f, 730.f), context.mTextures->get_resource(Textures::ID::READYBUTTON), "Leave", font, 25);
-
-		mButtonReady->set_text_color(sf::Color::White);
-		mButtonLeave->set_text_color(sf::Color::White);
+		set_gui(context);
 
 		if (mRemoteType == Net::RemoteType::CLIENT)
 			static_cast<Net::Client*>(mRemote)->set_game_state(this);
 		else
 			static_cast<Net::Server*>(mRemote)->set_game_state(this);
 
-		mWorld.set_remote(mRemote);
+		mWorld.set_remote(mRemote);	
+	}
 
-		mButtonReady->set_callback([this](void)
+	GameState::~GameState(void)
+	{
+		delete mRemote;
+	}
+
+	void GameState::set_gui(Context context)
+	{
+		context.mTextures->load_resource(Textures::ID::B_READY, "assets/readybutton.png");
+
+		sf::Font &font = context.mFonts->get_resource(Fonts::ID::VIKING);
+		sf::Texture &texture = context.mTextures->get_resource(Textures::ID::B_READY);
+
+		mWidgets.insert_widget<GUI::Button>(Widgets::B_READY, new GUI::Button(sf::Vector2f(90.0f, 730.f), texture, "Ready", font, 25));
+		mWidgets.insert_widget<GUI::Button>(Widgets::B_LEAVE, new GUI::Button(sf::Vector2f(320.0f, 730.f), texture, "Leave", font, 25));
+
+		mWidgets.get_widget<GUI::Button>(Widgets::B_READY)->set_text_color(sf::Color::White);
+		mWidgets.get_widget<GUI::Button>(Widgets::B_LEAVE)->set_text_color(sf::Color::White);
+
+		mWidgets.get_widget<GUI::Button>(Widgets::B_READY)->set_callback([this](void)
 		{
 			if (mWorld.all_ships_placed())
 			{
@@ -33,7 +45,7 @@ namespace States
 			}
 		});
 
-		mButtonLeave->set_callback([this](void)
+		mWidgets.get_widget<GUI::Button>(Widgets::B_LEAVE)->set_callback([this](void)
 		{
 			
 		});
@@ -46,26 +58,25 @@ namespace States
 
 	void GameState::deactivate_ready_button(void)
 	{
-		mButtonReady->deactivate();
+		mWidgets.get_widget<GUI::Button>(Widgets::B_READY)->deactivate();
 	}
 
 	void GameState::activate_ready_button(void)
 	{
-		mButtonReady->activate();
+		mWidgets.get_widget<GUI::Button>(Widgets::B_READY)->activate();
 	}
 
 	void GameState::render(void)
 	{
 		mWorld.draw();
-		mButtonReady->draw(mWindow);
-		mButtonLeave->draw(mWindow);
+		mWidgets.draw(mWindow);
 	}
 
 	bool GameState::update(sf::Time elapsedTime)
 	{
 		mMousePosition = sf::Mouse::getPosition(*get_context().mWindow);
-		mButtonReady->update(mMousePosition);
-		mButtonLeave->update(mMousePosition);
+
+		mWidgets.update(mMousePosition);
 		mWorld.update();
 
 		return true;
@@ -73,8 +84,7 @@ namespace States
 
 	bool GameState::handle_event(const sf::Event &event)
 	{
-		mButtonReady->handle_event(event);
-		mButtonLeave->handle_event(event);
+		mWidgets.handle_event(event);
 
 		switch (event.type)
 		{

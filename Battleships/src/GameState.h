@@ -6,7 +6,7 @@
 #include "Client.h"
 
 #include "Button.h"
-#include "ResourceManager.h"
+#include "WidgetContainer.h"
 
 #include <SFML/Graphics.hpp>
 #include <thread>
@@ -15,17 +15,28 @@ namespace States
 {
 	class GameState : public State
 	{
+	public:
+		static Net::Remote* mRemote;
+
+	private:
+		enum class Widgets
+		{
+			B_READY,
+			B_LEAVE
+		};
+
 	private:
 		sf::RenderWindow* mWindow;
 		World mWorld;
 		sf::Vector2i mMousePosition;
 
-		GUI::Button *mButtonReady;
-		GUI::Button *mButtonLeave;
-	public:
-		static Net::Remote* mRemote;
+	private:
+		GUI::WidgetContainer<Widgets> mWidgets;
+		void set_gui(Context context);
 
+	public:
 		GameState(StateManager &stateManager, Context context, Net::RemoteType mRemoteType);
+		virtual ~GameState(void);
 
 		World& get_world(void);
 		void deactivate_ready_button(void);

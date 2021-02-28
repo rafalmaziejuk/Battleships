@@ -23,7 +23,7 @@ World::World(sf::RenderWindow* window) :
 	mHintBackgroundSprite.setTexture(mTextures.get_resource(Textures::ID::HINT_BOARD_BACKGROUND));
 	mHintBackgroundSprite.setPosition(sf::Vector2f(75, 607));
 	
-	mBackgroundSprite.setTexture(mTextures.get_resource(Textures::ID::GAME_BACKGROUND));
+	mBackgroundSprite.setTexture(mTextures.get_resource(Textures::ID::BG_GAME));
 	mGridSprites[0].setTexture(mTextures.get_resource(Textures::ID::GRID));
 	mGridSprites[0].setPosition(sf::Vector2f(50.0f, 50.0f));
 	mGridSprites[1].setTexture(mTextures.get_resource(Textures::ID::GRID));
@@ -39,7 +39,7 @@ World::~World(void)
 
 void World::load_textures(void)
 {
-	mTextures.load_resource(Textures::ID::GAME_BACKGROUND, "assets/gamebg.png");
+	mTextures.load_resource(Textures::ID::BG_GAME, "assets/gamebg.png");
 	mTextures.load_resource(Textures::ID::GRID, "assets/grid.png");
 	mTextures.load_resource(Textures::ID::SELECTED_TILE, "assets/selectedtile.png");
 	mTextures.load_resource(Textures::ID::SHIP_TILE, "assets/shiptile.png");

@@ -81,6 +81,11 @@ namespace GUI
 			mText.setString(text);
 		}
 
+		inline bool is_text_empty(void) const
+		{
+			return mText.getString().isEmpty();
+		}
+
 		inline std::string get_text(void)
 		{
 			return mText.getString();
@@ -138,6 +143,6 @@ namespace GUI
 
 		virtual void draw(sf::RenderWindow *window) const;
 		virtual void update(sf::Vector2i mousePosition) = 0;
-		virtual void handle_event(const sf::Event &event) = 0;
+		virtual bool handle_event(const sf::Event &event) = 0;
 	};
 }

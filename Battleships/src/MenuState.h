@@ -16,9 +16,9 @@ namespace States
 	private:
 		enum class Widgets : uint8_t
 		{
-			HOST,
-			CONNECT,
-			EXIT
+			B_HOST,
+			B_CONNECT,
+			B_EXIT
 		};
 
 	private:

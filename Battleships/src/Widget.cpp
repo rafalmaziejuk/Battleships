@@ -25,6 +25,7 @@ namespace GUI
 		mDefaultFontSize(fontSize),
 		mAlignMode(AlignOptions::CENTER)
 	{
+		set_text_position();
 		mText.setFillColor(sf::Color::Black);
 	}
 
@@ -35,7 +36,7 @@ namespace GUI
 
 	void Widget::draw(sf::RenderWindow *window) const
 	{
-		if (mIsTextVisible)
+		if (mIsActive && mIsTextVisible)
 			window->draw(mText);
 	}
 }
