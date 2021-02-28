@@ -31,13 +31,20 @@ void EnemyGrid::draw_dots(sf::RenderWindow* window)
 	{
 		for (unsigned j = 0; j < FIELDS; j++)
 		{
-			if (mShotTiles[i][j] == true)
+			if (mShotTiles[i][j] == TileStatus::MISS)
 			{
-				//std::cout << "Drawing sprite";
+				std::cout << "DM ENEMY";
 
 				sf::Vector2f pos = sf::Vector2f(mGridStart.x + i * 50, mGridStart.y + j * 50);
 				mDotSprite.setPosition(pos);
 				window->draw(mDotSprite);
+			}
+			else if (mShotTiles[i][j] == TileStatus::HIT)
+			{
+				std::cout << "DH ENEMY";
+				sf::Vector2f pos = sf::Vector2f(mGridStart.x + i * 50, mGridStart.y + j * 50);
+				mSankShipTile.setPosition(pos);
+				window->draw(mSankShipTile);
 			}
 		}
 	}

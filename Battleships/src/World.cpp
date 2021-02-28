@@ -21,9 +21,11 @@ World::World(sf::RenderWindow* window) :
 	mPlayerGrid.set_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE));
 	mPlayerGrid.set_hint_ship_texture(mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_I), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_A));
 	mPlayerGrid.set_dot_testure(mTextures.get_resource(Textures::ID::DOT));
+	mPlayerGrid.set_sank_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE_SANK));
 	mEnemyGrid.set_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE_SANK));
 	mEnemyGrid.set_hint_ship_texture(mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_A), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_SANK));
 	mEnemyGrid.set_dot_testure(mTextures.get_resource(Textures::ID::DOT));
+	mEnemyGrid.set_sank_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE_SANK));
 
 	mHintBackgroundSprite.setTexture(mTextures.get_resource(Textures::ID::HINT_BOARD_BACKGROUND));
 	mHintBackgroundSprite.setPosition(sf::Vector2f(75, 607));
@@ -58,7 +60,6 @@ void World::load_textures(void)
 
 }
 
-
 void World::set_ships(void)
 {
 	mPlayerShips[0].set_length(1);
@@ -80,11 +81,15 @@ void World::draw(void)
 	mWindow->draw(mGridSprites[1]);
 	mWindow->draw(mHintBackgroundSprite);
 
-	mPlayerGrid.draw(mWindow);
-	mEnemyGrid.draw(mWindow);
+	
 	for (unsigned i = 0; i < NUM_OF_SHIPS; i++)
 		mPlayerShips[i].draw_ship(mWindow);
 	mCursor.draw(mWindow);
+
+	mPlayerGrid.draw(mWindow);
+	mEnemyGrid.draw(mWindow);
+
+
 }
 
 void World::update(void)
@@ -109,18 +114,22 @@ void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPresse
 			if (playerReady && mRemote->mMyTurn)
 			{
 				sf::Vector2i missilePos = mEnemyGrid.get_grid_coordinates(sf::Vector2i(mouse.x, mouse.y));
-				mEnemyGrid.fire_missile(missilePos);
-				mRemote->mMyTurn = false;
-				activate_enemy_grid(false);
 
-				// Critical section
-				Net::mutex.lock();
+				if (mEnemyGrid.mShotTiles[missilePos.x][missilePos.y] == TileStatus::NUL)
+				{
+					mEnemyGrid.fire_missile(missilePos);
+					mRemote->mMyTurn = false;
+					activate_enemy_grid(false);
 
-				mRemote->mRecentlyFiredMissile = missilePos;
-				mRemote->mMsgSent.ID = Net::PlayerAction::MISSILE;
-				mRemote->mMsgSent.coord = sf::Vector2i(missilePos);
+					// Critical section
+					Net::mutex.lock();
 
-				Net::mutex.unlock();
+					mRemote->mRecentlyFiredMissile = missilePos;
+					mRemote->mMsgSent.ID = Net::PlayerAction::MISSILE;
+					mRemote->mMsgSent.coord = sf::Vector2i(missilePos);
+
+					Net::mutex.unlock();
+				}
 			}
 		}
 	}

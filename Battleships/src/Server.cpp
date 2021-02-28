@@ -70,12 +70,14 @@ namespace Net
         if (temp == nullptr)
         {
             std::cout << "Enemy missed !\n";
-            world.get_player_grid().mShotTiles[coord.x][coord.y] = true;
+            world.get_player_grid().mShotTiles[coord.x][coord.y] = TileStatus::MISS;
             mMsgSent.ID = PlayerAction::MISS;
             
         }
         else
         {
+            std::cout << "Enemy hit your ship!\n";
+            world.get_player_grid().mShotTiles[coord.x][coord.y] = TileStatus::HIT;
             mMsgSent.ID = PlayerAction::HIT;
         }
         if ((status = mSocket.send(&mMsgSent, sizeof(mMsgSent), sent)) != sf::Socket::Done)
@@ -102,11 +104,12 @@ namespace Net
         {
         case PlayerAction::HIT:
             std::cout << "Ship is hit!";
+            world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
             std::cout << "\n";
             break;
         case PlayerAction::MISS:
             std::cout << "You missed! :( ";
-            world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = true;
+            world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::MISS;
             std::cout << "\n";
             break;
         case PlayerAction::NUL:
@@ -159,8 +162,8 @@ namespace Net
 
         while (!mDone)
         {
-            // data exhange appears every 0,5 s
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            // data exhange appears every 0,05 s
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
             //std::cout << ".";
 
             mutex.lock();
