@@ -60,22 +60,55 @@ namespace Net
         return true;
     }
 
-    void Server::update_game_status(World& world)
+    void Server::handle_missile(World& world, const sf::Vector2i coord)
     {
+        Ship* temp = world.is_ship_choosen(coord);
+        sf::Socket::Status status;
+        size_t sent;
 
+        mMsgSent.clear();
+        if (temp == nullptr)
+        {
+            std::cout << "Enemy missed !\n";
+            world.get_player_grid().mShotTiles[coord.x][coord.y] = true;
+            mMsgSent.ID = PlayerAction::MISS;
+            
+        }
+        else
+        {
+            mMsgSent.ID = PlayerAction::HIT;
+        }
+        if ((status = mSocket.send(&mMsgSent, sizeof(mMsgSent), sent)) != sf::Socket::Done)
+            decode_status(status);
+        else
+        {
+            std::cout << "I sent information about missile accuracy to remote!\n";
+        }
+        mMsgSent.clear();
+        //std::cout << "Enemy hit your ship!\n";
     }
 
     void Server::update_grid(Grid& grid)
     {
-
+        
     }
 
     void Server::handle_message(message msg)
     {
         std::cout << "msgID (" << (int)msg.ID << ")\n";
+        World& world = static_cast<States::GameState*>(mGameState)->get_world();
 
         switch (msg.ID)
         {
+        case PlayerAction::HIT:
+            std::cout << "Ship is hit!";
+            std::cout << "\n";
+            break;
+        case PlayerAction::MISS:
+            std::cout << "You missed! :( ";
+            world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = true;
+            std::cout << "\n";
+            break;
         case PlayerAction::NUL:
             std::cout << "NUL";
             break;
@@ -84,8 +117,15 @@ namespace Net
             mEnemyReady = true;
             break;
         case PlayerAction::MISSILE:
+        {
             std::cout << "Odebralem -  " << msg.coord.x << " " << msg.coord.y;
+            
+
+            handle_missile(world, msg.coord);
+            mMyTurn = true;
+            world.activate_enemy_grid(true);
             break;
+        }
         case PlayerAction::DISCONNECT:
             std::cout << "DISCONNECT";
             break;
@@ -121,10 +161,13 @@ namespace Net
         {
             // data exhange appears every 0,5 s
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
-            std::cout << ".";
+            //std::cout << ".";
 
-            if ((status = mSocket.receive(&mMsgReceived,sizeof(message),received)) != sf::Socket::Done)
-                decode_status(status);
+            mutex.lock();
+            // Critical section
+
+            if ((status = mSocket.receive(&mMsgReceived,sizeof(message),received)) != sf::Socket::Done){}
+                //decode_status(status);
             else if (status == sf::Socket::Done)
             {
                 std::cout << "Data received! \n";
@@ -148,15 +191,29 @@ namespace Net
                     std::cout << "I sent information about being ready to battle!\n";
                     enemyKnowsThatImReady = true;
                 }
+                mMsgSent.clear();
             }
             
             if (mReady && mEnemyReady)
             {
-                std::cout << "Im ready and enemy is ready too!";
-                static_cast<States::GameState*>(mGameState)->deactivate_ready_button();
+                if (!mGameStarted)
+                {
+                    std::cout << "Im ready and enemy is ready too!";
+                    static_cast<States::GameState*>(mGameState)->deactivate_ready_button();
+                    mGameStarted = true;
+                }
+                if (!mMsgSent.is_clear())
+                {
+                    if ((status = mSocket.send(&mMsgSent, sizeof(mMsgSent), sent)) != sf::Socket::Done)
+                        decode_status(status);
+                    else
+                        std::cout << "I sent data to the client!\n";
+                    mMsgSent.clear();
+                }
             }
             //update_game_status(static_cast<States::GameState*>(mGameState)->get_world());
-
+            
+            mutex.unlock();
         }
         system("pause");
     }

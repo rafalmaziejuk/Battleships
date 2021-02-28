@@ -38,7 +38,7 @@ private:
 	
 	void load_textures(void);
 	void set_ships(void);
-	Ship* is_ship_choosen(const sf::Vector2i& cursorPos);
+	
 	Ship* get_this_ship_head(const sf::Vector2i& cursorPos);
 	void add_new_ship(const sf::Event::MouseButtonEvent& mouse, bool isPressed);
 	void remove_ship(Ship* ship);
@@ -47,9 +47,15 @@ public:
 	explicit World(sf::RenderWindow *window);
 	~World(void);
 
-	void draw(void) const;
+	void draw(void);
 	void update(void);
 	void handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPressed, bool playerReady);
 	bool all_ships_placed(void);
 	void set_remote(Net::Remote* remote);
+	void activate_enemy_grid(bool flag);
+	Ship* is_ship_choosen(const sf::Vector2i& cursorPos);
+
+	PlayerGrid& get_player_grid(void);
+	EnemyGrid& get_enemy_grid(void);
+
 };

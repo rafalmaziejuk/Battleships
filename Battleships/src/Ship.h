@@ -27,6 +27,8 @@ private:
 
 public:
 	unsigned mId;
+	unsigned mHitTiles;
+	bool mSank;
 	bool mIsOnGrid = false;
 	Orientation mOrientation;
 	Direction mDirection;

@@ -148,7 +148,7 @@ void PlayerGrid::update_fields(sf::Vector2i position, bool somethingAdded)
 	mFields[position.y + 1 == FIELDS ? position.y : position.y + 1][position.x + 1 == FIELDS ? position.x : position.x + 1] = true;
 }
 
-void PlayerGrid::draw(sf::RenderWindow* window) const
+void PlayerGrid::draw(sf::RenderWindow* window)
 {
 	//for (auto tile : mTileSprites)
 		//window->draw(tile);
@@ -156,6 +156,7 @@ void PlayerGrid::draw(sf::RenderWindow* window) const
 	// for debugging purpose only
 		//////////////////////////////////////////////////
 	mShipHint.draw_ship_hints(window);
+	draw_dots(window);
 
 	/*
 	console_cursor(false);
@@ -204,4 +205,22 @@ void PlayerGrid::update(Ship& ship, ShipAction action)
 bool PlayerGrid::is_field_free(sf::Vector2i position) const
 {
 	return !mFields[position.y][position.x];
+}
+
+void PlayerGrid::draw_dots(sf::RenderWindow* window)
+{
+	for (unsigned i = 0; i < FIELDS; i++)
+	{
+		for (unsigned j = 0; j < FIELDS; j++)
+		{
+			if (mShotTiles[i][j] == true)
+			{
+				//std::cout << "Drawing sprite";
+				
+				sf::Vector2f pos = sf::Vector2f(mGridStart.x + i * 50, mGridStart.y + j * 50);
+				mDotSprite.setPosition(pos);
+				window->draw(mDotSprite);
+			}
+		}
+	}
 }

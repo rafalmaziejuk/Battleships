@@ -13,14 +13,16 @@ private:
 	void set_new_ship_segment(sf::Vector2i position, Ship& ship);
 	void update_fields(sf::Vector2i position, bool somethingAdded);
 
+
 public:
 	unsigned mPlacedShips;
 
 	PlayerGrid(sf::Vector2i gridStart);
 	~PlayerGrid();
 
-	void draw(sf::RenderWindow* window) const;
+	void draw(sf::RenderWindow* window);
 	void update(Ship& ship, ShipAction action);
 	bool is_field_free(sf::Vector2i position) const;
+	void draw_dots(sf::RenderWindow* window);
 };
 

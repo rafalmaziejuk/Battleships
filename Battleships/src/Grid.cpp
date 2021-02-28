@@ -24,12 +24,11 @@ sf::Vector2i Grid::get_window_coordinates(sf::Vector2i position) const
 	return position;
 }
 
-
-
-
-
-
-
+void Grid::set_dot_testure(const sf::Texture& texture)
+{
+	mDotTexture = texture;
+	mDotSprite.setTexture(mDotTexture);
+}
 
 void Grid::set_ship_texture(const sf::Texture &texture)
 {
@@ -49,8 +48,6 @@ sf::Vector2i Grid::get_grid_coordinates(sf::Vector2i mousePosition) const
 
 	return mousePosition;
 }
-
-
 
 void Grid::set_remote(Net::Remote* remote)
 {

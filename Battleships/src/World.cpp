@@ -20,6 +20,11 @@ World::World(sf::RenderWindow* window) :
 
 	mPlayerGrid.set_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE));
 	mPlayerGrid.set_hint_ship_texture(mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_I), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_A));
+	mPlayerGrid.set_dot_testure(mTextures.get_resource(Textures::ID::DOT));
+	mEnemyGrid.set_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE_SANK));
+	mEnemyGrid.set_hint_ship_texture(mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_A), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_SANK));
+	mEnemyGrid.set_dot_testure(mTextures.get_resource(Textures::ID::DOT));
+
 	mHintBackgroundSprite.setTexture(mTextures.get_resource(Textures::ID::HINT_BOARD_BACKGROUND));
 	mHintBackgroundSprite.setPosition(sf::Vector2f(75, 607));
 	
@@ -41,11 +46,16 @@ void World::load_textures(void)
 {
 	mTextures.load_resource(Textures::ID::BG_GAME, "assets/gamebg.png");
 	mTextures.load_resource(Textures::ID::GRID, "assets/grid.png");
+	mTextures.load_resource(Textures::ID::GRIDINNACTIVE, "assets/gridinnactive.png");
 	mTextures.load_resource(Textures::ID::SELECTED_TILE, "assets/selectedtile.png");
 	mTextures.load_resource(Textures::ID::SHIP_TILE, "assets/shiptile.png");
 	mTextures.load_resource(Textures::ID::HINT_SHIP_TILE_A, "assets/hinttile.png");
 	mTextures.load_resource(Textures::ID::HINT_SHIP_TILE_I, "assets/innactivehinttile.png");
 	mTextures.load_resource(Textures::ID::HINT_BOARD_BACKGROUND, "assets/hintbackground.png");
+	mTextures.load_resource(Textures::ID::DOT, "assets/dot.png");
+	mTextures.load_resource(Textures::ID::HINT_SHIP_TILE_SANK, "assets/sankhinttile.png");
+	mTextures.load_resource(Textures::ID::SHIP_TILE_SANK, "assets/sankshiptile.png");
+
 }
 
 
@@ -63,7 +73,7 @@ void World::set_ships(void)
 	mPlayerShips[9].set_length(4);
 }
 
-void World::draw(void) const
+void World::draw(void)
 {
 	mWindow->draw(mBackgroundSprite);
 	mWindow->draw(mGridSprites[0]);
@@ -71,6 +81,7 @@ void World::draw(void) const
 	mWindow->draw(mHintBackgroundSprite);
 
 	mPlayerGrid.draw(mWindow);
+	mEnemyGrid.draw(mWindow);
 	for (unsigned i = 0; i < NUM_OF_SHIPS; i++)
 		mPlayerShips[i].draw_ship(mWindow);
 	mCursor.draw(mWindow);
@@ -95,7 +106,22 @@ void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPresse
 		}
 		else if (mouse.x > 700 && mouse.y > 100 && mouse.x < 1200 && mouse.y < 600)
 		{
-			//TODO(rm): Right grid functionality based of input
+			if (playerReady && mRemote->mMyTurn)
+			{
+				sf::Vector2i missilePos = mEnemyGrid.get_grid_coordinates(sf::Vector2i(mouse.x, mouse.y));
+				mEnemyGrid.fire_missile(missilePos);
+				mRemote->mMyTurn = false;
+				activate_enemy_grid(false);
+
+				// Critical section
+				Net::mutex.lock();
+
+				mRemote->mRecentlyFiredMissile = missilePos;
+				mRemote->mMsgSent.ID = Net::PlayerAction::MISSILE;
+				mRemote->mMsgSent.coord = sf::Vector2i(missilePos);
+
+				Net::mutex.unlock();
+			}
 		}
 	}
 	else if (mouse.button == sf::Mouse::Right)
@@ -198,4 +224,26 @@ void World::set_remote(Net::Remote* remote)
 	mRemote = remote;
 	mPlayerGrid.set_remote(remote);
 	mEnemyGrid.set_remote(remote);
+	activate_enemy_grid(false);
+}
+
+void  World::activate_enemy_grid(bool flag)
+{
+	if (flag)
+		std::cout << "AKTYWUJE GRID\n";
+	if (mRemote != nullptr)
+	{
+		(mRemote->mMyTurn) ? mGridSprites[1].setTexture(mTextures.get_resource(Textures::ID::GRID))
+			: mGridSprites[1].setTexture(mTextures.get_resource(Textures::ID::GRIDINNACTIVE));
+
+	}
+}
+
+PlayerGrid& World::get_player_grid(void)
+{
+	return mPlayerGrid;
+}
+EnemyGrid& World::get_enemy_grid(void)
+{
+	return mEnemyGrid;
 }

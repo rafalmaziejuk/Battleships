@@ -6,7 +6,9 @@
 Ship::Ship(void) :
 	mStart(),
 	mEnd(),
-	mDirection(Direction::Null)
+	mDirection(Direction::Null),
+	mHitTiles(0),
+	mSank(false)
 {
 	static int id = 0;
 	mId = id;
