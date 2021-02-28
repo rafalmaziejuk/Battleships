@@ -1,91 +1,103 @@
 #include "Button.h"
+#include "Utility.h"
 
-/* constructor/ destructor */
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Event.hpp>
 
-Button::Button(const sf::Texture& texture, const std::string& bText, const sf::Vector2f& pos, const sf::Font& font, int fontSize)
+namespace GUI
 {
-	initButtonTexture(texture);
-	setPosition(pos);
-	text_string = bText;
-	text_font = font;
-	font_size = fontSize;
-	initText(bText);
-}
+	Button::Button(void) :
+		Widget(),
+		mSprite(),
+		mCallback()
+	{
 
-Button::~Button()
-{
+	}
 
-}
+	Button::Button(	sf::Vector2f position, 
+					const sf::Texture &texture, 
+					const std::string &text, 
+					const sf::Font &font,
+					uint8_t fontSize) :
+		Widget(Utility::to_vector2i(position), Utility::to_vector2i(texture.getSize()), text, font, fontSize),
+		mSprite(texture),
+		mCallback()
+	{
+		change_text_visibility(!text.empty());
 
-/* functions used to getting character and string size in pixels */
+		if (!is_text_visible())
+		{
+			Utility::set_origin_to_center(mSprite);
 
-static int getLetterSize(char letter, sf::Font& font, int font_size)
-{
-    return int(font.getGlyph(int(letter), font_size, false).advance);
-}
+			sf::FloatRect spriteBounds = mSprite.getLocalBounds();
+			sf::Vector2f spritePosition(position.x + spriteBounds.width / 2.0f, position.y + spriteBounds.height / 2.0f);
+			mSprite.setPosition(spritePosition);
+		}
+		else
+			mSprite.setPosition(position);
+	}
 
-static int getTextLenghtInPixel(const std::string& b_text, int letter_size)
-{
-    return letter_size * b_text.length();
-}
+	Button::~Button(void)
+	{
+		
+	}
 
-/* initialization */
+	void Button::draw(sf::RenderWindow *window) const
+	{
+		if (is_active())
+		{
+			window->draw(mSprite);
+			Widget::draw(window);
+		}
+	}
 
-void Button::initText(const std::string& b_text)
-{
-    button_signature.setString(b_text);
-    button_signature.setFont(text_font);
-    setNewCharSize(font_size);
-}
+	void Button::update(sf::Vector2i mousePosition)
+	{
+		if (is_active())
+		{
+			if (!is_text_visible())
+			{
+				if (is_mouse_over(mousePosition))
+					mSprite.setScale(1.05f, 1.05f);
+				else
+					mSprite.setScale(1.00f, 1.00f);
+			}
+			else
+			{
+				if (is_mouse_over(mousePosition))
+					change_text_size(2);
+				else
+					change_text_size(-2);
+			}
+		}
+	}
 
+	bool Button::handle_event(const sf::Event &event)
+	{
+		if (is_active())
+		{
+			switch (event.type)
+			{
+				case sf::Event::MouseButtonReleased:
+				{
+					if (event.mouseButton.button == sf::Mouse::Left)
+					{
+						sf::Vector2i mousePosition(event.mouseButton.x, event.mouseButton.y);
 
-void Button::initButtonTexture(const sf::Texture& tex)
-{
-    mTexture = tex;
-    setTexture(mTexture);
+						if (is_mouse_over(mousePosition))
+						{
+							mCallback();
+							return true;
+						}
+					}
 
-    sf::Vector2f sprite_size = { getLocalBounds().width,getLocalBounds().height };
-    size = sprite_size;
-}
+					break;
+				}
 
+				default: break;
+			}
+		}
 
-/* methods */
-
-bool Button::isCovered(sf::RenderWindow* window)
-{
-    sf::Vector2i mouse_pos = sf::Mouse::getPosition(*window);
-    if ((mouse_pos.x >= getPosition().x && mouse_pos.x <= getPosition().x + getSize().x) && (mouse_pos.y >= getPosition().y && mouse_pos.y <= getPosition().y + getSize().y))
-        return true;
-    else return false;
-}
-
-void Button::drawButton(sf::RenderWindow* window)
-{
-    window->draw(*this);
-    window->draw(button_signature);
-}
-
-void Button::setNewCharSize(int font_size)
-{
-    button_signature.setCharacterSize(font_size);
-    int letter_size_x = getLetterSize(text_string[0], text_font, font_size);
-    int text_size_x = getTextLenghtInPixel(text_string, letter_size_x);
-    int letter_size_y = (int)button_signature.getLocalBounds().height;
-
-    button_signature.setPosition(getPosition().x + getSize().x / 2.0f - text_size_x / 2.0f, getPosition().y + getSize().y / 2.0f - letter_size_y/2.0f);
-}
-
-sf::Vector2f Button::getSize(void)
-{
-    return size;
-}
-
-void Button::setSize(const sf::FloatRect& newSize)
-{
-    size = {newSize.width, newSize.height};
-}
-
-std::string Button::getString(void)
-{
-    return text_string;
+		return false;
+	}
 }

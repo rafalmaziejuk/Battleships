@@ -1,23 +1,39 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-
 #include "State.h"
-#include "MenuUIComponents.h"
+#include "Button.h"
+#include "Client.h"
+#include "Server.h"
 
-class MenuState : public State
+#include <SFML/Graphics/Sprite.hpp>
+
+#include "WidgetContainer.h"
+
+namespace States
 {
-private:
-	std::vector<Button *> mButtons;
-	sf::Sprite mBackground;
-	bool mMouseClicked;
-	ButtonID mButtonClicked;
+	class MenuState : public State
+	{
+	private:
+		enum class Widgets : uint8_t
+		{
+			B_HOST,
+			B_CONNECT,
+			B_EXIT
+		};
 
-public:
-	MenuState(Context context);
-	virtual ~MenuState(void);
+	private:
+		sf::Sprite mBackground;
 
-	virtual void render(void) override;
-	virtual void update(sf::Time elapsedTime) override;
-	virtual void handle_event(const sf::Event &event) override;
-};
+	private:
+		GUI::WidgetContainer<Widgets> mWidgets;
+		void set_gui(Context context);
+
+	public:
+		MenuState(StateManager &stateManager, Context context);
+		virtual ~MenuState(void);
+
+		virtual void render(void) override;
+		virtual bool update(sf::Time elapsedTime) override;
+		virtual bool handle_event(const sf::Event &event) override;
+	};
+}

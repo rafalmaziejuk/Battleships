@@ -1,34 +1,47 @@
 #pragma once
 
+#include "ResourceManager.h"
+#include "ResourceIdentifiers.h"
+#include "PlayerGrid.h"
+#include "EnemyGrid.h"
+#include "Cursor.h"
+#include "Ship.h"
+#include "Remote.h"
+
+
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
-#include "ResourceManager.h"
-#include "ResourceIdentifiers.h"
-#include "Defines.h"
-#include "Grid.h"
-#include "Cursor.h"
-#include "Ship.h"
 
 class World : sf::NonCopyable
 {
 private:
+	enum { NUM_OF_SHIPS = 10 };
+
+private:
 	sf::RenderWindow *mWindow;
 	TextureManager mTextures;
 	sf::Sprite mBackgroundSprite;
+	sf::Sprite mHintBackgroundSprite;
 	sf::Sprite mGridSprites[2];
 	sf::Vector2i mStart;
 	sf::Vector2i mEnd;
+	bool mIsGood;
 
 private:
-	Grid mPlayerGrid;
-	Grid mEnemyGrid;
+	PlayerGrid mPlayerGrid;
+	EnemyGrid mEnemyGrid;
 	Cursor mCursor;
 	Ship mPlayerShips[NUM_OF_SHIPS];
-
+	Net::Remote* mRemote;
 private:
+	
 	void load_textures(void);
 	void set_ships(void);
+	Ship* is_ship_choosen(const sf::Vector2i& cursorPos);
+	Ship* get_this_ship_head(const sf::Vector2i& cursorPos);
+	void add_new_ship(const sf::Event::MouseButtonEvent& mouse, bool isPressed);
+	void remove_ship(Ship* ship);
 
 public:
 	explicit World(sf::RenderWindow *window);
@@ -36,5 +49,7 @@ public:
 
 	void draw(void) const;
 	void update(void);
-	void handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPressed);
+	void handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPressed, bool playerReady);
+	bool all_ships_placed(void);
+	void set_remote(Net::Remote* remote);
 };

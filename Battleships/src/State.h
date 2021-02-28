@@ -1,39 +1,62 @@
 #pragma once
 
+#include "ResourceIdentifiers.h"
+#include "StateIdentifiers.h"
+
 #include <SFML/System/Time.hpp>
 #include <SFML/Window/Event.hpp>
 
-#include "ResourceIdentifiers.h"
+#include <memory>
 
-class State
+namespace sf
 {
-public:
-	struct Context
+	class RenderWindow;
+}
+
+namespace States
+{
+	class StateManager;
+
+	class State
 	{
-		sf::RenderWindow *mWindow;
-		TextureManager *mTextures;
-		FontManager *mFonts;
+	public:
+		typedef std::unique_ptr<State> statePointer;
 
-		Context(sf::RenderWindow &window, TextureManager &textures, FontManager &fonts) :
-			mWindow(&window),
-			mTextures(&textures), 
-			mFonts(&fonts)
+	public:
+		struct Context
 		{
-			
+			sf::RenderWindow *mWindow;
+			TextureManager *mTextures;
+			FontManager *mFonts;
+
+			Context(sf::RenderWindow &window, TextureManager &textures, FontManager &fonts) :
+				mWindow(&window),
+				mTextures(&textures),
+				mFonts(&fonts)
+			{
+
+			}
+		};
+
+	private:
+		Context mContext;
+		StateManager *mStateManager;
+
+	protected:
+		inline Context get_context(void) const 
+		{ 
+			return mContext;
 		}
+
+		void add_state(ID stateID);
+		void delete_state(void);
+
+	public:
+		State(StateManager &stateManager, Context context);
+		virtual ~State(void);
+
+		virtual void render(void) = 0;
+		virtual bool update(sf::Time elapsedTime) = 0;
+		virtual bool handle_event(const sf::Event &event) = 0;
 	};
-
-private:
-	Context mContext;
-
-protected:
-	Context get_context(void) const { return mContext; }
-
-public:
-	State(Context context) : mContext(context) { }
-	virtual ~State(void) { };
-
-	virtual void render(void) = 0;
-	virtual void update(sf::Time elapsedTime) = 0;
-	virtual void handle_event(const sf::Event &event) = 0;
-};
+}

@@ -1,43 +1,40 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-
 #include "ResourceIdentifiers.h"
-#include "Defines.h"
+#include "ShipHint.h"
+#include "Remote.h"
+#include "Ship.h"
+
+#include <SFML/Graphics.hpp>
 
 class Ship;
 
-enum class Type
+enum class ShipAction
 {
-	PLAYER,
-	ENEMY
+	ADD,
+	REMOVE
 };
 
 class Grid
 {
-private:
-	sf::Texture mTileTexture;
-	std::vector<sf::Sprite> mTileSprites;
-	sf::Vector2i mGridStart;
+public:
+	enum { FIELDS = 10, CELL_SIZE = 50 };
 
-private:
 	bool mFields[FIELDS][FIELDS] = { false }; //fields taken overall
 	bool mShipFields[FIELDS][FIELDS] = { false }; //fields occupied by ships only
-	Type mType;
 
-private:
-	void update_fields(sf::Vector2i position);
-	sf::Vector2i get_window_coordinates(sf::Vector2i position) const;
+	Net::Remote* mRemote;
+	sf::Texture mTileTexture;
+	sf::Vector2i mGridStart;
+	ShipHint mShipHint;
 
-public:
-	Grid(Type type, sf::Vector2i gridStart);
+	Grid(const sf::Vector2i gridStart);
 	~Grid(void);
 
-	void draw(sf::RenderWindow *window) const;
-	void update(const Ship &ship);
-
-	void set_texture(const sf::Texture &texture);
-	Type get_type(void) const;
 	sf::Vector2i get_grid_coordinates(sf::Vector2i mousePosition) const;
-	bool is_field_free(sf::Vector2i position) const;
+	sf::Vector2i get_window_coordinates(sf::Vector2i position) const;
+	void set_ship_texture(const sf::Texture &texture);
+	void set_hint_ship_texture(sf::Texture &texture, sf::Texture& texture2);
+	void set_remote(Net::Remote* remote);
+
 };

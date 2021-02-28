@@ -1,39 +1,104 @@
 #include "GameState.h"
 
-GameState::GameState(Context context) :
-	State(context),
-	mWorld(context.mWindow)
+namespace States
 {
-	
-}
+	Net::Remote* GameState::mRemote;
 
-GameState::~GameState(void)
-{
-	
-}
-
-void GameState::render(void)
-{
-	mWorld.draw();
-}
-
-void GameState::update(sf::Time elapsedTime)
-{
-	mWorld.update();
-}
-
-void GameState::handle_event(const sf::Event &event)
-{
-	switch (event.type)
+	GameState::GameState(StateManager &stateManager, Context context, Net::RemoteType mRemoteType) :
+		State(stateManager, context),
+		mWorld(context.mWindow),
+		mWindow(context.mWindow)
 	{
-		case sf::Event::MouseButtonPressed:
-			mWorld.handle_input(event.mouseButton, true);
-			break;
-		
-		case sf::Event::MouseButtonReleased:
-			mWorld.handle_input(event.mouseButton, false);
-			break;
+		set_gui(context);
 
-		default: break;
+		if (mRemoteType == Net::RemoteType::CLIENT)
+			static_cast<Net::Client*>(mRemote)->set_game_state(this);
+		else
+			static_cast<Net::Server*>(mRemote)->set_game_state(this);
+
+		mWorld.set_remote(mRemote);	
+	}
+
+	GameState::~GameState(void)
+	{
+		delete mRemote;
+	}
+
+	void GameState::set_gui(Context context)
+	{
+		context.mTextures->load_resource(Textures::ID::B_READY, "assets/readybutton.png");
+
+		sf::Font &font = context.mFonts->get_resource(Fonts::ID::VIKING);
+		sf::Texture &texture = context.mTextures->get_resource(Textures::ID::B_READY);
+
+		mWidgets.insert_widget<GUI::Button>(Widgets::B_READY, new GUI::Button(sf::Vector2f(90.0f, 730.f), texture, "Ready", font, 25));
+		mWidgets.insert_widget<GUI::Button>(Widgets::B_LEAVE, new GUI::Button(sf::Vector2f(320.0f, 730.f), texture, "Leave", font, 25));
+
+		mWidgets.get_widget<GUI::Button>(Widgets::B_READY)->set_text_color(sf::Color::White);
+		mWidgets.get_widget<GUI::Button>(Widgets::B_LEAVE)->set_text_color(sf::Color::White);
+
+		mWidgets.get_widget<GUI::Button>(Widgets::B_READY)->set_callback([this](void)
+		{
+			if (mWorld.all_ships_placed())
+			{
+				mRemote->mReady = true;
+			}
+		});
+
+		mWidgets.get_widget<GUI::Button>(Widgets::B_LEAVE)->set_callback([this](void)
+		{
+			
+		});
+	}
+
+	World& GameState::get_world(void)
+	{
+		return this->mWorld;
+	}
+
+	void GameState::deactivate_ready_button(void)
+	{
+		mWidgets.get_widget<GUI::Button>(Widgets::B_READY)->deactivate();
+	}
+
+	void GameState::activate_ready_button(void)
+	{
+		mWidgets.get_widget<GUI::Button>(Widgets::B_READY)->activate();
+	}
+
+	void GameState::render(void)
+	{
+		mWorld.draw();
+		mWidgets.draw(mWindow);
+	}
+
+	bool GameState::update(sf::Time elapsedTime)
+	{
+		mMousePosition = sf::Mouse::getPosition(*get_context().mWindow);
+
+		mWidgets.update(mMousePosition);
+		mWorld.update();
+
+		return true;
+	}
+
+	bool GameState::handle_event(const sf::Event &event)
+	{
+		mWidgets.handle_event(event);
+
+		switch (event.type)
+		{
+			case sf::Event::MouseButtonPressed:
+				mWorld.handle_input(event.mouseButton, true, mRemote->mReady);
+				break;
+
+			case sf::Event::MouseButtonReleased:
+				mWorld.handle_input(event.mouseButton, false, mRemote->mReady);
+				break;
+
+			default: break;
+		}
+
+		return true;
 	}
 }

@@ -1,72 +1,72 @@
-#include <iostream>
-
 #include "MenuState.h"
-#include "GameState.h"
-#include "StateManager.h"
+#include "ResourceManager.h"
 
-MenuState::MenuState(Context context) :
-	State(context),
-	mBackground()
+namespace States
 {
-	mBackground.setTexture(get_context().mTextures->get_resource(Textures::ID::MENU_BACKGROUND));
-	mBackground.setScale(0.95f, 0.95f);
-	mMouseClicked = false;
-
-	sf::Font &font = get_context().mFonts->get_resource(Fonts::ID::VIKING);
-	mButtons.push_back(new MenuButton(get_context().mTextures->get_resource(Textures::ID::BUTTON1), "Host", sf::Vector2f(100, 200), font, 25));
-	mButtons.push_back(new MenuButton(get_context().mTextures->get_resource(Textures::ID::BUTTON2), "Connect", sf::Vector2f(100, 350), font, 25));
-	mButtons.push_back(new MenuButton(get_context().mTextures->get_resource(Textures::ID::BUTTON3), "Exit", sf::Vector2f(100, 500), font, 25));
-	mButtonClicked = ButtonID::NONE;
-}
-
-MenuState::~MenuState(void)
-{
-	
-}
-
-void MenuState::render(void)
-{
-	get_context().mWindow->draw(mBackground);
-	for (auto& i : mButtons)
-		i->drawButton(get_context().mWindow);
-}
-
-void MenuState::update(sf::Time elapsedTime)
-{
-	bool clicked = false;
-	 
-	for (auto& i : mButtons)
+	MenuState::MenuState(StateManager &stateManager, Context context) :
+		State(stateManager, context),
+		mBackground()
 	{
-		mButtonClicked = i->update(get_context().mWindow, mMouseClicked);
-		if (mButtonClicked != ButtonID::NONE)
-		{
-			switch (mButtonClicked)
-			{
-				case ButtonID::M_HOST: clicked = true; StateManager::get_instance().change_state<GameState>(get_context()); break;
-				case ButtonID::M_CONNECT:  break;
-				case ButtonID::M_EXIT: break;
-			}
-
-			if (clicked) 
-				break;
-		}
+		mBackground.setTexture(context.mTextures->get_resource(Textures::ID::BG_MENU));
+		set_gui(context);
 	}
 
-	mMouseClicked = false;
-}
-
-void MenuState::handle_event(const sf::Event &event)
-{
-	switch (event.type)
+	MenuState::~MenuState(void)
 	{
-		case sf::Event::MouseButtonReleased:
+		mWidgets.clear_widgets();
+	}
+
+	void MenuState::set_gui(Context context)
+	{
+		sf::Font &font = context.mFonts->get_resource(Fonts::ID::VIKING);
+
+		mWidgets.insert_widget<GUI::Button>(Widgets::B_HOST, new GUI::Button(sf::Vector2f(100.0f, 200.0f), context.mTextures->get_resource(Textures::ID::B_MENU1), "Host", font, 25));
+		mWidgets.insert_widget<GUI::Button>(Widgets::B_CONNECT, new GUI::Button(sf::Vector2f(100.0f, 350.0f), context.mTextures->get_resource(Textures::ID::B_MENU2), "Connect", font, 25));
+		mWidgets.insert_widget<GUI::Button>(Widgets::B_EXIT, new GUI::Button(sf::Vector2f(100.0f, 500.0f), context.mTextures->get_resource(Textures::ID::B_MENU3), "Exit", font, 25));
+
+		mWidgets.get_widget<GUI::Button>(Widgets::B_HOST)->set_text_color(sf::Color::White);
+		mWidgets.get_widget<GUI::Button>(Widgets::B_CONNECT)->set_text_color(sf::Color::White);
+		mWidgets.get_widget<GUI::Button>(Widgets::B_EXIT)->set_text_color(sf::Color::White);
+
+		mWidgets.get_widget<GUI::Button>(Widgets::B_HOST)->set_callback([this](void)
 		{
-			if (event.mouseButton.button == sf::Mouse::Left)
-				mMouseClicked = true;
+			delete_state();
+			add_state(ID::CONNECT_HOST);
+		});
 
-			break;
-		}
+		mWidgets.get_widget<GUI::Button>(Widgets::B_CONNECT)->set_callback([this](void)
+		{
+			delete_state();
+			add_state(ID::CONNECT_JOIN);
+		});
 
-		default: break;
+		mWidgets.get_widget<GUI::Button>(Widgets::B_EXIT)->set_callback([this](void)
+		{
+			delete_state();
+		});
+	}
+
+	void MenuState::render(void)
+	{
+		sf::RenderWindow *window = get_context().mWindow;
+
+		window->draw(mBackground);
+		mWidgets.draw(window);
+	}
+
+	bool MenuState::update(sf::Time elapsedTime)
+	{
+		sf::Vector2i mousePosition = sf::Mouse::getPosition(*get_context().mWindow);
+
+		mWidgets.update(mousePosition);
+
+		return true;
+	}
+
+	bool MenuState::handle_event(const sf::Event &event)
+	{
+		mWidgets.handle_event(event);
+
+		return true;
 	}
 }

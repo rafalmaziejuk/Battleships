@@ -1,20 +1,48 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-
 #include "State.h"
 #include "World.h"
+#include "Server.h"
+#include "Client.h"
 
-class GameState : public State
+#include "Button.h"
+#include "WidgetContainer.h"
+
+#include <SFML/Graphics.hpp>
+#include <thread>
+
+namespace States
 {
-private:
-	World mWorld;
+	class GameState : public State
+	{
+	public:
+		static Net::Remote* mRemote;
 
-public:
-	GameState(Context context);
-	virtual ~GameState(void);
+	private:
+		enum class Widgets
+		{
+			B_READY,
+			B_LEAVE
+		};
 
-	virtual void render(void) override;
-	virtual void update(sf::Time elapsedTime) override;
-	virtual void handle_event(const sf::Event &event) override;
-};
+	private:
+		sf::RenderWindow* mWindow;
+		World mWorld;
+		sf::Vector2i mMousePosition;
+
+	private:
+		GUI::WidgetContainer<Widgets> mWidgets;
+		void set_gui(Context context);
+
+	public:
+		GameState(StateManager &stateManager, Context context, Net::RemoteType mRemoteType);
+		virtual ~GameState(void);
+
+		World& get_world(void);
+		void deactivate_ready_button(void);
+		void activate_ready_button(void);
+		virtual void render(void) override;
+		virtual bool update(sf::Time elapsedTime) override;
+		virtual bool handle_event(const sf::Event &event) override;
+	};
+}

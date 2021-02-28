@@ -1,11 +1,13 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-
-#include "Defines.h"
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 
 class Cursor
 {
+private:
+	enum { CELL_SIZE = 50 };
 private:
 	sf::Sprite mCursorSprite;
 
