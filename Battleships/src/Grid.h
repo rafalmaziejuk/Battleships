@@ -47,5 +47,4 @@ public:
 	void set_sank_ship_texture(const sf::Texture &texture);
 	void set_hint_ship_texture(sf::Texture &texture, sf::Texture& texture2);
 	void set_remote(Net::Remote* remote);
-
 };

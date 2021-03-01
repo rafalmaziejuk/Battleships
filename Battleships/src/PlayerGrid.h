@@ -2,6 +2,8 @@
 
 #include "Grid.h"
 
+
+
 class PlayerGrid : public Grid
 {
 
@@ -24,5 +26,7 @@ public:
 	void update(Ship& ship, ShipAction action);
 	bool is_field_free(sf::Vector2i position) const;
 	void draw_dots(sf::RenderWindow* window);
+
+	Net::PlayerAction update_shot_tiles(Ship* ship, sf::Vector2i missilePos);
 };
 

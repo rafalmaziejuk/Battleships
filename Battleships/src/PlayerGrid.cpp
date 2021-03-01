@@ -1,5 +1,7 @@
 #include "PlayerGrid.h"
 
+#include <list>
+
 PlayerGrid::PlayerGrid(sf::Vector2i gridStart)
 	: Grid(gridStart), mPlacedShips(0)
 {
@@ -227,7 +229,39 @@ void PlayerGrid::draw_dots(sf::RenderWindow* window)
 	}
 }
 
-void PlayerGrid::update_shot_tiles(Ship& ship, sf::Vector2i missilePos)
-{
+// function is called to update PLAYER GRID after his ship is hit
 
+Net::PlayerAction PlayerGrid::update_shot_tiles(Ship* ship, sf::Vector2i missilePos)
+{
+	// setting coord to draw a HIT tile
+	mShotTiles[missilePos.x][missilePos.y] = TileStatus::HIT;
+
+	if (ship->get_length() == 1) // Hit ship with lenght 1
+	{
+		std::list<sf::Vector2i> tiles_to_update;
+		
+		// im updating all possible coords around this tile and store in a vector
+		if (missilePos.x - 1 >= 0 && missilePos.y - 1 >= 0) tiles_to_update.emplace_back(sf::Vector2i(missilePos.x - 1, missilePos.y - 1));
+		if (missilePos.x - 1  >= 0)		tiles_to_update.emplace_back(sf::Vector2i(missilePos.x - 1 , missilePos.y ));
+		if (missilePos.x - 1 >= 0 && missilePos.y + 1 < FIELDS)	tiles_to_update.emplace_back(sf::Vector2i(missilePos.x - 1 , missilePos.y + 1));
+
+		if (missilePos.y - 1  >= 0)	tiles_to_update.emplace_back(sf::Vector2i(missilePos.x , missilePos.y - 1));
+		if (missilePos.y + 1  < FIELDS)	tiles_to_update.emplace_back(sf::Vector2i(missilePos.x , missilePos.y + 1));
+
+		if (missilePos.x + 1 < FIELDS && missilePos.y - 1 >= 0) tiles_to_update.emplace_back(sf::Vector2i(missilePos.x + 1, missilePos.y - 1));
+		if (missilePos.x + 1 < FIELDS)		tiles_to_update.emplace_back(sf::Vector2i(missilePos.x - 1, missilePos.y));
+		if (missilePos.x + 1 < FIELDS && missilePos.y + 1 < FIELDS)	tiles_to_update.emplace_back(sf::Vector2i(missilePos.x + 1, missilePos.y + 1));
+
+		// updating mShotTiles with coords stored in vector
+		for (auto& tile : tiles_to_update)
+			mShotTiles[tile.x][tile.y] = TileStatus::MISS; // MISS means a dot is beign drawn
+
+		// updating ship flag
+		ship->mSank = true;
+
+		// updating user's sank ships 
+		mRemote->mSankShips++;
+
+		return Net::PlayerAction::HIT_ONE;
+	}
 }

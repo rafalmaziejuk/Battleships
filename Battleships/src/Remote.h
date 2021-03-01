@@ -25,7 +25,11 @@ namespace Net
         MISSILE,
         READY,
         HIT,
-        MISS
+        MISS,
+        HIT_ONE,
+        HIT_VERTICAL_SHIP,
+        HIT_HORIZONTAL_SHIP,
+        HIT_AND_SANK
     };
 
     struct message
@@ -75,6 +79,8 @@ namespace Net
         bool mEnemyReady;
         bool mGameStarted;
 
+        unsigned mSankShips;
+
         Remote()
             : mSocket(),
             mPacketSent(),
@@ -88,7 +94,8 @@ namespace Net
             mMyTurn(false),
             mReady(false),
             mEnemyReady(false),
-            mGameStarted(false)
+            mGameStarted(false),
+            mSankShips(0)
         {
         }
         ~Remote()

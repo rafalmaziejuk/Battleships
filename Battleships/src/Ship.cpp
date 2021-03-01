@@ -27,9 +27,12 @@ void Ship::remove_tiles(void)
 
 void Ship::draw_ship(sf::RenderWindow* window) const
 {
-	for(auto& i : mTiles)
+	if (!mSank)
 	{
-		window->draw(i);
+		for (auto& i : mTiles)
+		{
+			window->draw(i);
+		}
 	}
 }
 

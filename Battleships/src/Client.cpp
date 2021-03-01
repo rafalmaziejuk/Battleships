@@ -46,34 +46,55 @@ namespace Net
 
     void Client::handle_missile(World& world, sf::Vector2i coord)
     {
-        Ship* temp = world.is_ship_choosen(coord);
+        // if missile hits a ship then its pointer is returned
+        Ship* ship = world.is_ship_choosen(coord);
+
         sf::Socket::Status status;
         size_t sent;
 
         mMsgSent.clear();
-        if (temp == nullptr)
+
+        if (ship == nullptr) // if pointer is nullptr then remote missed
         {
             std::cout << "Enemy missed !\n";
+
+            // updating position to draw a dot
             world.get_player_grid().mShotTiles[coord.x][coord.y] = TileStatus::MISS;
+
+            // setting data for feedback message
             mMsgSent.ID = PlayerAction::MISS;
+
             mMyTurn = true;
-            world.activate_enemy_grid(false);
+            world.activate_enemy_grid(true);
         }
         else
         {
             std::cout << "Enemy hit your ship!\n";
-            world.get_player_grid().mShotTiles[coord.x][coord.y] = TileStatus::HIT;
+
+            ////////////////////////////////////////
+            world.get_player_grid().update_shot_tiles(ship, coord);
             mMsgSent.ID = PlayerAction::HIT;
+            /// /////////////////////////////////////
+            // the above should be changed to this : ///////
+
+            //mMsgSent.ID = world.get_player_grid().update_shot_tiles(ship, coord);
+            // and returned ID should be handled properly in remote's handle_message()
+            /////////////////////////////////////////
+
             mMyTurn = false;
             world.activate_enemy_grid(false);
         }
+        //sending feedback message to remote 
         if ((status = mSocket.send(&mMsgSent, sizeof(mMsgSent), sent)) != sf::Socket::Done)
             decode_status(status);
         else
         {
             std::cout << "I sent information about missile accuracy to remote!\n";
         }
+        // clearing message struct
         mMsgSent.clear();
+
+        //std::cout << "Enemy hit your ship!\n";
     }
 
     void Client::update_grid(Grid& grid)
@@ -97,6 +118,18 @@ namespace Net
             world.activate_enemy_grid(true);
             std::cout << "\n";
             break;
+        // above HIT handler should be separated to this : 
+        //////////////////////////////////////
+        case PlayerAction::HIT_ONE:
+            break;
+        case PlayerAction::HIT_HORIZONTAL_SHIP:
+            break;
+        case PlayerAction::HIT_VERTICAL_SHIP:
+            break;
+        case PlayerAction::HIT_AND_SANK:
+            break;
+        ///////////////////////////////////////
+
         case PlayerAction::MISS:
             std::cout << "You missed! :( ";
             world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::MISS;
