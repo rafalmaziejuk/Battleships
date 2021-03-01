@@ -119,7 +119,6 @@ void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPresse
 				{
 					mEnemyGrid.fire_missile(missilePos);
 					mRemote->mMyTurn = false;
-					activate_enemy_grid(false);
 
 					// Critical section
 					Net::mutex.lock();

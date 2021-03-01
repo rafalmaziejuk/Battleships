@@ -14,7 +14,7 @@ namespace States
 		if (mRemoteType == Net::RemoteType::CLIENT)
 			static_cast<Net::Client*>(mRemote)->set_game_state(this);
 		else
-			static_cast<Net::Server*>(mRemote)->set_game_state(this);
+			static_cast<Net::Host*>(mRemote)->set_game_state(this);
 
 		mWorld.set_remote(mRemote);	
 	}

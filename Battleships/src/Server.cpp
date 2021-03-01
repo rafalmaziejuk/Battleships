@@ -2,35 +2,35 @@
 
 namespace Net
 {
-    Server::Server()
+    Host::Host()
         : Remote(), mPort(0),mServerThread(nullptr), mGameState(nullptr)
     {
         mListener.setBlocking(false);
         mMyTurn = true;
     }
 
-    Server::~Server()
+    Host::~Host()
     {
 
     }
 
-    void Server::set_game_state(States::State* state)
+    void Host::set_game_state(States::State* state)
     {
         mGameState = state;
     }
 
-    void Server::set_port(const int port)
+    void Host::set_port(const int port)
     {
         mPort = port;
     }
 
-    void Server::start(void)
+    void Host::start(void)
     {
         mIsRunning = true;
-        mServerThread = new std::thread(&Server::run_server, this);
+        mServerThread = new std::thread(&Host::run_server, this);
     }
 
-    void Server::stop(void)
+    void Host::stop(void)
     {
         mIsRunning = false;
         mDone = true;
@@ -39,7 +39,7 @@ namespace Net
         mDone = false;
     }
 
-    bool Server::establish_connection(void)
+    bool Host::establish_connection(void)
     {
         std::cout << "Server is listening to port " << mPort << ", waiting for connections... \n" << std::endl;
 
@@ -60,7 +60,7 @@ namespace Net
         return true;
     }
 
-    void Server::handle_missile(World& world, const sf::Vector2i coord)
+    void Host::handle_missile(World& world, const sf::Vector2i coord)
     {
         Ship* temp = world.is_ship_choosen(coord);
         sf::Socket::Status status;
@@ -72,13 +72,16 @@ namespace Net
             std::cout << "Enemy missed !\n";
             world.get_player_grid().mShotTiles[coord.x][coord.y] = TileStatus::MISS;
             mMsgSent.ID = PlayerAction::MISS;
-            
+            mMyTurn = true;
+            world.activate_enemy_grid(true);
         }
         else
         {
             std::cout << "Enemy hit your ship!\n";
             world.get_player_grid().mShotTiles[coord.x][coord.y] = TileStatus::HIT;
             mMsgSent.ID = PlayerAction::HIT;
+            mMyTurn = false;
+            world.activate_enemy_grid(false);
         }
         if ((status = mSocket.send(&mMsgSent, sizeof(mMsgSent), sent)) != sf::Socket::Done)
             decode_status(status);
@@ -90,12 +93,12 @@ namespace Net
         //std::cout << "Enemy hit your ship!\n";
     }
 
-    void Server::update_grid(Grid& grid)
+    void Host::update_grid(Grid& grid)
     {
         
     }
 
-    void Server::handle_message(message msg)
+    void Host::handle_message(message msg)
     {
         std::cout << "msgID (" << (int)msg.ID << ")\n";
         World& world = static_cast<States::GameState*>(mGameState)->get_world();
@@ -105,11 +108,15 @@ namespace Net
         case PlayerAction::HIT:
             std::cout << "Ship is hit!";
             world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
+            mMyTurn = true;
+            world.activate_enemy_grid(true);
             std::cout << "\n";
             break;
         case PlayerAction::MISS:
             std::cout << "You missed! :( ";
             world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::MISS;
+            mMyTurn = false;
+            world.activate_enemy_grid(false);
             std::cout << "\n";
             break;
         case PlayerAction::NUL:
@@ -125,8 +132,6 @@ namespace Net
             
 
             handle_missile(world, msg.coord);
-            mMyTurn = true;
-            world.activate_enemy_grid(true);
             break;
         }
         case PlayerAction::DISCONNECT:
@@ -135,7 +140,7 @@ namespace Net
         }
     }
 
-    void Server::run_server(void)
+    void Host::run_server(void)
     {
         sf::Socket::Status status;
 

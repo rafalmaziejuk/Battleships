@@ -12,7 +12,7 @@
 
 namespace Net
 {
-    class Server : public Remote
+    class Host : public Remote
     {
     private:
 
@@ -30,8 +30,8 @@ namespace Net
 
         virtual bool establish_connection(void) override;
     public:
-        Server();
-        ~Server();
+        Host();
+        ~Host();
 
         void set_game_state(States::State* state);
         void set_port(const int port);

@@ -31,8 +31,8 @@ namespace States
 		}
 		else if (mRemoteType == Net::RemoteType::SERVER)
 		{
-			GameState::mRemote = new Net::Server();
-			mServer = static_cast<Net::Server*>(GameState::mRemote);
+			GameState::mRemote = new Net::Host();
+			mServer = static_cast<Net::Host*>(GameState::mRemote);
 		}
 
 		mWidgets.get_widget<GUI::InputBox>(Widgets::IB_IP)->set_entered_text(mMyIp.toString());

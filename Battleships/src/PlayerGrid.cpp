@@ -215,19 +215,19 @@ void PlayerGrid::draw_dots(sf::RenderWindow* window)
 		{
 			if (mShotTiles[i][j] == TileStatus::MISS)
 			{
-				//std::cout << "Drawing sprite";
-				std::cout << "DM PLAYER";
-				sf::Vector2f pos = sf::Vector2f(mGridStart.x + i * 50, mGridStart.y + j * 50);
-				mDotSprite.setPosition(pos);
+				mDotSprite.setPosition(sf::Vector2f(mGridStart.x + i * 50, mGridStart.y + j * 50));
 				window->draw(mDotSprite);
 			}
 			else if (mShotTiles[i][j] == TileStatus::HIT)
 			{
-				std::cout << "DH PLAYER";
-				sf::Vector2f pos = sf::Vector2f(mGridStart.x + i * 50, mGridStart.y + j * 50);
-				mSankShipTile.setPosition(pos);
+				mSankShipTile.setPosition(sf::Vector2f(mGridStart.x + i * 50, mGridStart.y + j * 50));
 				window->draw(mSankShipTile);
 			}
 		}
 	}
+}
+
+void PlayerGrid::update_shot_tiles(Ship& ship, sf::Vector2i missilePos)
+{
+
 }

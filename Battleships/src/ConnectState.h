@@ -8,7 +8,7 @@
 
 namespace Net
 {
-	class Server;
+	class Host;
 	class Client;
 }
 
@@ -43,7 +43,7 @@ namespace States
 		Net::RemoteType mRemoteType;
 		sf::IpAddress mMyIp;		// User's IP
 		
-		Net::Server* mServer;			// Server
+		Net::Host* mServer;			// Server
 		Net::Client* mClient;			// Client
 		bool mIsRemoteThreadRunning;
 

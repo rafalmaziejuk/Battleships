@@ -20,7 +20,6 @@ enum class TileStatus
 	NUL, HIT, MISS
 };
 
-
 class Grid
 {
 public:
