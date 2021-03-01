@@ -81,21 +81,18 @@ void World::draw(void)
 	mWindow->draw(mGridSprites[1]);
 	mWindow->draw(mHintBackgroundSprite);
 
-	
 	for (unsigned i = 0; i < NUM_OF_SHIPS; i++)
 		mPlayerShips[i].draw_ship(mWindow);
+
 	mCursor.draw(mWindow);
 
 	mPlayerGrid.draw(mWindow);
 	mEnemyGrid.draw(mWindow);
-
-
 }
 
 void World::update(void)
 {
 	mCursor.update(sf::Mouse::getPosition(*mWindow));
-
 }
 
 void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPressed, bool playerReady)
@@ -103,7 +100,6 @@ void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPresse
 	//left button
 	if (mouse.button == sf::Mouse::Left)
 	{
-
 		if (mouse.x > 100 && mouse.y > 100 && mouse.x < 600 && mouse.y < 600)
 		{
 			if(!playerReady)
@@ -146,21 +142,23 @@ void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPresse
 
 void World::add_new_ship(const sf::Event::MouseButtonEvent& mouse, bool isPressed)
 {
-	if (isPressed == true)
+	if (isPressed)
 	{
 		mStart = mPlayerGrid.get_grid_coordinates(sf::Vector2i(mouse.x, mouse.y));
+		mCursor.set_cursor_mode(Cursor::Mode::DRAGGING);
 
-		if (mPlayerGrid.is_field_free(mStart) == true)
+		if (mPlayerGrid.is_field_free(mStart))
 			mIsGood = true;
 		else
 			mIsGood = false;
 	}
 
-	if (isPressed == false)
+	if (!isPressed)
 	{
 		mEnd = mPlayerGrid.get_grid_coordinates(sf::Vector2i(mouse.x, mouse.y));
+		mCursor.set_cursor_mode(Cursor::Mode::DEFAULT);
 
-		if (mPlayerGrid.is_field_free(mEnd) == true && mIsGood == true)
+		if (mPlayerGrid.is_field_free(mEnd) && mIsGood)
 		{
 			uint8_t length = 1;
 
@@ -181,7 +179,7 @@ void World::add_new_ship(const sf::Event::MouseButtonEvent& mouse, bool isPresse
 					if (mPlayerShips[i].get_length() == length && mPlayerShips[i].is_on_grid() == false)
 					{
 						mPlayerShips[i].set_position(mStart, mEnd);
-						mPlayerGrid.update(mPlayerShips[i],ShipAction::ADD);
+						mPlayerGrid.update(mPlayerShips[i], ShipAction::ADD);
 						break;
 					}
 				}
