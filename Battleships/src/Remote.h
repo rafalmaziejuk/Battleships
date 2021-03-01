@@ -11,8 +11,6 @@ namespace Net
     
     static std::mutex mutex;    // not sure if it is a good solution (to be change?)
 
-    void decode_status(sf::Socket::Status status);
-
     enum class RemoteType
     {
         SERVER, CLIENT
@@ -24,13 +22,16 @@ namespace Net
         DISCONNECT,
         MISSILE,
         READY,
-        HIT,
         MISS,
+        HIT_PART,
         HIT_ONE,
-        HIT_VERTICAL_SHIP,
-        HIT_HORIZONTAL_SHIP,
         HIT_AND_SANK
     };
+
+    void decode_status(sf::Socket::Status status);
+    void decode_action(PlayerAction action);
+
+    
 
     struct message
     {

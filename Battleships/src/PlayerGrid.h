@@ -27,6 +27,7 @@ public:
 	bool is_field_free(sf::Vector2i position) const;
 	void draw_dots(sf::RenderWindow* window);
 
+	void PlayerGrid::update_grid_after_ship_sank(const Ship& ship, sf::Vector2i missilePos);
 	Net::PlayerAction update_shot_tiles(Ship* ship, sf::Vector2i missilePos);
 };
 

@@ -72,12 +72,12 @@ namespace Net
             std::cout << "Enemy hit your ship!\n";
 
             ////////////////////////////////////////
-            world.get_player_grid().update_shot_tiles(ship, coord);
-            mMsgSent.ID = PlayerAction::HIT;
+            //world.get_player_grid().update_shot_tiles(ship, coord);
+            //mMsgSent.ID = PlayerAction::HIT;
             /// /////////////////////////////////////
             // the above should be changed to this : ///////
 
-            //mMsgSent.ID = world.get_player_grid().update_shot_tiles(ship, coord);
+            mMsgSent.ID = world.get_player_grid().update_shot_tiles(ship, coord);
             // and returned ID should be handled properly in remote's handle_message()
             /////////////////////////////////////////
 
@@ -111,9 +111,10 @@ namespace Net
 
         switch (msg.ID)
         {
-        case PlayerAction::HIT:
+        case PlayerAction::HIT_PART:
             std::cout << "Ship is hit!";
             world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
+            world.get_enemy_grid().update_shot_tiles(PlayerAction::HIT_PART, mRecentlyFiredMissile);
             mMyTurn = true;
             world.activate_enemy_grid(true);
             std::cout << "\n";
@@ -121,12 +122,20 @@ namespace Net
         // above HIT handler should be separated to this : 
         //////////////////////////////////////
         case PlayerAction::HIT_ONE:
-            break;
-        case PlayerAction::HIT_HORIZONTAL_SHIP:
-            break;
-        case PlayerAction::HIT_VERTICAL_SHIP:
+
+            std::cout << "Ship is hit!";
+            world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
+            world.get_enemy_grid().update_shot_tiles(PlayerAction::HIT_ONE, mRecentlyFiredMissile);
+            mMyTurn = true;
+            world.activate_enemy_grid(true);
+
             break;
         case PlayerAction::HIT_AND_SANK:
+            std::cout << "Ship is hit!";
+            world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
+            world.get_enemy_grid().update_shot_tiles(PlayerAction::HIT_AND_SANK, mRecentlyFiredMissile);
+            mMyTurn = true;
+            world.activate_enemy_grid(true);
             break;
         ///////////////////////////////////////
 
@@ -148,7 +157,6 @@ namespace Net
         {
             std::cout << "Odebralem -  " << msg.coord.x << " " << msg.coord.y;
             
-
             handle_missile(world, msg.coord);
             world.activate_enemy_grid(true);
 
@@ -210,7 +218,7 @@ namespace Net
         {
 
             // data exhange appears every 0,5 s
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
             //std::cout << ".";
 
             mutex.lock();
