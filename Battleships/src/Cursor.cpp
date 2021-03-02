@@ -45,16 +45,25 @@ void Cursor::update(sf::Vector2i mousePosition)
 		mCursorSprite.setPosition(sf::Vector2f(float(mousePosition.x * CELL_SIZE), float(mousePosition.y * CELL_SIZE)));
 	}
 	else if ((mousePosition.x > 100 && mousePosition.y > 100) && (mousePosition.x < 600 && mousePosition.y < 600) &&
-		mMode == Mode::DRAGGING)
+		mMode == Mode::DRAGGING && mCursorSprites.size() <= 4)
 	{
 		mousePosition.x /= CELL_SIZE;
 		mousePosition.y /= CELL_SIZE;
 
 		sf::Vector2f position = sf::Vector2f(float(mousePosition.x * CELL_SIZE), float(mousePosition.y * CELL_SIZE));
-
+		
 		for (auto &sprite : mCursorSprites)
 		{
-			if (sprite.getPosition() == position)
+			sf::Vector2f spritePosition = sprite.getPosition();
+
+			if (position.x != spritePosition.x && position.y != spritePosition.y)
+			{
+				mMode = Mode::DEFAULT;
+				mCursorSprites.clear();
+				return;
+			}
+
+			if (spritePosition == position)
 				return;
 		}
 
