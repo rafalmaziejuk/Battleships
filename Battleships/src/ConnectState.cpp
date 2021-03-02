@@ -59,7 +59,11 @@ namespace States
 		mWidgets.get_widget<GUI::InputBox>(Widgets::IB_IP)->set_align_mode(GUI::Widget::AlignOptions::LEFT);
 		mWidgets.get_widget<GUI::InputBox>(Widgets::IB_PORT)->set_align_mode(GUI::Widget::AlignOptions::LEFT);
 
-		mWidgets.insert_widget<GUI::Button>(Widgets::B_CONNECT, new GUI::Button(sf::Vector2f(523.0f, 480.0f), context.mTextures->get_resource(Textures::ID::B_CONNECT), "Connect", font, 25));
+		if (mRemoteType == Net::RemoteType::CLIENT)
+			mWidgets.insert_widget<GUI::Button>(Widgets::B_CONNECT, new GUI::Button(sf::Vector2f(523.0f, 480.0f), context.mTextures->get_resource(Textures::ID::B_CONNECT), "Connect", font, 25));
+		else
+			mWidgets.insert_widget<GUI::Button>(Widgets::B_CONNECT, new GUI::Button(sf::Vector2f(523.0f, 480.0f), context.mTextures->get_resource(Textures::ID::B_CONNECT), "Host", font, 25));
+
 		mWidgets.insert_widget<GUI::Button>(Widgets::B_CANCEL, new GUI::Button(sf::Vector2f(523.0f, 470.0f), context.mTextures->get_resource(Textures::ID::B_CANCEL), "Cancel", font, 25));
 		mWidgets.insert_widget<GUI::Button>(Widgets::B_BACK, new GUI::Button(sf::Vector2f(360.0f, 560.0f), context.mTextures->get_resource(Textures::ID::B_BACK)));
 
@@ -129,6 +133,7 @@ namespace States
 			delete_state();
 			add_state(ID::MAIN_MENU);
 		});
+
 	}
 
 	void ConnectState::render(void)

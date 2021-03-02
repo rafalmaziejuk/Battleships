@@ -39,9 +39,16 @@ namespace States
 
 		mWidgets.get_widget<GUI::Button>(Widgets::B_READY)->set_callback([this](void)
 		{
-			if (mWorld.all_ships_placed())
+			if (mWidgets.get_widget<GUI::Button>(Widgets::B_READY)->get_text() == "Ready")
 			{
-				mRemote->mReady = true;
+				if (mWorld.all_ships_placed())
+				{
+					mRemote->mReady = true;
+				}
+			}
+			else
+			{
+				mRemote->mReplay = true;
 			}
 		});
 
@@ -64,6 +71,11 @@ namespace States
 	void GameState::activate_ready_button(void)
 	{
 		mWidgets.get_widget<GUI::Button>(Widgets::B_READY)->activate();
+	}
+
+	void GameState::update_ready_button_text(std::string text)
+	{
+		mWidgets.get_widget<GUI::Button>(Widgets::B_READY)->set_text(text);
 	}
 
 	void GameState::render(void)

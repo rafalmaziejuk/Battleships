@@ -11,8 +11,6 @@ namespace Net
     
     static std::mutex mutex;    // not sure if it is a good solution (to be change?)
 
-    void decode_status(sf::Socket::Status status);
-
     enum class RemoteType
     {
         SERVER, CLIENT
@@ -24,13 +22,18 @@ namespace Net
         DISCONNECT,
         MISSILE,
         READY,
-        HIT,
         MISS,
+        HIT_PART,
         HIT_ONE,
-        HIT_VERTICAL_SHIP,
-        HIT_HORIZONTAL_SHIP,
-        HIT_AND_SANK
+        HIT_AND_SANK,
+        LOSE,
+        REPLAY
     };
+
+    void decode_status(sf::Socket::Status status);
+    void decode_action(PlayerAction action);
+
+    
 
     struct message
     {
@@ -78,7 +81,11 @@ namespace Net
         bool mReady;
         bool mEnemyReady;
         bool mGameStarted;
-
+        bool mIStartedGame;
+        bool mEnemyKnowsThatImReady;
+        bool mEnemyKnowsThatIWantReplay;
+        bool mReplay;
+        bool mEnemyWantsReplay;
         unsigned mSankShips;
 
         Remote()
@@ -95,7 +102,11 @@ namespace Net
             mReady(false),
             mEnemyReady(false),
             mGameStarted(false),
-            mSankShips(0)
+            mSankShips(0),
+            mEnemyKnowsThatImReady(false),
+            mEnemyKnowsThatIWantReplay(false),
+            mReplay(true),
+            mEnemyWantsReplay(true)
         {
         }
         ~Remote()
