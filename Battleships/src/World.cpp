@@ -95,21 +95,19 @@ void World::update(void)
 	mCursor.update(sf::Mouse::getPosition(*mWindow));
 }
 
-void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPressed, bool playerReady)
+void World::handle_event(const sf::Event &event, bool playerReady)
 {
 	//left button
-	if (mouse.button == sf::Mouse::Left)
+	if (!playerReady)
+		add_new_ship(event);
+
+	if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Button::Left)
 	{
-		if (mouse.x > 100 && mouse.y > 100 && mouse.x < 600 && mouse.y < 600)
-		{
-			if(!playerReady)
-				add_new_ship(mouse, isPressed);
-		}
-		else if (mouse.x > 700 && mouse.y > 100 && mouse.x < 1200 && mouse.y < 600)
+		if (event.mouseButton.x > 700 && event.mouseButton.y > 100 && event.mouseButton.x < 1200 && event.mouseButton.y < 600)
 		{
 			if (playerReady && mRemote->mMyTurn)
 			{
-				sf::Vector2i missilePos = mEnemyGrid.get_grid_coordinates(sf::Vector2i(mouse.x, mouse.y));
+				sf::Vector2i missilePos = mEnemyGrid.get_grid_coordinates(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
 
 				if (mEnemyGrid.mShotTiles[missilePos.x][missilePos.y] == TileStatus::NUL)
 				{
@@ -128,11 +126,11 @@ void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPresse
 			}
 		}
 	}
-	else if (mouse.button == sf::Mouse::Right)
+	else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Button::Right)
 	{
-		if (isPressed && !playerReady)
+		if (!playerReady)
 		{
-			sf::Vector2f cursorPos = map_cursor_to_world(sf::Vector2i(mouse.x, mouse.y));
+			sf::Vector2f cursorPos = map_cursor_to_world(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
 			Ship* clickedShip = is_ship_choosen((sf::Vector2i)cursorPos);
 			if (clickedShip)
 				remove_ship(clickedShip);
@@ -140,52 +138,58 @@ void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPresse
 	}
 }
 
-void World::add_new_ship(const sf::Event::MouseButtonEvent& mouse, bool isPressed)
+void World::add_new_ship(const sf::Event& event)
 {
-	if (isPressed)
+	if (event.type == sf::Event::MouseButtonPressed)
 	{
-		mStart = mPlayerGrid.get_grid_coordinates(sf::Vector2i(mouse.x, mouse.y));
-		mCursor.set_cursor_mode(Cursor::Mode::DRAGGING);
+		if (event.mouseButton.x > 100 && event.mouseButton.y > 100 && event.mouseButton.x < 600 && event.mouseButton.y < 600)
+		{
+			mStart = mPlayerGrid.get_grid_coordinates(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+			mCursor.set_cursor_mode(Cursor::Mode::DRAGGING);
 
-		if (mPlayerGrid.is_field_free(mStart))
-			mIsGood = true;
-		else
-			mIsGood = false;
+			if (mPlayerGrid.is_field_free(mStart))
+				mIsGood = true;
+			else
+				mIsGood = false;
+		}
 	}
 
-	if (!isPressed)
+	if (event.type == sf::Event::MouseButtonReleased)
 	{
-		mEnd = mPlayerGrid.get_grid_coordinates(sf::Vector2i(mouse.x, mouse.y));
-		mCursor.set_cursor_mode(Cursor::Mode::DEFAULT);
-
-		if (mPlayerGrid.is_field_free(mEnd) && mIsGood)
+		if (event.mouseButton.x > 100 && event.mouseButton.y > 100 && event.mouseButton.x < 600 && event.mouseButton.y < 600)
 		{
-			uint8_t length = 1;
+			mEnd = mPlayerGrid.get_grid_coordinates(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+			mCursor.set_cursor_mode(Cursor::Mode::DEFAULT);
 
-			if (mEnd.x == mStart.x)
-				length += abs(mEnd.y - mStart.y);
-			else if (mEnd.y == mStart.y)
-				length += abs(mEnd.x - mStart.x);
-			else
+			if (mPlayerGrid.is_field_free(mEnd) && mIsGood)
 			{
-				mIsGood = false;
-				return;
-			}
+				uint8_t length = 1;
 
-			if (length <= 4)
-			{
-				for (int i = 0; i < NUM_OF_SHIPS; i++)
+				if (mEnd.x == mStart.x)
+					length += abs(mEnd.y - mStart.y);
+				else if (mEnd.y == mStart.y)
+					length += abs(mEnd.x - mStart.x);
+				else
 				{
-					if (mPlayerShips[i].get_length() == length && mPlayerShips[i].is_on_grid() == false)
+					mIsGood = false;
+					return;
+				}
+
+				if (length <= 4)
+				{
+					for (int i = 0; i < NUM_OF_SHIPS; i++)
 					{
-						mPlayerShips[i].set_position(mStart, mEnd);
-						mPlayerGrid.update(mPlayerShips[i], ShipAction::ADD);
-						break;
+						if (mPlayerShips[i].get_length() == length && mPlayerShips[i].is_on_grid() == false)
+						{
+							mPlayerShips[i].set_position(mStart, mEnd);
+							mPlayerGrid.update(mPlayerShips[i], ShipAction::ADD);
+							break;
+						}
 					}
 				}
-			}
 
-			mIsGood = false;
+				mIsGood = false;
+			}
 		}
 	}
 }

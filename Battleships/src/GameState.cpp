@@ -85,19 +85,7 @@ namespace States
 	bool GameState::handle_event(const sf::Event &event)
 	{
 		mWidgets.handle_event(event);
-
-		switch (event.type)
-		{
-			case sf::Event::MouseButtonPressed:
-				mWorld.handle_input(event.mouseButton, true, mRemote->mReady);
-				break;
-
-			case sf::Event::MouseButtonReleased:
-				mWorld.handle_input(event.mouseButton, false, mRemote->mReady);
-				break;
-
-			default: break;
-		}
+		mWorld.handle_event(event, mRemote->mReady);
 
 		return true;
 	}

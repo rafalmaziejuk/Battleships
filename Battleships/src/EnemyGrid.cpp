@@ -36,7 +36,8 @@ void EnemyGrid::draw_dots(sf::RenderWindow* window)
 				mDotSprite.setPosition(sf::Vector2f(mGridStart.x + i * 50, mGridStart.y + j * 50));
 				window->draw(mDotSprite);
 			}
-			else if (mShotTiles[i][j] == TileStatus::HIT)
+			
+			if (mShotTiles[i][j] == TileStatus::HIT)
 			{
 				mSankShipTile.setPosition(sf::Vector2f(mGridStart.x + i * 50, mGridStart.y + j * 50));
 				window->draw(mSankShipTile);

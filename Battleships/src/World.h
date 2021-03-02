@@ -40,7 +40,7 @@ private:
 	void set_ships(void);
 	
 	Ship* get_this_ship_head(const sf::Vector2i& cursorPos);
-	void add_new_ship(const sf::Event::MouseButtonEvent& mouse, bool isPressed);
+	void add_new_ship(const sf::Event& event);
 	void remove_ship(Ship* ship);
 
 public:
@@ -49,7 +49,7 @@ public:
 
 	void draw(void);
 	void update(void);
-	void handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPressed, bool playerReady);
+	void handle_event(const sf::Event &event, bool playerReady);
 	bool all_ships_placed(void);
 	void set_remote(Net::Remote* remote);
 	void activate_enemy_grid(bool flag);
@@ -57,5 +57,4 @@ public:
 
 	PlayerGrid& get_player_grid(void);
 	EnemyGrid& get_enemy_grid(void);
-
 };
