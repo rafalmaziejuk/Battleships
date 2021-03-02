@@ -190,7 +190,6 @@ void PlayerGrid::draw(sf::RenderWindow* window)
 	//////////////////////////////////////////////////
 }
 
-
 void PlayerGrid::update(Ship& ship, ShipAction action)
 {
 	if (action == ShipAction::ADD)

@@ -94,11 +94,11 @@ namespace States
 
 			if (mIsRemoteThreadRunning)
 			{
-				mWidgets.get_widget<GUI::InputBox>(Widgets::IB_IP)->deactivate();
-				mWidgets.get_widget<GUI::InputBox>(Widgets::IB_PORT)->deactivate();
-				mWidgets.get_widget<GUI::Button>(Widgets::B_CONNECT)->deactivate();
-				mWidgets.get_widget<GUI::Button>(Widgets::B_BACK)->deactivate();
-				mWidgets.get_widget<GUI::Button>(Widgets::B_CANCEL)->activate();
+				mWidgets.get_widget(Widgets::IB_IP)->deactivate();
+				mWidgets.get_widget(Widgets::IB_PORT)->deactivate();
+				mWidgets.get_widget(Widgets::B_CONNECT)->deactivate();
+				mWidgets.get_widget(Widgets::B_BACK)->deactivate();
+				mWidgets.get_widget(Widgets::B_CANCEL)->activate();
 			}
 		});
 
@@ -109,7 +109,6 @@ namespace States
 				if (mServer->is_running())
 				{
 					mServer->stop();
-					std::cout << "stop";
 					mIsRemoteThreadRunning = false;
 				}
 			}
@@ -118,16 +117,15 @@ namespace States
 				if (mClient->is_running())
 				{
 					mClient->stop();
-					std::cout << "stop";
 					mIsRemoteThreadRunning = false;
 				}
 			}
 
-			mWidgets.get_widget<GUI::Button>(Widgets::B_CANCEL)->deactivate();
-			mWidgets.get_widget<GUI::InputBox>(Widgets::IB_IP)->activate();
-			mWidgets.get_widget<GUI::InputBox>(Widgets::IB_PORT)->activate();
-			mWidgets.get_widget<GUI::Button>(Widgets::B_CONNECT)->activate();
-			mWidgets.get_widget<GUI::Button>(Widgets::B_BACK)->activate();
+			mWidgets.get_widget(Widgets::B_CANCEL)->deactivate();
+			mWidgets.get_widget(Widgets::IB_IP)->activate();
+			mWidgets.get_widget(Widgets::IB_PORT)->activate();
+			mWidgets.get_widget(Widgets::B_CONNECT)->activate();
+			mWidgets.get_widget(Widgets::B_BACK)->activate();
 		});
 		
 		mWidgets.get_widget<GUI::Button>(Widgets::B_BACK)->set_callback([this](void)
