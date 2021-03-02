@@ -66,6 +66,7 @@ void Ship::reset(void)
 	mSank = false;
 	mIsOnGrid = false;
 	mTiles.clear();
+	mHitTiles = 0;
 }
 
 sf::Vector2i Ship::get_start(void) const

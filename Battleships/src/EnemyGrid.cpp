@@ -54,11 +54,11 @@ void EnemyGrid::draw_dots(sf::RenderWindow* window)
 }
 
 // to be rafactored
-void EnemyGrid::update_grid_after_ship_sank(void)
+void EnemyGrid::update_grid_after_ship_sank(sf::Vector2i missilePos, sf::Vector2i comeFrom)
 {
 	
 	std::list<sf::Vector2i> tiles_to_update;
-	 
+	/*
 	for (int x = 0; x < FIELDS; x++)
 	{
 		for (int  y = 0; y < FIELDS; y++)
@@ -95,6 +95,39 @@ void EnemyGrid::update_grid_after_ship_sank(void)
 			}
 		}
 	}
+	*/
+	int x = missilePos.x;
+	int y = missilePos.y;
+
+	if (mShotTiles[x][y] == TileStatus::HIT)
+	{
+		if (x - 1 >= 0 && y - 1 >= 0)
+			(mShotTiles[x - 1][y - 1] != TileStatus::HIT && comeFrom != sf::Vector2i(x - 1,y - 1)) ?
+				tiles_to_update.push_back(sf::Vector2i(x - 1, y - 1)) : update_grid_after_ship_sank(sf::Vector2i(x - 1, y - 1),missilePos);
+		if (x - 1 >= 0)
+			(mShotTiles[x - 1][y] != TileStatus::HIT && comeFrom != sf::Vector2i(x - 1, y)) ?
+				tiles_to_update.push_back(sf::Vector2i(x - 1, y)) : update_grid_after_ship_sank(sf::Vector2i(x - 1, y ), missilePos);
+
+		if (x - 1 >= 0 && y + 1 < FIELDS)
+			(mShotTiles[x - 1][y + 1] != TileStatus::HIT && comeFrom != sf::Vector2i(x - 1, y + 1)) ?
+				tiles_to_update.push_back(sf::Vector2i(x - 1, y + 1)) : update_grid_after_ship_sank(sf::Vector2i(x - 1, y + 1), missilePos);
+		if (y - 1 >= 0)
+			(mShotTiles[x][y - 1] != TileStatus::HIT && comeFrom != sf::Vector2i(x, y - 1)) ?
+				tiles_to_update.push_back(sf::Vector2i(x, y - 1)) : update_grid_after_ship_sank(sf::Vector2i(x, y - 1), missilePos);
+		if (y + 1 < FIELDS)
+			(mShotTiles[x][y + 1] != TileStatus::HIT && comeFrom != sf::Vector2i(x, y + 1)) ?
+				tiles_to_update.push_back(sf::Vector2i(x, y + 1)) : update_grid_after_ship_sank(sf::Vector2i(x, y + 1), missilePos);
+		if (x + 1 < FIELDS && y - 1 >= 0)
+			(mShotTiles[x + 1][y - 1] != TileStatus::HIT && comeFrom != sf::Vector2i(x + 1, y - 1)) ?
+				tiles_to_update.push_back(sf::Vector2i(x + 1, y - 1)) : update_grid_after_ship_sank(sf::Vector2i(x + 1, y - 1), missilePos);
+		if (x + 1 < FIELDS)
+			(mShotTiles[x + 1][y] != TileStatus::HIT && comeFrom != sf::Vector2i(x + 1, y)) ?
+				tiles_to_update.push_back(sf::Vector2i(x + 1, y)) : update_grid_after_ship_sank(sf::Vector2i(x + 1, y), missilePos);
+		if (x + 1 < FIELDS && y + 1 < FIELDS)
+			(mShotTiles[x + 1][y + 1] != TileStatus::HIT && comeFrom != sf::Vector2i(x + 1, y + 1)) ?
+				tiles_to_update.push_back(sf::Vector2i(x + 1, y + 1)) : update_grid_after_ship_sank(sf::Vector2i(x + 1, y + 1), missilePos);
+	}
+
 	for (auto& tile : tiles_to_update)
 		mShotTiles[tile.x][tile.y] = TileStatus::MISS; // MISS means a dot is beign drawn
 		
@@ -131,7 +164,7 @@ void EnemyGrid::update_shot_tiles(Net::PlayerAction action, sf::Vector2i missile
 	}
 	else if (action == Net::PlayerAction::HIT_AND_SANK)
 	{
-		update_grid_after_ship_sank();
+		update_grid_after_ship_sank(missilePos, sf::Vector2i(-1,-1));
 	}
 
 	for (auto& tile : tiles_to_update)

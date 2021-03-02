@@ -16,34 +16,12 @@ World::World(sf::RenderWindow* window) :
 
 {
 	load_textures();
-	set_ships();
-	
-
-	mPlayerGrid.set_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE));
-	mPlayerGrid.set_hint_ship_texture(mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_I), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_A));
-	mPlayerGrid.set_dot_testure(mTextures.get_resource(Textures::ID::DOT));
-	mPlayerGrid.set_sank_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE_SANK));
-	mEnemyGrid.set_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE_SANK));
-	mEnemyGrid.set_hint_ship_texture(mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_A), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_SANK));
-	mEnemyGrid.set_dot_testure(mTextures.get_resource(Textures::ID::DOT));
-	mEnemyGrid.set_sank_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE_SANK));
-
-	mHintBackgroundSprite.setTexture(mTextures.get_resource(Textures::ID::HINT_BOARD_BACKGROUND));
-	mHintBackgroundSprite.setPosition(sf::Vector2f(75, 607));
-	
-	mBackgroundSprite.setTexture(mTextures.get_resource(Textures::ID::BG_GAME));
-	mGridSprites[0].setTexture(mTextures.get_resource(Textures::ID::GRID));
-	mGridSprites[0].setPosition(sf::Vector2f(50.0f, 50.0f));
-	mGridSprites[1].setTexture(mTextures.get_resource(Textures::ID::GRID));
-	mGridSprites[1].setPosition(sf::Vector2f(650.0f, 50.0f));
-	mGameStatus.setTexture(mTextures.get_resource(Textures::ID::GAMESTATUS));
-	mGameStatus.setPosition(375, 200);
-	mCursor = Cursor(mTextures.get_resource(Textures::ID::SELECTED_TILE));
+	init_ships();
+	init_world_components();
 }
 
 World::~World(void)
 {
-
 }
 
 void World::load_textures(void)
@@ -62,7 +40,7 @@ void World::load_textures(void)
 	mTextures.load_resource(Textures::ID::GAMESTATUS, "assets/gamestatus.png");
 }
 
-void World::set_ships(void)
+void World::init_ships(void)
 {
 	mPlayerShips[0].set_length(1);
 	mPlayerShips[1].set_length(1);
@@ -76,30 +54,63 @@ void World::set_ships(void)
 	mPlayerShips[9].set_length(4);
 }
 
+void World::init_world_components(void)
+{
+	mPlayerGrid.set_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE));
+	mPlayerGrid.set_hint_ship_texture(mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_I), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_A));
+	mPlayerGrid.set_dot_testure(mTextures.get_resource(Textures::ID::DOT));
+	mPlayerGrid.set_sank_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE_SANK));
+	mEnemyGrid.set_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE_SANK));
+	mEnemyGrid.set_hint_ship_texture(mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_A), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_SANK));
+	mEnemyGrid.set_dot_testure(mTextures.get_resource(Textures::ID::DOT));
+	mEnemyGrid.set_sank_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE_SANK));
+
+	mHintBackgroundSprite.setTexture(mTextures.get_resource(Textures::ID::HINT_BOARD_BACKGROUND));
+	mHintBackgroundSprite.setPosition(sf::Vector2f(75, 607));
+
+	mBackgroundSprite.setTexture(mTextures.get_resource(Textures::ID::BG_GAME));
+	mGridSprites[0].setTexture(mTextures.get_resource(Textures::ID::GRID));
+	mGridSprites[0].setPosition(sf::Vector2f(50.0f, 50.0f));
+	mGridSprites[1].setTexture(mTextures.get_resource(Textures::ID::GRID));
+	mGridSprites[1].setPosition(sf::Vector2f(650.0f, 50.0f));
+	mGameStatus.setTexture(mTextures.get_resource(Textures::ID::GAMESTATUS));
+	mGameStatus.setPosition(375, 200);
+	mCursor = Cursor(mTextures.get_resource(Textures::ID::SELECTED_TILE));
+}
+
 void World::draw(void)
 {
+	// drawing sprites
 	mWindow->draw(mBackgroundSprite);
 	mWindow->draw(mGridSprites[0]);
 	mWindow->draw(mGridSprites[1]);
 	mWindow->draw(mHintBackgroundSprite);
-
 	
+	// drawing player's ships 
 	for (unsigned i = 0; i < NUM_OF_SHIPS; i++)
 		mPlayerShips[i].draw_ship(mWindow);
+	// drawing cursor
 	mCursor.draw(mWindow);
 
+	// 
 	mPlayerGrid.draw(mWindow);
 	mEnemyGrid.draw(mWindow);
 
 	if (mRemote->mGameOver)
 		mWindow->draw(mGameStatus);
-
 }
 
 void World::update(void)
 {
 	mCursor.update(sf::Mouse::getPosition(*mWindow));
+}
 
+void World::reset_game(void)
+{
+	for (unsigned i = 0; i < NUM_OF_SHIPS; i++)
+		mPlayerShips[i].reset();
+	mPlayerGrid.reset();
+	mEnemyGrid.reset();
 }
 
 void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPressed, bool playerReady)
@@ -223,7 +234,6 @@ Ship* World::get_this_ship_head(const sf::Vector2i& cursorPos)
 			//std::cout << "mam";
 		}
 	return nullptr;
-
 }
 
 bool World::all_ships_placed(void)
@@ -261,13 +271,7 @@ void World::update_game_status(bool isWon)
 		mGameStatus.setTextureRect(sf::IntRect(0, 150, 500, 150));
 }
 
-void World::reset_game(void)
-{
-	for (unsigned i = 0; i < NUM_OF_SHIPS; i++)
-		mPlayerShips[i].reset();
-	mPlayerGrid.reset();
-	mEnemyGrid.reset();
-}
+
 
 PlayerGrid& World::get_player_grid(void)
 {

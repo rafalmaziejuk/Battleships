@@ -92,6 +92,7 @@ namespace Net
                mEnemyKnowsThatIWantReplay = false;
                mReplay = false;
                mEnemyWantsReplay = false;
+               mSankShips = 0;
 
                 if (mIStartedGame)
                 {
@@ -211,6 +212,7 @@ namespace Net
                 mEnemyKnowsThatIWantReplay = false;
                 mReplay = false;
                 mEnemyWantsReplay = false;
+                mSankShips = 0;
                 if (mIStartedGame)
                 {
                     mMyTurn = false;
@@ -327,6 +329,11 @@ namespace Net
             {
                 static_cast<States::GameState*>(mGameState)->update_ready_button_text("Ready");
                 static_cast<States::GameState*>(mGameState)->get_world().reset_game();
+                if(mMyTurn)
+                    static_cast<States::GameState*>(mGameState)->get_world().activate_enemy_grid(true);
+                else if (!mMyTurn)
+                    static_cast<States::GameState*>(mGameState)->get_world().activate_enemy_grid(false);
+
                 mGameOver = false;
             }
 
