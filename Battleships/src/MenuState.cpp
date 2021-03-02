@@ -20,9 +20,9 @@ namespace States
 	{
 		sf::Font &font = context.mFonts->get_resource(Fonts::ID::VIKING);
 
-		mWidgets.insert_widget<GUI::Button>(Widgets::B_HOST, new GUI::Button(sf::Vector2f(100.0f, 200.0f), context.mTextures->get_resource(Textures::ID::B_MENU1), "Host", font, 25));
-		mWidgets.insert_widget<GUI::Button>(Widgets::B_CONNECT, new GUI::Button(sf::Vector2f(100.0f, 350.0f), context.mTextures->get_resource(Textures::ID::B_MENU2), "Connect", font, 25));
-		mWidgets.insert_widget<GUI::Button>(Widgets::B_EXIT, new GUI::Button(sf::Vector2f(100.0f, 500.0f), context.mTextures->get_resource(Textures::ID::B_MENU3), "Exit", font, 25));
+		mWidgets.insert_widget<GUI::Button>(Widgets::B_HOST, new GUI::Button(sf::Vector2f(90.0f, 250.0f), context.mTextures->get_resource(Textures::ID::B_MENU1), "Host", font, 25));
+		mWidgets.insert_widget<GUI::Button>(Widgets::B_CONNECT, new GUI::Button(sf::Vector2f(90.0f, 400.0f), context.mTextures->get_resource(Textures::ID::B_MENU2), "Connect", font, 25));
+		mWidgets.insert_widget<GUI::Button>(Widgets::B_EXIT, new GUI::Button(sf::Vector2f(90.0f, 550.0f), context.mTextures->get_resource(Textures::ID::B_MENU3), "Exit", font, 25));
 
 		mWidgets.get_widget<GUI::Button>(Widgets::B_HOST)->set_text_color(sf::Color::White);
 		mWidgets.get_widget<GUI::Button>(Widgets::B_CONNECT)->set_text_color(sf::Color::White);

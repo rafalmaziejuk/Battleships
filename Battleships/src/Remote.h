@@ -3,10 +3,13 @@
 #include <SFML/Network.hpp>
 #include <atomic>
 #include <iostream>
+#include <mutex>
+
 
 namespace Net
 {
-    void decode_status(sf::Socket::Status status);
+    
+    static std::mutex mutex;    // not sure if it is a good solution (to be change?)
 
     enum class RemoteType
     {
@@ -19,23 +22,32 @@ namespace Net
         DISCONNECT,
         MISSILE,
         READY,
-        HIT,
-        MISS
+        MISS,
+        HIT_PART,
+        HIT_ONE,
+        HIT_AND_SANK,
+        LOSE,
+        REPLAY
     };
+
+    void decode_status(sf::Socket::Status status);
+    void decode_action(PlayerAction action);
+
+    
 
     struct message
     {
         PlayerAction ID;
-        sf::Vector2f coord;
+        sf::Vector2i coord;
 
-        message() : ID(PlayerAction::NUL), coord(sf::Vector2f(-1, -1)) 
+        message() : ID(PlayerAction::NUL), coord(sf::Vector2i(-1, -1)) 
         {
         }
         
         void clear(void)
         {
             ID = PlayerAction::NUL;
-            coord = sf::Vector2f(0, 0);
+            coord = sf::Vector2i(0, 0);
         }
 
         bool is_clear(void)
@@ -58,6 +70,7 @@ namespace Net
         message mMsgSent;
         message mMsgReceived;
 
+        sf::Vector2i mRecentlyFiredMissile;
         bool mIsRunning;
         bool mIsConnectedWithRemote;
 
@@ -67,6 +80,13 @@ namespace Net
         bool mMyTurn;
         bool mReady;
         bool mEnemyReady;
+        bool mGameStarted;
+        bool mIStartedGame;
+        bool mEnemyKnowsThatImReady;
+        bool mEnemyKnowsThatIWantReplay;
+        bool mReplay;
+        bool mEnemyWantsReplay;
+        unsigned mSankShips;
 
         Remote()
             : mSocket(),
@@ -80,7 +100,13 @@ namespace Net
             mIsWon(false),
             mMyTurn(false),
             mReady(false),
-            mEnemyReady(false)
+            mEnemyReady(false),
+            mGameStarted(false),
+            mSankShips(0),
+            mEnemyKnowsThatImReady(false),
+            mEnemyKnowsThatIWantReplay(false),
+            mReplay(true),
+            mEnemyWantsReplay(true)
         {
         }
         ~Remote()

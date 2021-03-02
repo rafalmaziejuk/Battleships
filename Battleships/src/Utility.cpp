@@ -28,4 +28,11 @@ namespace Utility
 		cursorInfo.bVisible = flag;
 		SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
 	}
+
+	void copy_grid(bool src[10][10], bool dst[10][10])
+	{
+		for (unsigned i = 0; i < 10; i++)
+			for (unsigned j = 0; j < 10; j++)
+				dst[i][j] = src[i][j];
+	}
 }

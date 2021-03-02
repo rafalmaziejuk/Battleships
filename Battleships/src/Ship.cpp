@@ -6,7 +6,22 @@
 Ship::Ship(void) :
 	mStart(),
 	mEnd(),
-	mDirection(Direction::Null)
+	mDirection(Direction::Null),
+	mHitTiles(0),
+	mSank(false)
+{
+	static int id = 0;
+	mId = id;
+	id++;
+}
+
+Ship::Ship(uint8_t lenght) :
+	mStart(),
+	mEnd(),
+	mDirection(Direction::Null),
+	mHitTiles(0),
+	mSank(false),
+	mLength(lenght)
 {
 	static int id = 0;
 	mId = id;
@@ -25,9 +40,12 @@ void Ship::remove_tiles(void)
 
 void Ship::draw_ship(sf::RenderWindow* window) const
 {
-	for(auto& i : mTiles)
+	if (!mSank)
 	{
-		window->draw(i);
+		for (auto& i : mTiles)
+		{
+			window->draw(i);
+		}
 	}
 }
 
@@ -41,6 +59,14 @@ void Ship::set_position(sf::Vector2i start, sf::Vector2i end)
 	mStart = start;
 	mEnd = end;
 	mIsOnGrid = true;
+}
+
+void Ship::reset(void)
+{
+	mSank = false;
+	mIsOnGrid = false;
+	mTiles.clear();
+	mHitTiles = 0;
 }
 
 sf::Vector2i Ship::get_start(void) const

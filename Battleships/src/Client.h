@@ -21,7 +21,7 @@ namespace Net
         States::State* mGameState;
 
         void run_client(void);
-        void update_game_status(World& world);
+        void handle_missile(World& world,sf::Vector2i coord);
         void update_grid(Grid& grid);
         void handle_message(message msg);
 

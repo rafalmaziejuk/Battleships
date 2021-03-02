@@ -22,6 +22,7 @@ namespace Utility
 	
 	void cls(void);
 	void console_cursor(bool flag);
+	void copy_grid(bool tab1[10][10], bool tab2[10][10]);
 }
 
 #include "Utility.inl"

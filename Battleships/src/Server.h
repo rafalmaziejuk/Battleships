@@ -12,7 +12,7 @@
 
 namespace Net
 {
-    class Server : public Remote
+    class Host : public Remote
     {
     private:
 
@@ -24,14 +24,14 @@ namespace Net
 
 
         void run_server(void);
-        void update_game_status(World& world);
+        void handle_missile(World& world, const sf::Vector2i coord);
         void update_grid(Grid& grid);
         void handle_message(message msg);
 
         virtual bool establish_connection(void) override;
     public:
-        Server();
-        ~Server();
+        Host();
+        ~Host();
 
         void set_game_state(States::State* state);
         void set_port(const int port);

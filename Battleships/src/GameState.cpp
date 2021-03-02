@@ -14,7 +14,7 @@ namespace States
 		if (mRemoteType == Net::RemoteType::CLIENT)
 			static_cast<Net::Client*>(mRemote)->set_game_state(this);
 		else
-			static_cast<Net::Server*>(mRemote)->set_game_state(this);
+			static_cast<Net::Host*>(mRemote)->set_game_state(this);
 
 		mWorld.set_remote(mRemote);	
 	}
@@ -39,9 +39,16 @@ namespace States
 
 		mWidgets.get_widget<GUI::Button>(Widgets::B_READY)->set_callback([this](void)
 		{
-			if (mWorld.all_ships_placed())
+			if (mWidgets.get_widget<GUI::Button>(Widgets::B_READY)->get_text() == "Ready")
 			{
-				mRemote->mReady = true;
+				if (mWorld.all_ships_placed())
+				{
+					mRemote->mReady = true;
+				}
+			}
+			else
+			{
+				mRemote->mReplay = true;
 			}
 		});
 
@@ -66,6 +73,11 @@ namespace States
 		mWidgets.get_widget<GUI::Button>(Widgets::B_READY)->activate();
 	}
 
+	void GameState::update_ready_button_text(std::string text)
+	{
+		mWidgets.get_widget<GUI::Button>(Widgets::B_READY)->set_text(text);
+	}
+
 	void GameState::render(void)
 	{
 		mWorld.draw();
@@ -85,19 +97,7 @@ namespace States
 	bool GameState::handle_event(const sf::Event &event)
 	{
 		mWidgets.handle_event(event);
-
-		switch (event.type)
-		{
-			case sf::Event::MouseButtonPressed:
-				mWorld.handle_input(event.mouseButton, true, mRemote->mReady);
-				break;
-
-			case sf::Event::MouseButtonReleased:
-				mWorld.handle_input(event.mouseButton, false, mRemote->mReady);
-				break;
-
-			default: break;
-		}
+		mWorld.handle_event(event, mRemote->mReady);
 
 		return true;
 	}

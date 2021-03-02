@@ -31,8 +31,8 @@ namespace States
 		}
 		else if (mRemoteType == Net::RemoteType::SERVER)
 		{
-			GameState::mRemote = new Net::Server();
-			mServer = static_cast<Net::Server*>(GameState::mRemote);
+			GameState::mRemote = new Net::Host();
+			mServer = static_cast<Net::Host*>(GameState::mRemote);
 		}
 
 		mWidgets.get_widget<GUI::InputBox>(Widgets::IB_IP)->set_entered_text(mMyIp.toString());
@@ -59,7 +59,11 @@ namespace States
 		mWidgets.get_widget<GUI::InputBox>(Widgets::IB_IP)->set_align_mode(GUI::Widget::AlignOptions::LEFT);
 		mWidgets.get_widget<GUI::InputBox>(Widgets::IB_PORT)->set_align_mode(GUI::Widget::AlignOptions::LEFT);
 
-		mWidgets.insert_widget<GUI::Button>(Widgets::B_CONNECT, new GUI::Button(sf::Vector2f(523.0f, 480.0f), context.mTextures->get_resource(Textures::ID::B_CONNECT), "Connect", font, 25));
+		if (mRemoteType == Net::RemoteType::CLIENT)
+			mWidgets.insert_widget<GUI::Button>(Widgets::B_CONNECT, new GUI::Button(sf::Vector2f(523.0f, 480.0f), context.mTextures->get_resource(Textures::ID::B_CONNECT), "Connect", font, 25));
+		else
+			mWidgets.insert_widget<GUI::Button>(Widgets::B_CONNECT, new GUI::Button(sf::Vector2f(523.0f, 480.0f), context.mTextures->get_resource(Textures::ID::B_CONNECT), "Host", font, 25));
+
 		mWidgets.insert_widget<GUI::Button>(Widgets::B_CANCEL, new GUI::Button(sf::Vector2f(523.0f, 470.0f), context.mTextures->get_resource(Textures::ID::B_CANCEL), "Cancel", font, 25));
 		mWidgets.insert_widget<GUI::Button>(Widgets::B_BACK, new GUI::Button(sf::Vector2f(360.0f, 560.0f), context.mTextures->get_resource(Textures::ID::B_BACK)));
 
@@ -90,11 +94,11 @@ namespace States
 
 			if (mIsRemoteThreadRunning)
 			{
-				mWidgets.get_widget<GUI::InputBox>(Widgets::IB_IP)->deactivate();
-				mWidgets.get_widget<GUI::InputBox>(Widgets::IB_PORT)->deactivate();
-				mWidgets.get_widget<GUI::Button>(Widgets::B_CONNECT)->deactivate();
-				mWidgets.get_widget<GUI::Button>(Widgets::B_BACK)->deactivate();
-				mWidgets.get_widget<GUI::Button>(Widgets::B_CANCEL)->activate();
+				mWidgets.get_widget(Widgets::IB_IP)->deactivate();
+				mWidgets.get_widget(Widgets::IB_PORT)->deactivate();
+				mWidgets.get_widget(Widgets::B_CONNECT)->deactivate();
+				mWidgets.get_widget(Widgets::B_BACK)->deactivate();
+				mWidgets.get_widget(Widgets::B_CANCEL)->activate();
 			}
 		});
 
@@ -105,7 +109,6 @@ namespace States
 				if (mServer->is_running())
 				{
 					mServer->stop();
-					std::cout << "stop";
 					mIsRemoteThreadRunning = false;
 				}
 			}
@@ -114,16 +117,15 @@ namespace States
 				if (mClient->is_running())
 				{
 					mClient->stop();
-					std::cout << "stop";
 					mIsRemoteThreadRunning = false;
 				}
 			}
 
-			mWidgets.get_widget<GUI::Button>(Widgets::B_CANCEL)->deactivate();
-			mWidgets.get_widget<GUI::InputBox>(Widgets::IB_IP)->activate();
-			mWidgets.get_widget<GUI::InputBox>(Widgets::IB_PORT)->activate();
-			mWidgets.get_widget<GUI::Button>(Widgets::B_CONNECT)->activate();
-			mWidgets.get_widget<GUI::Button>(Widgets::B_BACK)->activate();
+			mWidgets.get_widget(Widgets::B_CANCEL)->deactivate();
+			mWidgets.get_widget(Widgets::IB_IP)->activate();
+			mWidgets.get_widget(Widgets::IB_PORT)->activate();
+			mWidgets.get_widget(Widgets::B_CONNECT)->activate();
+			mWidgets.get_widget(Widgets::B_BACK)->activate();
 		});
 		
 		mWidgets.get_widget<GUI::Button>(Widgets::B_BACK)->set_callback([this](void)
@@ -131,6 +133,7 @@ namespace States
 			delete_state();
 			add_state(ID::MAIN_MENU);
 		});
+
 	}
 
 	void ConnectState::render(void)

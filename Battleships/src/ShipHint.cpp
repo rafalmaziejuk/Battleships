@@ -75,7 +75,7 @@ void ShipHint::draw_ship_hints(sf::RenderWindow* window) const
 		window->draw(mShipHints[i]);
 }
 
-void ShipHint::update_ship_hints(const int shipId,HintAction action)
+void ShipHint::update_ship_hints(int shipId,HintAction action)
 {
 	if (action == HintAction::ADD)
 	{
