@@ -25,7 +25,9 @@ namespace Net
         MISS,
         HIT_PART,
         HIT_ONE,
-        HIT_AND_SANK
+        HIT_AND_SANK,
+        LOSE,
+        REPLAY
     };
 
     void decode_status(sf::Socket::Status status);
@@ -79,7 +81,11 @@ namespace Net
         bool mReady;
         bool mEnemyReady;
         bool mGameStarted;
-
+        bool mIStartedGame;
+        bool mEnemyKnowsThatImReady;
+        bool mEnemyKnowsThatIWantReplay;
+        bool mReplay;
+        bool mEnemyWantsReplay;
         unsigned mSankShips;
 
         Remote()
@@ -96,7 +102,11 @@ namespace Net
             mReady(false),
             mEnemyReady(false),
             mGameStarted(false),
-            mSankShips(0)
+            mSankShips(0),
+            mEnemyKnowsThatImReady(false),
+            mEnemyKnowsThatIWantReplay(false),
+            mReplay(true),
+            mEnemyWantsReplay(true)
         {
         }
         ~Remote()

@@ -20,7 +20,6 @@ Application::Application(void) :
 {
 	mWindow.setKeyRepeatEnabled(false);
 	mWindow.setFramerateLimit(60);
-
 	mFonts.load_resource(Fonts::ID::SANSATION, "assets/Sansation.ttf");
 	mFonts.load_resource(Fonts::ID::VIKING, "assets/VIKING-FONT.ttf");
 	mTextures.load_resource(Textures::ID::B_MENU1, "assets/button1.png");

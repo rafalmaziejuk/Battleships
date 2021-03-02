@@ -15,6 +15,19 @@ Ship::Ship(void) :
 	id++;
 }
 
+Ship::Ship(uint8_t lenght) :
+	mStart(),
+	mEnd(),
+	mDirection(Direction::Null),
+	mHitTiles(0),
+	mSank(false),
+	mLength(lenght)
+{
+	static int id = 0;
+	mId = id;
+	id++;
+}
+
 Ship::~Ship(void) 
 {
 
@@ -46,6 +59,13 @@ void Ship::set_position(sf::Vector2i start, sf::Vector2i end)
 	mStart = start;
 	mEnd = end;
 	mIsOnGrid = true;
+}
+
+void Ship::reset(void)
+{
+	mSank = false;
+	mIsOnGrid = false;
+	mTiles.clear();
 }
 
 sf::Vector2i Ship::get_start(void) const

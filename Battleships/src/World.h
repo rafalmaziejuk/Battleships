@@ -24,6 +24,7 @@ private:
 	sf::Sprite mBackgroundSprite;
 	sf::Sprite mHintBackgroundSprite;
 	sf::Sprite mGridSprites[2];
+	sf::Sprite mGameStatus;
 	sf::Vector2i mStart;
 	sf::Vector2i mEnd;
 	bool mIsGood;
@@ -53,6 +54,9 @@ public:
 	bool all_ships_placed(void);
 	void set_remote(Net::Remote* remote);
 	void activate_enemy_grid(bool flag);
+	void update_game_status(bool isWon);
+	void reset_game(void);
+
 	Ship* is_ship_choosen(const sf::Vector2i& cursorPos);
 
 	PlayerGrid& get_player_grid(void);

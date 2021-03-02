@@ -17,6 +17,7 @@ World::World(sf::RenderWindow* window) :
 {
 	load_textures();
 	set_ships();
+	
 
 	mPlayerGrid.set_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE));
 	mPlayerGrid.set_hint_ship_texture(mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_I), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_A));
@@ -35,7 +36,8 @@ World::World(sf::RenderWindow* window) :
 	mGridSprites[0].setPosition(sf::Vector2f(50.0f, 50.0f));
 	mGridSprites[1].setTexture(mTextures.get_resource(Textures::ID::GRID));
 	mGridSprites[1].setPosition(sf::Vector2f(650.0f, 50.0f));
-	
+	mGameStatus.setTexture(mTextures.get_resource(Textures::ID::GAMESTATUS));
+	mGameStatus.setPosition(375, 200);
 	mCursor = Cursor(mTextures.get_resource(Textures::ID::SELECTED_TILE));
 }
 
@@ -57,7 +59,7 @@ void World::load_textures(void)
 	mTextures.load_resource(Textures::ID::DOT, "assets/dot.png");
 	mTextures.load_resource(Textures::ID::HINT_SHIP_TILE_SANK, "assets/sankhinttile.png");
 	mTextures.load_resource(Textures::ID::SHIP_TILE_SANK, "assets/sankshiptile.png");
-
+	mTextures.load_resource(Textures::ID::GAMESTATUS, "assets/gamestatus.png");
 }
 
 void World::set_ships(void)
@@ -89,6 +91,8 @@ void World::draw(void)
 	mPlayerGrid.draw(mWindow);
 	mEnemyGrid.draw(mWindow);
 
+	if (mRemote->mGameOver)
+		mWindow->draw(mGameStatus);
 
 }
 
@@ -111,7 +115,7 @@ void World::handle_input(const sf::Event::MouseButtonEvent &mouse, bool isPresse
 		}
 		else if (mouse.x > 700 && mouse.y > 100 && mouse.x < 1200 && mouse.y < 600)
 		{
-			if (playerReady && mRemote->mMyTurn)
+			if (playerReady && mRemote->mMyTurn && !mRemote->mGameOver && mRemote->mGameStarted)
 			{
 				sf::Vector2i missilePos = mEnemyGrid.get_grid_coordinates(sf::Vector2i(mouse.x, mouse.y));
 
@@ -245,6 +249,24 @@ void  World::activate_enemy_grid(bool flag)
 			: mGridSprites[1].setTexture(mTextures.get_resource(Textures::ID::GRIDINNACTIVE));
 
 	}
+}
+
+void World::update_game_status(bool isWon)
+{
+	if (!isWon)
+	{
+		mGameStatus.setTextureRect(sf::IntRect(0, 0, 500, 150));
+	}
+	else
+		mGameStatus.setTextureRect(sf::IntRect(0, 150, 500, 150));
+}
+
+void World::reset_game(void)
+{
+	for (unsigned i = 0; i < NUM_OF_SHIPS; i++)
+		mPlayerShips[i].reset();
+	mPlayerGrid.reset();
+	mEnemyGrid.reset();
 }
 
 PlayerGrid& World::get_player_grid(void)

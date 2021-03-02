@@ -204,6 +204,22 @@ void PlayerGrid::update(Ship& ship, ShipAction action)
 	}
 }
 
+void PlayerGrid::reset(void)
+{
+	for (unsigned i = 0; i < FIELDS; i++)
+	{
+		for (unsigned j = 0; j < FIELDS; j++)
+		{
+			mFields[i][j] =  false ; //fields taken overall
+			mShipFields[i][j] = false ; //fields occupied by ships only
+			mShotTiles[i][j] = TileStatus::NUL ;
+		}
+	}
+	mPlacedShips = 0;
+	for (unsigned i = 0; i < 10; i++)
+		mShipHint.update_ship_hints(i, HintAction::REMOVE);
+}
+
 bool PlayerGrid::is_field_free(sf::Vector2i position) const
 {
 	return !mFields[position.y][position.x];
@@ -217,17 +233,18 @@ void PlayerGrid::draw_dots(sf::RenderWindow* window)
 		{
 			if (mShotTiles[i][j] == TileStatus::MISS)
 			{
-				mDotSprite.setPosition(sf::Vector2f(mGridStart.x + i * 50, mGridStart.y + j * 50));
+				mDotSprite.setPosition(sf::Vector2f((float)(mGridStart.x + i * 50), (float)(mGridStart.y + j * 50)));
 				window->draw(mDotSprite);
 			}
 			else if (mShotTiles[i][j] == TileStatus::HIT)
 			{
-				mSankShipTile.setPosition(sf::Vector2f(mGridStart.x + i * 50, mGridStart.y + j * 50));
+				mSankShipTile.setPosition(sf::Vector2f((float)(mGridStart.x + i * 50),(float)( mGridStart.y + j * 50)));
 				window->draw(mSankShipTile);
 			}
 		}
 	}
 }
+
 
 void PlayerGrid::update_grid_after_ship_sank(const Ship& ship, sf::Vector2i missilePos)
 {
@@ -321,8 +338,10 @@ Net::PlayerAction PlayerGrid::update_shot_tiles(Ship* ship, sf::Vector2i missile
 	// updating mShotTiles with coords stored in vector
 	for (auto& tile : tiles_to_update)
 		mShotTiles[tile.x][tile.y] = TileStatus::MISS; // MISS means a dot is beign drawn
-	std::cout << "RETURNING : ";
-	Net::decode_action(playerAction);
+	//std::cout << "RETURNING : ";
+	//Net::decode_action(playerAction);
 
-	return playerAction;
+	if (mRemote->mSankShips == 10)
+		return Net::PlayerAction::LOSE;
+	else return playerAction;
 }

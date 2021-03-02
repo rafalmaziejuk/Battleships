@@ -6,7 +6,8 @@ namespace Net
     Client::Client()
         : Remote(), mPort(0), mClientThread(nullptr), mGameState(nullptr)
     {
-        //mSocket.setBlocking(true);
+        mMyTurn = false;
+        mIStartedGame = false;
     }
 
     Client::~Client()
@@ -80,9 +81,37 @@ namespace Net
             mMsgSent.ID = world.get_player_grid().update_shot_tiles(ship, coord);
             // and returned ID should be handled properly in remote's handle_message()
             /////////////////////////////////////////
+            if (mMsgSent.ID == PlayerAction::LOSE)
+            {
+               mGameOver = true;
+               mGameStarted = false;
+               mIsWon = false;
+               mReady = false;
+               mEnemyReady = false;
+               mEnemyKnowsThatImReady = false;
+               mEnemyKnowsThatIWantReplay = false;
+               mReplay = false;
+               mEnemyWantsReplay = false;
 
-            mMyTurn = false;
-            world.activate_enemy_grid(false);
+                if (mIStartedGame)
+                {
+                    mMyTurn = false;
+                    mIStartedGame = false;
+                }
+                else
+                {
+                    mMyTurn = true;
+                    mIStartedGame = true;
+                }
+                static_cast<States::GameState*>(mGameState)->get_world().update_game_status(false);
+                static_cast<States::GameState*>(mGameState)->update_ready_button_text("Replay");
+                static_cast<States::GameState*>(mGameState)->activate_ready_button();
+            }
+            else
+            {
+                mMyTurn = false;
+                world.activate_enemy_grid(false);
+            }
         }
         //sending feedback message to remote 
         if ((status = mSocket.send(&mMsgSent, sizeof(mMsgSent), sent)) != sf::Socket::Done)
@@ -111,61 +140,94 @@ namespace Net
 
         switch (msg.ID)
         {
-        case PlayerAction::HIT_PART:
-            std::cout << "Ship is hit!";
-            world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
-            world.get_enemy_grid().update_shot_tiles(PlayerAction::HIT_PART, mRecentlyFiredMissile);
-            mMyTurn = true;
-            world.activate_enemy_grid(true);
-            std::cout << "\n";
-            break;
-        // above HIT handler should be separated to this : 
-        //////////////////////////////////////
-        case PlayerAction::HIT_ONE:
-
-            std::cout << "Ship is hit!";
-            world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
-            world.get_enemy_grid().update_shot_tiles(PlayerAction::HIT_ONE, mRecentlyFiredMissile);
-            mMyTurn = true;
-            world.activate_enemy_grid(true);
+            case PlayerAction::REPLAY:
+                mEnemyWantsReplay = true;
 
             break;
-        case PlayerAction::HIT_AND_SANK:
-            std::cout << "Ship is hit!";
-            world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
-            world.get_enemy_grid().update_shot_tiles(PlayerAction::HIT_AND_SANK, mRecentlyFiredMissile);
-            mMyTurn = true;
-            world.activate_enemy_grid(true);
-            break;
-        ///////////////////////////////////////
+            case PlayerAction::HIT_PART:
+                std::cout << "Ship is hit!";
+                world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
+                world.get_enemy_grid().update_shot_tiles(PlayerAction::HIT_PART, mRecentlyFiredMissile);
+                mMyTurn = true;
+                world.activate_enemy_grid(true);
+                std::cout << "\n";
+                break;
+            // above HIT handler should be separated to this : 
+            //////////////////////////////////////
+            case PlayerAction::HIT_ONE:
 
-        case PlayerAction::MISS:
-            std::cout << "You missed! :( ";
-            world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::MISS;
-            world.activate_enemy_grid(false);
-            mMyTurn = false;
-            std::cout << "\n";
-            break;
-        case PlayerAction::NUL:
-            std::cout << "NUL";
-            break;
-        case PlayerAction::READY:
-            std::cout << "READY";
-            mEnemyReady = true;
-            break;
-        case PlayerAction::MISSILE:
-        {
-            std::cout << "Odebralem -  " << msg.coord.x << " " << msg.coord.y;
+                std::cout << "Ship is hit!";
+                world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
+                world.get_enemy_grid().update_shot_tiles(PlayerAction::HIT_ONE, mRecentlyFiredMissile);
+                mMyTurn = true;
+                world.activate_enemy_grid(true);
+
+                break;
+            case PlayerAction::HIT_AND_SANK:
+                std::cout << "Ship is hit!";
+                world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
+                world.get_enemy_grid().update_shot_tiles(PlayerAction::HIT_AND_SANK, mRecentlyFiredMissile);
+                mMyTurn = true;
+                world.activate_enemy_grid(true);
+                break;
+            ///////////////////////////////////////
+
+            case PlayerAction::MISS:
+                std::cout << "You missed! :( ";
+                world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::MISS;
+                world.activate_enemy_grid(false);
+                mMyTurn = false;
+                std::cout << "\n";
+                break;
+            case PlayerAction::NUL:
+                std::cout << "NUL";
+                break;
+            case PlayerAction::READY:
+                std::cout << "READY";
+                mEnemyReady = true;
+                break;
+            case PlayerAction::MISSILE:
+            {
+                std::cout << "Odebralem -  " << msg.coord.x << " " << msg.coord.y;
             
-            handle_missile(world, msg.coord);
-            world.activate_enemy_grid(true);
+                handle_missile(world, msg.coord);
+                world.activate_enemy_grid(true);
 
-            break;
+                break;
+            }
+            case PlayerAction::DISCONNECT:
+                std::cout << "DISCONNECT";
+                break;
+            case PlayerAction::LOSE:
+                world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
+                world.get_enemy_grid().update_shot_tiles(PlayerAction::HIT_AND_SANK, mRecentlyFiredMissile);
+
+                mGameOver = true;
+                mGameStarted = false;
+                mIsWon = true;
+                mReady = false;
+                mEnemyReady = false;
+                mEnemyKnowsThatImReady = false;
+                mEnemyKnowsThatIWantReplay = false;
+                mReplay = false;
+                mEnemyWantsReplay = false;
+                if (mIStartedGame)
+                {
+                    mMyTurn = false;
+                    mIStartedGame = false;
+                }
+                else
+                {
+                    mMyTurn = true;
+                    mIStartedGame = true;
+                }
+                static_cast<States::GameState*>(mGameState)->get_world().update_game_status(true);
+                static_cast<States::GameState*>(mGameState)->update_ready_button_text("Replay");
+                static_cast<States::GameState*>(mGameState)->activate_ready_button();
+                std::cout << "You won!";
+                break;
         }
-        case PlayerAction::DISCONNECT:
-            std::cout << "DISCONNECT";
-            break;
-        }
+        
     }
 
     bool Client::establish_connection(void)
@@ -211,8 +273,7 @@ namespace Net
         size_t received;
         size_t sent;
 
-        bool enemyKnowsThatImReady = false;
-        bool readyButtonDisabled = false;
+
 
         while (!mDone)
         {
@@ -236,10 +297,11 @@ namespace Net
                 // end client
                 // end state 
                 // back to main menu
+                std::cout << "Disconnected with remote or an error occured\n";
             }
 
-
-            if (mReady && !enemyKnowsThatImReady)
+            
+            if (mReplay && mEnemyWantsReplay && mReady && !mEnemyKnowsThatImReady)
             {
                 mMsgSent.ID = PlayerAction::READY;
                 if ((status = mSocket.send(&mMsgSent, sizeof(mMsgSent), sent)) != sf::Socket::Done)
@@ -247,8 +309,25 @@ namespace Net
                 else
                 {
                     std::cout << "I sent information about being ready to battle!\n";
-                    enemyKnowsThatImReady = true;
+                    mEnemyKnowsThatImReady = true;
                 }
+            }
+            else if (mReplay && !mEnemyKnowsThatIWantReplay)
+            {
+                mMsgSent.ID = PlayerAction::REPLAY;
+                if ((status = mSocket.send(&mMsgSent, sizeof(mMsgSent), sent)) != sf::Socket::Done)
+                    decode_status(status);
+                else
+                {
+                    std::cout << "I sent information that you are willing to play again!\n";
+                    mEnemyKnowsThatIWantReplay = true;
+                }
+            }
+            else if (mReplay && mEnemyWantsReplay && !mGameStarted && mGameOver)
+            {
+                static_cast<States::GameState*>(mGameState)->update_ready_button_text("Ready");
+                static_cast<States::GameState*>(mGameState)->get_world().reset_game();
+                mGameOver = false;
             }
 
             if (mReady && mEnemyReady)
@@ -258,6 +337,7 @@ namespace Net
                     std::cout << "Im ready and enemy is ready too!";
                     static_cast<States::GameState*>(mGameState)->deactivate_ready_button();
                     mGameStarted = true;
+                    mGameOver = false;
                 }
                 if (!mMsgSent.is_clear())
                 {

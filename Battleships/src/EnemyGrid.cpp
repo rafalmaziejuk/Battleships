@@ -3,7 +3,7 @@
 #include <list>
 
 EnemyGrid::EnemyGrid(const sf::Vector2i gridStart)
-	: Grid(gridStart), mHitShips(0)
+	: Grid(gridStart)
 {
 }
 
@@ -17,9 +17,15 @@ void EnemyGrid::draw(sf::RenderWindow* window)
 	draw_dots(window);
 }
 
-void EnemyGrid::update(void)
+void EnemyGrid::reset(void)
 {
-
+	for (unsigned i = 0; i < FIELDS; i++)
+	{
+		for (unsigned j = 0; j < FIELDS; j++)
+		{
+			mShotTiles[i][j] = TileStatus::NUL;
+		}
+	}
 }
 
 void EnemyGrid::fire_missile(const sf::Vector2i position)

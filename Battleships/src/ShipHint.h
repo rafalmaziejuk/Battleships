@@ -21,6 +21,6 @@ public:
 	~ShipHint();
 
 	void draw_ship_hints(sf::RenderWindow* window) const;
-	void update_ship_hints(const int shipId, HintAction action);
+	void update_ship_hints(int shipId, HintAction action);
 
 };
