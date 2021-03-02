@@ -102,30 +102,61 @@ void EnemyGrid::update_grid_after_ship_sank(sf::Vector2i missilePos, sf::Vector2
 	if (mShotTiles[x][y] == TileStatus::HIT)
 	{
 		if (x - 1 >= 0 && y - 1 >= 0)
-			(mShotTiles[x - 1][y - 1] != TileStatus::HIT && comeFrom != sf::Vector2i(x - 1,y - 1)) ?
-				tiles_to_update.push_back(sf::Vector2i(x - 1, y - 1)) : update_grid_after_ship_sank(sf::Vector2i(x - 1, y - 1),missilePos);
+		{
+			if (mShotTiles[x - 1][y - 1] != TileStatus::HIT)
+				tiles_to_update.push_back(sf::Vector2i(x - 1, y - 1));
+			else if (comeFrom != sf::Vector2i(x - 1, y - 1))
+				update_grid_after_ship_sank(sf::Vector2i(x - 1, y - 1), missilePos);
+		}
 		if (x - 1 >= 0)
-			(mShotTiles[x - 1][y] != TileStatus::HIT && comeFrom != sf::Vector2i(x - 1, y)) ?
-				tiles_to_update.push_back(sf::Vector2i(x - 1, y)) : update_grid_after_ship_sank(sf::Vector2i(x - 1, y ), missilePos);
-
+		{
+			if (mShotTiles[x - 1][y] != TileStatus::HIT)
+				tiles_to_update.push_back(sf::Vector2i(x - 1, y));
+			else if (comeFrom != sf::Vector2i(x - 1, y))
+				update_grid_after_ship_sank(sf::Vector2i(x - 1, y), missilePos);
+		}
 		if (x - 1 >= 0 && y + 1 < FIELDS)
-			(mShotTiles[x - 1][y + 1] != TileStatus::HIT && comeFrom != sf::Vector2i(x - 1, y + 1)) ?
-				tiles_to_update.push_back(sf::Vector2i(x - 1, y + 1)) : update_grid_after_ship_sank(sf::Vector2i(x - 1, y + 1), missilePos);
+		{
+			if (mShotTiles[x - 1][y + 1] != TileStatus::HIT)
+				tiles_to_update.push_back(sf::Vector2i(x - 1, y + 1));
+			else if(comeFrom != sf::Vector2i(x - 1, y + 1))
+				update_grid_after_ship_sank(sf::Vector2i(x - 1, y + 1), missilePos);
+		}
 		if (y - 1 >= 0)
-			(mShotTiles[x][y - 1] != TileStatus::HIT && comeFrom != sf::Vector2i(x, y - 1)) ?
-				tiles_to_update.push_back(sf::Vector2i(x, y - 1)) : update_grid_after_ship_sank(sf::Vector2i(x, y - 1), missilePos);
+		{
+			if (mShotTiles[x][y - 1] != TileStatus::HIT)
+				tiles_to_update.push_back(sf::Vector2i(x, y - 1));
+			else if(comeFrom != sf::Vector2i(x, y - 1))
+				update_grid_after_ship_sank(sf::Vector2i(x, y - 1), missilePos);
+		}
 		if (y + 1 < FIELDS)
-			(mShotTiles[x][y + 1] != TileStatus::HIT && comeFrom != sf::Vector2i(x, y + 1)) ?
-				tiles_to_update.push_back(sf::Vector2i(x, y + 1)) : update_grid_after_ship_sank(sf::Vector2i(x, y + 1), missilePos);
+		{
+			if (mShotTiles[x][y + 1] != TileStatus::HIT)
+				tiles_to_update.push_back(sf::Vector2i(x, y + 1));
+			else if(comeFrom != sf::Vector2i(x, y + 1))
+				update_grid_after_ship_sank(sf::Vector2i(x, y + 1), missilePos);
+		}
 		if (x + 1 < FIELDS && y - 1 >= 0)
-			(mShotTiles[x + 1][y - 1] != TileStatus::HIT && comeFrom != sf::Vector2i(x + 1, y - 1)) ?
-				tiles_to_update.push_back(sf::Vector2i(x + 1, y - 1)) : update_grid_after_ship_sank(sf::Vector2i(x + 1, y - 1), missilePos);
+		{
+			if (mShotTiles[x + 1][y - 1] != TileStatus::HIT)
+				tiles_to_update.push_back(sf::Vector2i(x + 1, y - 1));
+			else if(comeFrom != sf::Vector2i(x + 1, y - 1)) 
+				update_grid_after_ship_sank(sf::Vector2i(x + 1, y - 1), missilePos);
+		}
 		if (x + 1 < FIELDS)
-			(mShotTiles[x + 1][y] != TileStatus::HIT && comeFrom != sf::Vector2i(x + 1, y)) ?
-				tiles_to_update.push_back(sf::Vector2i(x + 1, y)) : update_grid_after_ship_sank(sf::Vector2i(x + 1, y), missilePos);
+		{
+			if (mShotTiles[x + 1][y] != TileStatus::HIT)
+				tiles_to_update.push_back(sf::Vector2i(x + 1, y));
+			else if(comeFrom != sf::Vector2i(x + 1, y))
+				update_grid_after_ship_sank(sf::Vector2i(x + 1, y), missilePos);
+		}
 		if (x + 1 < FIELDS && y + 1 < FIELDS)
-			(mShotTiles[x + 1][y + 1] != TileStatus::HIT && comeFrom != sf::Vector2i(x + 1, y + 1)) ?
-				tiles_to_update.push_back(sf::Vector2i(x + 1, y + 1)) : update_grid_after_ship_sank(sf::Vector2i(x + 1, y + 1), missilePos);
+		{
+			if (mShotTiles[x + 1][y + 1] != TileStatus::HIT)
+				tiles_to_update.push_back(sf::Vector2i(x + 1, y + 1));
+			else if(comeFrom != sf::Vector2i(x + 1, y + 1))
+				update_grid_after_ship_sank(sf::Vector2i(x + 1, y + 1), missilePos);
+		}
 	}
 
 	for (auto& tile : tiles_to_update)
