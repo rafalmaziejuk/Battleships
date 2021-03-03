@@ -80,9 +80,9 @@ void World::init_world_components(void)
 
 void World::handle_ship_adding(const sf::Event& event)
 {
-	if (event.type == sf::Event::MouseButtonPressed)
+	if (event.mouseButton.x > 100 && event.mouseButton.y > 100 && event.mouseButton.x < 600 && event.mouseButton.y < 600)
 	{
-		if (event.mouseButton.x > 100 && event.mouseButton.y > 100 && event.mouseButton.x < 600 && event.mouseButton.y < 600)
+		if (event.type == sf::Event::MouseButtonPressed)
 		{
 			mStart = mPlayerGrid.get_grid_coordinates(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
 			mCursor.set_cursor_mode(Cursor::Mode::DRAGGING);
@@ -92,11 +92,8 @@ void World::handle_ship_adding(const sf::Event& event)
 			else
 				mIsGood = false;
 		}
-	}
 
-	if (event.type == sf::Event::MouseButtonReleased)
-	{
-		if (event.mouseButton.x > 100 && event.mouseButton.y > 100 && event.mouseButton.x < 600 && event.mouseButton.y < 600)
+		if (event.type == sf::Event::MouseButtonReleased)
 		{
 			mEnd = mPlayerGrid.get_grid_coordinates(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
 			mCursor.set_cursor_mode(Cursor::Mode::DEFAULT);
