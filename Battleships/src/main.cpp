@@ -4,6 +4,7 @@
 /*
 *   Battleships
 *   Done - 03.03.2021
+*
 *   @ Maziejuk Rafal & Mlynarz Pawel
 */
 
