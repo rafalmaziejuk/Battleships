@@ -3,9 +3,10 @@
 
 /*
 *   Battleships
-*   work in progress :)
+*   Done - 03.03.2021
 *   @ Maziejuk Rafal & Mlynarz Pawel
 */
+
 static void hideConsole(void)
 {
     ShowWindow(GetConsoleWindow(), 0);
@@ -13,7 +14,7 @@ static void hideConsole(void)
 
 int main(void)
 {
-    //hideConsole();
+    hideConsole();
 
     Application battleships;
     battleships.run();

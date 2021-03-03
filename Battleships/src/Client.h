@@ -1,11 +1,6 @@
 #pragma once
 
-
 #include "Remote.h"
-#include "World.h"
-#include "Grid.h"
-#include "State.h"
-#include "GameState.h"
 
 #include <thread>
 
@@ -15,23 +10,18 @@ namespace Net
     {
     private:
 
-        std::thread* mClientThread;
-        sf::IpAddress mRemoteIp;
-        unsigned mPort;
-        States::State* mGameState;
+        std::thread* mClientThread; // client thread
+        sf::IpAddress mRemoteIp;    // host ip
+        unsigned mPort;             // port
 
-        void run_client(void);
-        void handle_missile(World& world,sf::Vector2i coord);
-        void update_grid(Grid& grid);
-        void handle_message(message msg);
-
+        
         virtual bool establish_connection(void) override;
+        void run_client(void);
 
     public:
         Client();
         ~Client();
 
-        void set_game_state(States::State* state);
         void set_port(const int port);
         void set_ip(const sf::IpAddress ip);
 

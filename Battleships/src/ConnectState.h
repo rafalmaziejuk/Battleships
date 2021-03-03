@@ -41,9 +41,9 @@ namespace States
 
 	private:
 		Net::RemoteType mRemoteType;
-		sf::IpAddress mMyIp;		// User's IP
+		sf::IpAddress mMyIp;			// User's IP
 		
-		Net::Host* mServer;			// Server
+		Net::Host* mServer;				// Server
 		Net::Client* mClient;			// Client
 		bool mIsRemoteThreadRunning;
 

@@ -7,7 +7,7 @@ namespace States
 	GameState::GameState(StateManager &stateManager, Context context, Net::RemoteType mRemoteType) :
 		State(stateManager, context),
 		mWorld(context.mWindow),
-		mWindow(context.mWindow)
+		mExitToMenuState(false)
 	{
 		set_gui(context);
 
@@ -16,11 +16,12 @@ namespace States
 		else
 			static_cast<Net::Host*>(mRemote)->set_game_state(this);
 
-		mWorld.set_remote(mRemote);	
+		mWorld.set_remote(mRemote);
 	}
 
 	GameState::~GameState(void)
 	{
+		mWidgets.clear_widgets();
 		delete mRemote;
 	}
 
@@ -54,7 +55,7 @@ namespace States
 
 		mWidgets.get_widget<GUI::Button>(Widgets::B_LEAVE)->set_callback([this](void)
 		{
-			
+			disconnect();
 		});
 	}
 
@@ -81,14 +82,19 @@ namespace States
 	void GameState::render(void)
 	{
 		mWorld.draw();
-		mWidgets.draw(mWindow);
+		mWidgets.draw(get_context().mWindow);
 	}
 
 	bool GameState::update(sf::Time elapsedTime)
 	{
-		mMousePosition = sf::Mouse::getPosition(*get_context().mWindow);
+		if (mExitToMenuState)
+		{
+			mRemote->send_message(Net::MessageCode::DISCONNECT);
+			disconnect();
+		}
 
-		mWidgets.update(mMousePosition);
+		sf::Vector2i mousePosition = sf::Mouse::getPosition(*get_context().mWindow);
+		mWidgets.update(mousePosition);
 		mWorld.update();
 
 		return true;
@@ -96,9 +102,33 @@ namespace States
 
 	bool GameState::handle_event(const sf::Event &event)
 	{
+		if (event.type == sf::Event::Closed)
+		{
+			mRemote->mIsConnectedWithRemote = false;
+			mRemote->send_message(Net::MessageCode::DISCONNECT);
+		}
 		mWidgets.handle_event(event);
 		mWorld.handle_event(event, mRemote->mReady);
 
 		return true;
+	}
+
+	void GameState::reset_game(void)
+	{
+		update_ready_button_text("Ready");
+		mWorld.reset_game();
+
+		if (mRemote->mMyTurn)
+			mWorld.activate_enemy_grid(true);
+		else if (!mRemote->mMyTurn)
+			mWorld.activate_enemy_grid(false);
+		mRemote->mGameOver = false;
+	}
+
+	void GameState::disconnect(void)
+	{
+		mRemote->stop();
+		delete_state();
+		add_state(ID::MAIN_MENU);
 	}
 }

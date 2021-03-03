@@ -3,7 +3,7 @@
 #include "State.h"
 #include "Button.h"
 #include "Client.h"
-#include "Server.h"
+#include "Host.h"
 
 #include <SFML/Graphics/Sprite.hpp>
 

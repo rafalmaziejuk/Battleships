@@ -6,31 +6,40 @@
 
 class PlayerGrid : public Grid
 {
-
-
 private:
-	void add_ship_to_grid(Ship& ship);
-	void delete_ship_from_grid(Ship& ship);
-	void update_ship_hint(const int shipId, HintAction action);
-	void set_new_ship_segment(sf::Vector2i position, Ship& ship);
-	void update_fields(sf::Vector2i position, bool somethingAdded);
+
+	/* utility functions */
+
+	void add_ship_to_grid(Ship& ship);									// adds ship to the player grid, updates essential components
+	void delete_ship_from_grid(Ship& ship);								// deletes ship from the grid
+	void update_ship_hint(const int shipId, HintAction action);			// updates ship hint below the grid
+	void set_new_ship_segment(sf::Vector2i position, Ship& ship);		// increments ship lenght by adding one tile
+	void update_fields(sf::Vector2i position, bool somethingAdded);		// updates field tables around the given tile position 
 	
 
 public:
-	unsigned mPlacedShips;
+	unsigned mPlacedShips; // ships already placed by user on the grid
+
+	/* constructor / destructor */
 
 	PlayerGrid(sf::Vector2i gridStart);
 	~PlayerGrid();
 
-	void draw(sf::RenderWindow* window);
+	/* drawing / updating */		
+	void draw(sf::RenderWindow* window);			
 	void update(Ship& ship, ShipAction action);
-	void reset(void);
+	void reset(void);																// grid reset
 
-	bool is_field_free(sf::Vector2i position) const;
-	void draw_dots(sf::RenderWindow* window);
-	
+	/* utility functions */
 
-	void update_grid_after_ship_sank(const Ship& ship, sf::Vector2i missilePos);
-	Net::PlayerAction update_shot_tiles(Ship* ship, sf::Vector2i missilePos);
+	bool is_field_free(sf::Vector2i position) const;								// true if ship can be placed on a given position
+	void draw_updated_shot_fields(sf::RenderWindow* window);						// draws dots and red ship tile textures 
+	void set_up_ship_hint(sf::Texture& texture, sf::Texture& texture2, sf::Texture& texture3);
+
+	/* missile handling */
+	Net::MessageCode update_grid_after_ship_sank(Ship& ship, sf::Vector2i missilePos);	// updates grid after missile hit and caused ship sinking
+	Net::MessageCode update_grid_after_hit_part(sf::Vector2i missilePos);				// updating grid after missile hit a part of a ship
+	Net::MessageCode update_grid_after_hit_one(Ship& ship, sf::Vector2i missilePos);	// updating grid after missile hit a one lenght ship
+	Net::MessageCode update_shot_tiles(Ship* ship, sf::Vector2i missilePos);			// updates shot tiles depending on a missile accuracy, returns a PlayerAction which will be send back to the remote
 };
 

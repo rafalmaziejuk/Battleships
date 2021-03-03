@@ -35,7 +35,7 @@ namespace GUI
 		uint8_t mDefaultFontSize;
 		AlignOptions mAlignMode;
 
-	public:
+	protected:
 		inline bool is_mouse_over(sf::Vector2i mousePosition) const
 		{
 			return mTriggerArea.contains(mousePosition);
@@ -51,16 +51,6 @@ namespace GUI
 			mIsSelected = false;
 		}
 
-		inline void activate(void)
-		{
-			mIsActive = true;
-		}
-
-		inline void deactivate(void)
-		{
-			mIsActive = false;
-		}
-
 		inline bool is_text_visible(void) const
 		{
 			return mIsTextVisible;
@@ -69,36 +59,6 @@ namespace GUI
 		inline bool is_selected(void) const
 		{
 			return mIsSelected;
-		}
-
-		inline bool is_active(void) const
-		{
-			return mIsActive;
-		}
-
-		inline void set_text(const std::string &text)
-		{
-			mText.setString(text);
-		}
-
-		inline bool is_text_empty(void) const
-		{
-			return mText.getString().isEmpty();
-		}
-
-		inline std::string get_text(void)
-		{
-			return mText.getString();
-		}
-
-		inline void change_text_visibility(bool isTextVisible)
-		{
-			mIsTextVisible = isTextVisible;
-		}
-
-		inline void set_text_color(sf::Color color)
-		{
-			mText.setFillColor(color);
 		}
 
 		/*
@@ -125,6 +85,47 @@ namespace GUI
 					mText.setPosition(mTriggerArea.left + mTriggerArea.width / 2.0f, mTriggerArea.top + mTriggerArea.height / 2.0f);
 					break;
 			}
+		}
+
+	public:
+		inline void activate(void)
+		{
+			mIsActive = true;
+		}
+
+		inline void deactivate(void)
+		{
+			mIsActive = false;
+		}
+
+		inline bool is_active(void) const
+		{
+			return mIsActive;
+		}
+
+		inline void set_text(const std::string &text)
+		{
+			mText.setString(text);
+		}
+
+		inline bool is_text_empty(void) const
+		{
+			return mText.getString().isEmpty();
+		}
+
+		inline std::string get_text(void) const
+		{
+			return mText.getString();
+		}
+
+		inline void change_text_visibility(bool isTextVisible)
+		{
+			mIsTextVisible = isTextVisible;
+		}
+
+		inline void set_text_color(sf::Color color)
+		{
+			mText.setFillColor(color);
 		}
 
 		inline void set_align_mode(AlignOptions mode)
