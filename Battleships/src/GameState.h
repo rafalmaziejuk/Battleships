@@ -26,9 +26,7 @@ namespace States
 		};
 
 	private:
-		sf::RenderWindow* mWindow;
 		World mWorld;
-		sf::Vector2i mMousePosition;
 
 	private:
 		GUI::WidgetContainer<Widgets> mWidgets;
@@ -42,9 +40,9 @@ namespace States
 		void deactivate_ready_button(void);
 		void activate_ready_button(void);
 		void update_ready_button_text(std::string text);
+
 		virtual void render(void) override;
 		virtual bool update(sf::Time elapsedTime) override;
 		virtual bool handle_event(const sf::Event &event) override;
-		
 	};
 }

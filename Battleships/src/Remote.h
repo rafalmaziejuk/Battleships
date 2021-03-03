@@ -5,12 +5,15 @@
 #include <iostream>
 #include <mutex>
 
-#include "GameState.h"
+namespace States
+{
+	class State;
+}
 
+class World;
 
 namespace Net
 {
-    
     static std::mutex mutex;
 
     enum class RemoteType
@@ -115,7 +118,7 @@ namespace Net
         {
         }
 
-        void handle_missile(World& world, const sf::Vector2i coord);
+        void handle_missile(World& world, sf::Vector2i coord);
         void handle_message(message msg);
 
         inline bool is_connected_with_remote(void) const

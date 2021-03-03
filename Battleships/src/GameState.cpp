@@ -6,8 +6,7 @@ namespace States
 
 	GameState::GameState(StateManager &stateManager, Context context, Net::RemoteType mRemoteType) :
 		State(stateManager, context),
-		mWorld(context.mWindow),
-		mWindow(context.mWindow)
+		mWorld(context.mWindow)
 	{
 		set_gui(context);
 
@@ -16,7 +15,7 @@ namespace States
 		else
 			static_cast<Net::Host*>(mRemote)->set_game_state(this);
 
-		mWorld.set_remote(mRemote);	
+		mWorld.set_remote(mRemote);
 	}
 
 	GameState::~GameState(void)
@@ -81,14 +80,14 @@ namespace States
 	void GameState::render(void)
 	{
 		mWorld.draw();
-		mWidgets.draw(mWindow);
+		mWidgets.draw(get_context().mWindow);
 	}
 
 	bool GameState::update(sf::Time elapsedTime)
 	{
-		mMousePosition = sf::Mouse::getPosition(*get_context().mWindow);
+		sf::Vector2i mousePosition = sf::Mouse::getPosition(*get_context().mWindow);
 
-		mWidgets.update(mMousePosition);
+		mWidgets.update(mousePosition);
 		mWorld.update();
 
 		return true;

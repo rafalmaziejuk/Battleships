@@ -1,5 +1,9 @@
 #include "Client.h"
 #include <iostream>
+#include "World.h"
+#include "Grid.h"
+#include "State.h"
+#include "GameState.h"
 
 namespace Net
 {

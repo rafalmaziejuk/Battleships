@@ -1,4 +1,5 @@
 #include "Remote.h"
+#include "GameState.h"
 
 namespace Net
 {
