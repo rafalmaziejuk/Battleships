@@ -144,7 +144,6 @@ void World::handle_ship_removing(const sf::Event& event)
 
 void World::remove_ship(Ship* ship)
 {
-	//std::cout << "Usuwamy\n";
 	mPlayerGrid.update(*ship, ShipAction::REMOVE);
 }
 
@@ -154,14 +153,12 @@ Ship* World::get_this_ship_head(const sf::Vector2i& cursorPos)
 		if (mPlayerShips[i].is_on_grid() == true && mPlayerShips[i].contain_tile(cursorPos))
 		{
 			return &mPlayerShips[i];
-			//std::cout << "mam";
 		}
 	return nullptr;
 }
 
 void World::draw(void)
 {
-	// drawing sprites
 	mWindow->draw(mBackgroundSprite);
 	mWindow->draw(mGridSprites[0]);
 	mWindow->draw(mGridSprites[1]);
@@ -171,13 +168,10 @@ void World::draw(void)
 	mHintBackgroundSprite.setPosition(sf::Vector2f(680, 607));
 	mWindow->draw(mHintBackgroundSprite);
 
-	// drawing player's ships 
 	for (unsigned i = 0; i < NUM_OF_SHIPS; i++)
 		mPlayerShips[i].draw_ship(mWindow);
-	// drawing cursor
-	mCursor.draw(mWindow);
 
-	// 
+	mCursor.draw(mWindow);
 	mPlayerGrid.draw(mWindow);
 	mEnemyGrid.draw(mWindow);
 
@@ -223,16 +217,12 @@ void World::fire_missile(const sf::Event& event, bool playerReady)
 
 void World::handle_missile(sf::Vector2i coord)
 {
-	// if missile hits a ship then its pointer is returned
 	Ship* ship = is_ship_choosen(coord);
-
-	//mRemote->mMsgSent.clear();
 
 	if (ship == nullptr) // if pointer is nullptr then remote missed
 	{
 		std::cout << "Enemy missed !\n";
 
-		// updating position to draw a dot
 		mPlayerGrid.mShotTiles[coord.x][coord.y] = TileStatus::MISS;
 
 		// setting data for feedback message
@@ -245,11 +235,10 @@ void World::handle_missile(sf::Vector2i coord)
 		std::cout << "Enemy hit your ship!\n";
 
 		mRemote->mMsgSent.ID = mPlayerGrid.update_shot_tiles(ship, coord);
-		// and returned ID should be handled properly in remote's handle_message()
-		/////////////////////////////////////////
+
 		if (mRemote->mMsgSent.ID == Net::MessageCode::LOSE)
 		{
-			mRemote->set_up_for_new_game(false);
+			mRemote->set_up_new_party(false);
 		}
 		else
 		{
@@ -259,8 +248,6 @@ void World::handle_missile(sf::Vector2i coord)
 	}
 	
 	mRemote->send_message();
-
-	//std::cout << "Enemy hit your ship!\n";
 }
 
 void World::handle_event(const sf::Event& event, bool playerReady)
@@ -317,10 +304,8 @@ void World::update_game_status(bool isWon)
 
 Ship* World::is_ship_choosen(const sf::Vector2i& cursorPos)
 {
-	//bool** shipGrid = mPlayerGrid->get_grid_fields();
 	if (mPlayerGrid.is_field_free(cursorPos) == false)
 	{
-		//std::cout << "TRUE";
 		return get_this_ship_head(cursorPos);
 	}
 	else

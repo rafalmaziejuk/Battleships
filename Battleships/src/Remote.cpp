@@ -41,7 +41,7 @@ namespace Net
         while (mGameState == nullptr) {}
     }
 
-    void Remote::set_up_for_new_game(bool isWon)
+    void Remote::set_up_new_party(bool isWon)
     {
         mGameOver = true;
         mGameStarted = false;
@@ -210,7 +210,7 @@ namespace Net
         case MessageCode::LOSE:
             world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
             world.get_enemy_grid().update_shot_tiles(MessageCode::HIT_AND_SANK, mRecentlyFiredMissile);
-            set_up_for_new_game(true);
+            set_up_new_party(true);
             //std::cout << "You won!";
             break;
         }

@@ -68,8 +68,6 @@ namespace Net
     public:
         std::atomic_bool mDone;
         sf::TcpSocket mSocket;
-        sf::Packet mPacketSent;
-        sf::Packet mPacketReceived;
         message mMsgSent;
         message mMsgReceived;
 
@@ -95,8 +93,6 @@ namespace Net
 
         Remote()
             : mSocket(),
-            mPacketSent(),
-            mPacketReceived(),
             mIsRunning(false),
             mIsConnectedWithRemote(false),
             mDone(false),
@@ -111,27 +107,31 @@ namespace Net
             mEnemyKnowsThatImReady(false),
             mEnemyKnowsThatIWantReplay(false),
             mReplay(true),
-            mEnemyWantsReplay(true)
+            mEnemyWantsReplay(true),
+            mGameState(nullptr),
+            mIStartedGame(false)
         {
         }
         ~Remote()
         {
         }
 
+        /* pure virtual methods */
+        virtual void start(void) = 0;
+        virtual void stop(void) = 0;
+
+        /* initialization */
         void set_game_state(States::State* state);
         void wait_till_game_state_ran(void);
-        void set_up_for_new_game(bool isWon);
+        void set_up_new_party(bool isWon);
 
+        /* data exchange */
         void try_receive(void);
         void try_send(void);
         void send_message(MessageCode action);
         void send_message(void);
-
         void handle_missile_msg(World& world, sf::Vector2i coord);
         void handle_message(message msg);
-
-        virtual void start(void) = 0;
-        virtual void stop(void) = 0;
 
         /* boolean expressions */
 

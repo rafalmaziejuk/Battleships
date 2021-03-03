@@ -66,7 +66,7 @@ public:
 	/* utility functions */
 
 	void fire_missile(const sf::Event& event, bool playerReady);	// checks if missile can be fired, if yes - writes data to a msg buffer, the second thread will send it to the remote
-	void handle_missile(sf::Vector2i coord);
+	void handle_missile(sf::Vector2i coord);						// handles comming missile
 
 	void handle_event(const sf::Event &event, bool playerReady);	// handles sfml event in world 
 	bool all_ships_placed(void);									// true if user placed all 10 ships on the grid, false otherwise
