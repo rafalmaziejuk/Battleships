@@ -18,12 +18,8 @@ namespace Net
         std::thread* mClientThread;
         sf::IpAddress mRemoteIp;
         unsigned mPort;
-        States::State* mGameState;
 
         void run_client(void);
-        void handle_missile(World& world,sf::Vector2i coord);
-        void update_grid(Grid& grid);
-        void handle_message(message msg);
 
         virtual bool establish_connection(void) override;
 

@@ -5,11 +5,13 @@
 #include <iostream>
 #include <mutex>
 
+#include "GameState.h"
+
 
 namespace Net
 {
     
-    static std::mutex mutex;    // not sure if it is a good solution (to be change?)
+    static std::mutex mutex;
 
     enum class RemoteType
     {
@@ -32,8 +34,6 @@ namespace Net
 
     void decode_status(sf::Socket::Status status);
     void decode_action(PlayerAction action);
-
-    
 
     struct message
     {
@@ -71,6 +71,8 @@ namespace Net
         message mMsgReceived;
 
         sf::Vector2i mRecentlyFiredMissile;
+        States::State* mGameState;
+
         bool mIsRunning;
         bool mIsConnectedWithRemote;
 
@@ -112,6 +114,9 @@ namespace Net
         ~Remote()
         {
         }
+
+        void handle_missile(World& world, const sf::Vector2i coord);
+        void handle_message(message msg);
 
         inline bool is_connected_with_remote(void) const
         {

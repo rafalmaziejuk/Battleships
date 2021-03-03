@@ -65,6 +65,7 @@ public:
 	void reset_game(void);
 
 	/* utility functions */
+
 	void handle_event(const sf::Event &event, bool playerReady);	// handles sfml event in world 
 	bool all_ships_placed(void);									// true if user placed all 10 ships on the grid, false otherwise
 	void set_remote(Net::Remote* remote);							// sets remote pointer to Client or Host

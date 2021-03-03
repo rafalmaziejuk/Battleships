@@ -24,8 +24,5 @@ public:
 	void update_grid_after_hit_part(sf::Vector2i missilePos);							// updating grid after missile hit a part of a ship
 	void update_grid_after_hit_one(sf::Vector2i missilePos);							// updating grid after missile hit a one lenght ship
 	void update_shot_tiles(Net::PlayerAction action, sf::Vector2i missilePos);			// updating after getting a response about missile accuracy
-
-
-
 };
 

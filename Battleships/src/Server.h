@@ -18,15 +18,12 @@ namespace Net
 
         sf::TcpListener mListener;
         std::thread* mServerThread;
-        States::State* mGameState;
 
         unsigned mPort;
 
 
         void run_server(void);
-        void handle_missile(World& world, const sf::Vector2i coord);
-        void update_grid(Grid& grid);
-        void handle_message(message msg);
+        
 
         virtual bool establish_connection(void) override;
     public:
