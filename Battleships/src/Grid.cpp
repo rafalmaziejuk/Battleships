@@ -14,16 +14,6 @@ Grid::~Grid(void)
 {
 }
 
-
-
-sf::Vector2i Grid::get_window_coordinates(sf::Vector2i position) const
-{
-	position.x = position.x * CELL_SIZE + mGridStart.x;
-	position.y = position.y * CELL_SIZE + mGridStart.y;
-
-	return position;
-}
-
 void Grid::set_dot_testure(const sf::Texture& texture)
 {
 	mDotSprite.setTexture(texture);
@@ -41,8 +31,12 @@ void Grid::set_sank_ship_texture(const sf::Texture& texture)
 
 void Grid::set_hint_ship_texture(sf::Texture& texture, sf::Texture& texture2)
 {
-	//mHintTileTexture = texture;
 	mShipHint = ShipHint(texture,texture2);
+}
+
+void Grid::set_remote(Net::Remote* remote)
+{
+	mRemote = remote;
 }
 
 sf::Vector2i Grid::get_grid_coordinates(sf::Vector2i mousePosition) const
@@ -53,8 +47,10 @@ sf::Vector2i Grid::get_grid_coordinates(sf::Vector2i mousePosition) const
 	return mousePosition;
 }
 
-void Grid::set_remote(Net::Remote* remote)
+sf::Vector2i Grid::get_window_coordinates(sf::Vector2i position) const
 {
-	mRemote = remote;
-}
+	position.x = position.x * CELL_SIZE + mGridStart.x;
+	position.y = position.y * CELL_SIZE + mGridStart.y;
 
+	return position;
+}

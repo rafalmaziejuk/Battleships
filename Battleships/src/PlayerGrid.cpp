@@ -152,42 +152,8 @@ void PlayerGrid::update_fields(sf::Vector2i position, bool somethingAdded)
 
 void PlayerGrid::draw(sf::RenderWindow* window)
 {
-	//for (auto tile : mTileSprites)
-		//window->draw(tile);
-
-	// for debugging purpose only
-		//////////////////////////////////////////////////
 	mShipHint.draw_ship_hints(window);
-	draw_dots(window);
-
-	/*
-	console_cursor(false);
-	std::cout << "GridFields\n";
-	std::cout << "  0 1 2 3 4 5 6 7 8 9\n";
-	for (unsigned i = 0; i < FIELDS; i++)
-	{
-		std::cout << i << " ";
-		for (unsigned j = 0; j < FIELDS; j++)
-		{
-			(mShipFields[i][j] == false) ? std::cout << ". " : std::cout << "x ";
-		}
-		std::cout << "\n";
-	}
-	std::cout << "\n\n";
-	std::cout << "UnavaliableFields\n";
-	std::cout << "  0 1 2 3 4 5 6 7 8 9\n";
-	for (unsigned i = 0; i < FIELDS; i++)
-	{
-		std::cout << i << " ";
-		for (unsigned j = 0; j < FIELDS; j++)
-		{
-			(mFields[i][j] == false) ? std::cout << ". " : std::cout << "x ";
-		}
-		std::cout << "\n";
-	}
-	cls();
-	*/
-	//////////////////////////////////////////////////
+	draw_updated_shot_fields(window);
 }
 
 void PlayerGrid::update(Ship& ship, ShipAction action)
@@ -224,7 +190,7 @@ bool PlayerGrid::is_field_free(sf::Vector2i position) const
 	return !mFields[position.y][position.x];
 }
 
-void PlayerGrid::draw_dots(sf::RenderWindow* window)
+void PlayerGrid::draw_updated_shot_fields(sf::RenderWindow* window)
 {
 	for (unsigned i = 0; i < FIELDS; i++)
 	{
@@ -245,7 +211,7 @@ void PlayerGrid::draw_dots(sf::RenderWindow* window)
 }
 
 
-void PlayerGrid::update_grid_after_ship_sank(const Ship& ship, sf::Vector2i missilePos)
+Net::PlayerAction PlayerGrid::update_grid_after_ship_sank(Ship& ship, sf::Vector2i missilePos)
 {
 	std::list<sf::Vector2i> tiles_to_update;
 	sf::Vector2i shift(0, 0);
@@ -273,44 +239,72 @@ void PlayerGrid::update_grid_after_ship_sank(const Ship& ship, sf::Vector2i miss
 		mShotTiles[pos.x][pos.y] = TileStatus::HIT;
 		pos += shift;
 	}
-	int counter = 0;
+
 	for (auto& tile : tiles_to_update)
 	{
 		mShotTiles[tile.x][tile.y] = TileStatus::MISS; // MISS means a dot is beign drawn
-		counter++;
 	}
-	std::cout << " \n\n " << counter << " DOTS DRAWN\n\n";
+
+	ship.mSank = true;
+	mRemote->mSankShips++;
+
+	return Net::PlayerAction::HIT_AND_SANK;
 }
 
-// function is called to update PLAYER GRID after his ship is hit
+Net::PlayerAction PlayerGrid::update_grid_after_hit_part(sf::Vector2i missilePos)							// updating grid after missile hit a part of a ship
+{
+	std::list<sf::Vector2i> tiles_to_update;
+	if (missilePos.x - 1 >= 0 && missilePos.y - 1 >= 0)			tiles_to_update.push_back(sf::Vector2i(missilePos.x - 1, missilePos.y - 1));
+	if (missilePos.x - 1 >= 0 && missilePos.y + 1 < FIELDS)		tiles_to_update.push_back(sf::Vector2i(missilePos.x - 1, missilePos.y + 1));
+	if (missilePos.x + 1 < FIELDS && missilePos.y - 1 >= 0)		tiles_to_update.push_back(sf::Vector2i(missilePos.x + 1, missilePos.y - 1));
+	if (missilePos.x + 1 < FIELDS && missilePos.y + 1 < FIELDS)	tiles_to_update.push_back(sf::Vector2i(missilePos.x + 1, missilePos.y + 1));
+
+	for (auto& tile : tiles_to_update)
+	{
+		mShotTiles[tile.x][tile.y] = TileStatus::MISS; // MISS means a dot is beign drawn
+	}
+
+	return Net::PlayerAction::HIT_PART;
+}
+
+Net::PlayerAction PlayerGrid::update_grid_after_hit_one(Ship& ship, sf::Vector2i missilePos)
+{
+	std::list<sf::Vector2i> tiles_to_update;
+
+	// im updating all possible coords around this tile and store in a vector
+	if (missilePos.x - 1 >= 0 && missilePos.y - 1 >= 0)			tiles_to_update.push_back(sf::Vector2i(missilePos.x - 1, missilePos.y - 1));
+	if (missilePos.x - 1 >= 0)									tiles_to_update.push_back(sf::Vector2i(missilePos.x - 1, missilePos.y));
+	if (missilePos.x - 1 >= 0 && missilePos.y + 1 < FIELDS)		tiles_to_update.push_back(sf::Vector2i(missilePos.x - 1, missilePos.y + 1));
+	if (missilePos.y - 1 >= 0)									tiles_to_update.push_back(sf::Vector2i(missilePos.x, missilePos.y - 1));
+	if (missilePos.y + 1 < FIELDS)								tiles_to_update.push_back(sf::Vector2i(missilePos.x, missilePos.y + 1));
+	if (missilePos.x + 1 < FIELDS && missilePos.y - 1 >= 0)		tiles_to_update.push_back(sf::Vector2i(missilePos.x + 1, missilePos.y - 1));
+	if (missilePos.x + 1 < FIELDS)								tiles_to_update.push_back(sf::Vector2i(missilePos.x + 1, missilePos.y));
+	if (missilePos.x + 1 < FIELDS && missilePos.y + 1 < FIELDS)	tiles_to_update.push_back(sf::Vector2i(missilePos.x + 1, missilePos.y + 1));
+
+	// updating ship flag
+	ship.mHitTiles = 1;
+	ship.mSank = true;
+
+	// updating user's sank ships 
+	mRemote->mSankShips++;
+	
+	for (auto& tile : tiles_to_update)
+	{
+		mShotTiles[tile.x][tile.y] = TileStatus::MISS; // MISS means a dot is beign drawn
+	}
+
+	return Net::PlayerAction::HIT_ONE;
+}
 
 Net::PlayerAction PlayerGrid::update_shot_tiles(Ship* ship, sf::Vector2i missilePos)
 {
 	// setting coord to draw a HIT tile
 	mShotTiles[missilePos.x][missilePos.y] = TileStatus::HIT;
 	Net::PlayerAction playerAction = Net::PlayerAction::NUL;
-	std::list<sf::Vector2i> tiles_to_update;
 
 	if (ship->get_length() == 1) // Hit ship with lenght 1
 	{
-		// im updating all possible coords around this tile and store in a vector
-		if (missilePos.x - 1 >= 0 && missilePos.y - 1 >= 0)			tiles_to_update.push_back(sf::Vector2i(missilePos.x - 1, missilePos.y - 1));
-		if (missilePos.x - 1  >= 0)									tiles_to_update.push_back(sf::Vector2i(missilePos.x - 1 , missilePos.y ));
-		if (missilePos.x - 1 >= 0 && missilePos.y + 1 < FIELDS)		tiles_to_update.push_back(sf::Vector2i(missilePos.x - 1 , missilePos.y + 1));
-		if (missilePos.y - 1  >= 0)									tiles_to_update.push_back(sf::Vector2i(missilePos.x , missilePos.y - 1));
-		if (missilePos.y + 1  < FIELDS)								tiles_to_update.push_back(sf::Vector2i(missilePos.x , missilePos.y + 1));
-		if (missilePos.x + 1 < FIELDS && missilePos.y - 1 >= 0)		tiles_to_update.push_back(sf::Vector2i(missilePos.x + 1, missilePos.y - 1));
-		if (missilePos.x + 1 < FIELDS)								tiles_to_update.push_back(sf::Vector2i(missilePos.x + 1, missilePos.y));
-		if (missilePos.x + 1 < FIELDS && missilePos.y + 1 < FIELDS)	tiles_to_update.push_back(sf::Vector2i(missilePos.x + 1, missilePos.y + 1));
-
-		// updating ship flag
-		ship->mHitTiles = 1;
-		ship->mSank = true;
-
-		// updating user's sank ships 
-		mRemote->mSankShips++;
-
-		playerAction = Net::PlayerAction::HIT_ONE;
+		playerAction = update_grid_after_hit_one(*ship, missilePos);
 	}
 	else if (ship->get_length() > 1)
 	{
@@ -318,27 +312,13 @@ Net::PlayerAction PlayerGrid::update_shot_tiles(Ship* ship, sf::Vector2i missile
 
 		if (!(ship->get_length() == ship->mHitTiles))
 		{
-			if (missilePos.x - 1 >= 0 && missilePos.y - 1 >= 0)			tiles_to_update.push_back(sf::Vector2i(missilePos.x - 1, missilePos.y - 1));
-			if (missilePos.x - 1 >= 0 && missilePos.y + 1 < FIELDS)		tiles_to_update.push_back(sf::Vector2i(missilePos.x - 1, missilePos.y + 1));
-			if (missilePos.x + 1 < FIELDS && missilePos.y - 1 >= 0)		tiles_to_update.push_back(sf::Vector2i(missilePos.x + 1, missilePos.y - 1));
-			if (missilePos.x + 1 < FIELDS && missilePos.y + 1 < FIELDS)	tiles_to_update.push_back(sf::Vector2i(missilePos.x + 1, missilePos.y + 1));
-
-			playerAction = Net::PlayerAction::HIT_PART;
+			playerAction = update_grid_after_hit_part(missilePos);
 		}
 		else
 		{
-			update_grid_after_ship_sank(*ship,missilePos);		
-			ship->mSank = true;
-			mRemote->mSankShips++;
-			playerAction = Net::PlayerAction::HIT_AND_SANK;
+			playerAction = update_grid_after_ship_sank(*ship,missilePos);
 		}
 	}
-
-	// updating mShotTiles with coords stored in vector
-	for (auto& tile : tiles_to_update)
-		mShotTiles[tile.x][tile.y] = TileStatus::MISS; // MISS means a dot is beign drawn
-	//std::cout << "RETURNING : ";
-	//Net::decode_action(playerAction);
 
 	if (mRemote->mSankShips == 10)
 		return Net::PlayerAction::LOSE;
