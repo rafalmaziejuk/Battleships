@@ -211,7 +211,7 @@ void PlayerGrid::draw_updated_shot_fields(sf::RenderWindow* window)
 }
 
 
-Net::PlayerAction PlayerGrid::update_grid_after_ship_sank(Ship& ship, sf::Vector2i missilePos)
+Net::MessageCode PlayerGrid::update_grid_after_ship_sank(Ship& ship, sf::Vector2i missilePos)
 {
 	std::list<sf::Vector2i> tiles_to_update;
 	sf::Vector2i shift(0, 0);
@@ -248,10 +248,10 @@ Net::PlayerAction PlayerGrid::update_grid_after_ship_sank(Ship& ship, sf::Vector
 	ship.mSank = true;
 	mRemote->mSankShips++;
 
-	return Net::PlayerAction::HIT_AND_SANK;
+	return Net::MessageCode::HIT_AND_SANK;
 }
 
-Net::PlayerAction PlayerGrid::update_grid_after_hit_part(sf::Vector2i missilePos)							// updating grid after missile hit a part of a ship
+Net::MessageCode PlayerGrid::update_grid_after_hit_part(sf::Vector2i missilePos)							// updating grid after missile hit a part of a ship
 {
 	std::list<sf::Vector2i> tiles_to_update;
 	if (missilePos.x - 1 >= 0 && missilePos.y - 1 >= 0)			tiles_to_update.push_back(sf::Vector2i(missilePos.x - 1, missilePos.y - 1));
@@ -264,10 +264,10 @@ Net::PlayerAction PlayerGrid::update_grid_after_hit_part(sf::Vector2i missilePos
 		mShotTiles[tile.x][tile.y] = TileStatus::MISS; // MISS means a dot is beign drawn
 	}
 
-	return Net::PlayerAction::HIT_PART;
+	return Net::MessageCode::HIT_PART;
 }
 
-Net::PlayerAction PlayerGrid::update_grid_after_hit_one(Ship& ship, sf::Vector2i missilePos)
+Net::MessageCode PlayerGrid::update_grid_after_hit_one(Ship& ship, sf::Vector2i missilePos)
 {
 	std::list<sf::Vector2i> tiles_to_update;
 
@@ -293,14 +293,14 @@ Net::PlayerAction PlayerGrid::update_grid_after_hit_one(Ship& ship, sf::Vector2i
 		mShotTiles[tile.x][tile.y] = TileStatus::MISS; // MISS means a dot is beign drawn
 	}
 
-	return Net::PlayerAction::HIT_ONE;
+	return Net::MessageCode::HIT_ONE;
 }
 
-Net::PlayerAction PlayerGrid::update_shot_tiles(Ship* ship, sf::Vector2i missilePos)
+Net::MessageCode PlayerGrid::update_shot_tiles(Ship* ship, sf::Vector2i missilePos)
 {
 	// setting coord to draw a HIT tile
 	mShotTiles[missilePos.x][missilePos.y] = TileStatus::HIT;
-	Net::PlayerAction playerAction = Net::PlayerAction::NUL;
+	Net::MessageCode playerAction = Net::MessageCode::NUL;
 
 	if (ship->get_length() == 1) // Hit ship with lenght 1
 	{
@@ -321,6 +321,6 @@ Net::PlayerAction PlayerGrid::update_shot_tiles(Ship* ship, sf::Vector2i missile
 	}
 
 	if (mRemote->mSankShips == 10)
-		return Net::PlayerAction::LOSE;
+		return Net::MessageCode::LOSE;
 	else return playerAction;
 }

@@ -21,7 +21,7 @@ namespace Net
         SERVER, CLIENT
     };
 
-    enum class PlayerAction
+    enum class MessageCode
     {
         NUL,
         DISCONNECT,
@@ -36,26 +36,26 @@ namespace Net
     };
 
     void decode_status(sf::Socket::Status status);
-    void decode_action(PlayerAction action);
+    void decode_message(MessageCode action);
 
     struct message
     {
-        PlayerAction ID;
+        MessageCode ID;
         sf::Vector2i coord;
 
-        message() : ID(PlayerAction::NUL), coord(sf::Vector2i(-1, -1)) 
+        message() : ID(MessageCode::NUL), coord(sf::Vector2i(-1, -1)) 
         {
         }
         
         void clear(void)
         {
-            ID = PlayerAction::NUL;
+            ID = MessageCode::NUL;
             coord = sf::Vector2i(0, 0);
         }
 
         bool is_clear(void)
         {
-            return (ID == PlayerAction::NUL) ? true : false;
+            return (ID == MessageCode::NUL) ? true : false;
         }
     };
 
@@ -118,22 +118,29 @@ namespace Net
         {
         }
 
-        void handle_missile(World& world, sf::Vector2i coord);
+        void set_game_state(States::State* state);
+        void wait_till_game_state_ran(void);
+        void set_up_for_new_game(bool isWon);
+
+        void try_receive(void);
+        void try_send(void);
+        void send_message(MessageCode action);
+        void send_message(void);
+
+        void handle_missile_msg(World& world, sf::Vector2i coord);
         void handle_message(message msg);
-
-        inline bool is_connected_with_remote(void) const
-        {
-            return mIsConnectedWithRemote;
-        }
-
-        inline bool is_running(void) const
-        {
-            return mIsRunning;
-        }
 
         virtual void start(void) = 0;
         virtual void stop(void) = 0;
 
+        /* boolean expressions */
+
+        bool is_connected_with_remote(void) const;
+        bool is_running(void) const;
+        bool both_want_replay_and_i_am_ready(void) const;   // in the first party, both mReplay and mEnemyWantsReplay are set to true
+        bool i_want_replay(void) const;
+        bool both_clicked_replay(void) const;
+        bool both_ready(void) const;
     };
 
 }

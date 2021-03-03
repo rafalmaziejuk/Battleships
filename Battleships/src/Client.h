@@ -4,30 +4,24 @@
 
 #include <thread>
 
-namespace States
-{
-	class State;
-}
-
 namespace Net
 {
     class Client : public Remote
     {
     private:
 
-        std::thread* mClientThread;
-        sf::IpAddress mRemoteIp;
-        unsigned mPort;
+        std::thread* mClientThread; // client thread
+        sf::IpAddress mRemoteIp;    // host ip
+        unsigned mPort;             // port
 
-        void run_client(void);
-
+        
         virtual bool establish_connection(void) override;
+        void run_client(void);
 
     public:
         Client();
         ~Client();
 
-        void set_game_state(States::State* state);
         void set_port(const int port);
         void set_ip(const sf::IpAddress ip);
 

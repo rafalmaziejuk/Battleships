@@ -36,9 +36,9 @@ public:
 	void draw_updated_shot_fields(sf::RenderWindow* window);						// draws dots and red ship tile textures 
 	
 	/* missile handling */
-	Net::PlayerAction update_grid_after_ship_sank(Ship& ship, sf::Vector2i missilePos);	// updates grid after missile hit and caused ship sinking
-	Net::PlayerAction update_grid_after_hit_part(sf::Vector2i missilePos);				// updating grid after missile hit a part of a ship
-	Net::PlayerAction update_grid_after_hit_one(Ship& ship, sf::Vector2i missilePos);	// updating grid after missile hit a one lenght ship
-	Net::PlayerAction update_shot_tiles(Ship* ship, sf::Vector2i missilePos);			// updates shot tiles depending on a missile accuracy, returns a PlayerAction which will be send back to the remote
+	Net::MessageCode update_grid_after_ship_sank(Ship& ship, sf::Vector2i missilePos);	// updates grid after missile hit and caused ship sinking
+	Net::MessageCode update_grid_after_hit_part(sf::Vector2i missilePos);				// updating grid after missile hit a part of a ship
+	Net::MessageCode update_grid_after_hit_one(Ship& ship, sf::Vector2i missilePos);	// updating grid after missile hit a one lenght ship
+	Net::MessageCode update_shot_tiles(Ship* ship, sf::Vector2i missilePos);			// updates shot tiles depending on a missile accuracy, returns a PlayerAction which will be send back to the remote
 };
 

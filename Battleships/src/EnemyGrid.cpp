@@ -158,16 +158,16 @@ void EnemyGrid::update_grid_after_hit_one(sf::Vector2i missilePos)
 	}
 }
 
-void EnemyGrid::update_shot_tiles(Net::PlayerAction action, sf::Vector2i missilePos)
+void EnemyGrid::update_shot_tiles(Net::MessageCode action, sf::Vector2i missilePos)
 {
 	// updating coord of a hit tile
 	mShotTiles[missilePos.x][missilePos.y] = TileStatus::HIT;
 	std::list<sf::Vector2i> tiles_to_update;
 
-	if (action == Net::PlayerAction::HIT_ONE)			// Hit ship with lenght 1
+	if (action == Net::MessageCode::HIT_ONE)			// Hit ship with lenght 1
 		update_grid_after_hit_one(missilePos);
-	else if (action == Net::PlayerAction::HIT_PART)		// Hit a part of a ship longer than 1
+	else if (action == Net::MessageCode::HIT_PART)		// Hit a part of a ship longer than 1
 		update_grid_after_hit_part(missilePos);
-	else if (action == Net::PlayerAction::HIT_AND_SANK)	// Hit a part of a ship what caused a ship sinking
+	else if (action == Net::MessageCode::HIT_AND_SANK)	// Hit a part of a ship what caused a ship sinking
 		update_grid_after_ship_sank(missilePos, sf::Vector2i(-1,-1));
 }

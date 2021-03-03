@@ -30,7 +30,6 @@ namespace Net
         Host();
         ~Host();
 
-        void set_game_state(States::State* state);
         void set_port(const int port);
         virtual void start(void) override;
         virtual void stop(void) override;

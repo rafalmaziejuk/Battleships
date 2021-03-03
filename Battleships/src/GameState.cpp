@@ -100,4 +100,16 @@ namespace States
 
 		return true;
 	}
+
+	void GameState::reset_game(void)
+	{
+		update_ready_button_text("Ready");
+		mWorld.reset_game();
+
+		if (mRemote->mMyTurn)
+			mWorld.activate_enemy_grid(true);
+		else if (!mRemote->mMyTurn)
+			mWorld.activate_enemy_grid(false);
+		mRemote->mGameOver = false;
+	}
 }

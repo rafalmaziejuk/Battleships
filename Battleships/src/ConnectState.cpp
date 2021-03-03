@@ -4,7 +4,7 @@
 #include "Widget.h"
 #include "InputBox.h"
 #include "Button.h"
-#include "Server.h"
+#include "Host.h"
 #include "Client.h"
 
 #include <SFML/Graphics/RenderWindow.hpp>

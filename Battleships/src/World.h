@@ -49,7 +49,6 @@ private:
 	void handle_ship_adding(const sf::Event& event);				// handles mouse button event and adds a new ship depending on current circumstances
 	void handle_ship_removing(const sf::Event& event);				// handles mouse button event and removes ship if pressed one
 	void remove_ship(Ship* ship);									// removes ship from the player grid
-	void fire_missile(const sf::Event& event, bool playerReady);	// checks if missile can be fired, if yes - writes data to a msg buffer, the second thread will send it to the remote
 	Ship* get_this_ship_head(const sf::Vector2i& cursorPos);		// returns head of clicked ship
 
 public:
@@ -65,6 +64,9 @@ public:
 	void reset_game(void);
 
 	/* utility functions */
+
+	void fire_missile(const sf::Event& event, bool playerReady);	// checks if missile can be fired, if yes - writes data to a msg buffer, the second thread will send it to the remote
+	void handle_missile(sf::Vector2i coord);
 
 	void handle_event(const sf::Event &event, bool playerReady);	// handles sfml event in world 
 	bool all_ships_placed(void);									// true if user placed all 10 ships on the grid, false otherwise

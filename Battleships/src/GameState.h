@@ -2,7 +2,7 @@
 
 #include "State.h"
 #include "World.h"
-#include "Server.h"
+#include "Host.h"
 #include "Client.h"
 
 #include "Button.h"
@@ -44,5 +44,7 @@ namespace States
 		virtual void render(void) override;
 		virtual bool update(sf::Time elapsedTime) override;
 		virtual bool handle_event(const sf::Event &event) override;
+
+		void reset_game(void);
 	};
 }

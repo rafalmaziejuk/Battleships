@@ -148,28 +148,6 @@ void World::remove_ship(Ship* ship)
 	mPlayerGrid.update(*ship, ShipAction::REMOVE);
 }
 
-void World::fire_missile(const sf::Event& event, bool playerReady)
-{
-	if (playerReady && mRemote->mMyTurn && !mRemote->mGameOver && mRemote->mGameStarted)
-	{
-		sf::Vector2i missilePos = mEnemyGrid.get_grid_coordinates(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
-
-		if (mEnemyGrid.mShotTiles[missilePos.x][missilePos.y] == TileStatus::NUL)
-		{
-			mRemote->mMyTurn = false;
-
-			// Critical section
-			Net::mutex.lock();
-
-			mRemote->mRecentlyFiredMissile = missilePos;
-			mRemote->mMsgSent.ID = Net::PlayerAction::MISSILE;
-			mRemote->mMsgSent.coord = sf::Vector2i(missilePos);
-
-			Net::mutex.unlock();
-		}
-	}
-}
-
 Ship* World::get_this_ship_head(const sf::Vector2i& cursorPos)
 {
 	for (unsigned i = 0; i < 10; i++)
@@ -214,6 +192,71 @@ void World::reset_game(void)
 		mPlayerShips[i].reset();
 	mPlayerGrid.reset();
 	mEnemyGrid.reset();
+}
+
+
+void World::fire_missile(const sf::Event& event, bool playerReady)
+{
+	if (playerReady && mRemote->mMyTurn && !mRemote->mGameOver && mRemote->mGameStarted)
+	{
+		sf::Vector2i missilePos = mEnemyGrid.get_grid_coordinates(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+
+		if (mEnemyGrid.mShotTiles[missilePos.x][missilePos.y] == TileStatus::NUL)
+		{
+			mRemote->mMyTurn = false;
+
+			// Critical section
+			Net::mutex.lock();
+
+			mRemote->mRecentlyFiredMissile = missilePos;
+			mRemote->mMsgSent.ID = Net::MessageCode::MISSILE;
+			mRemote->mMsgSent.coord = sf::Vector2i(missilePos);
+
+			Net::mutex.unlock();
+		}
+	}
+}
+
+void World::handle_missile(sf::Vector2i coord)
+{
+	// if missile hits a ship then its pointer is returned
+	Ship* ship = is_ship_choosen(coord);
+
+	//mRemote->mMsgSent.clear();
+
+	if (ship == nullptr) // if pointer is nullptr then remote missed
+	{
+		std::cout << "Enemy missed !\n";
+
+		// updating position to draw a dot
+		get_player_grid().mShotTiles[coord.x][coord.y] = TileStatus::MISS;
+
+		// setting data for feedback message
+		mRemote->mMsgSent.ID = Net::MessageCode::MISS;
+		mRemote->mMyTurn = true;
+		activate_enemy_grid(true);
+	}
+	else
+	{
+		std::cout << "Enemy hit your ship!\n";
+
+		mRemote->mMsgSent.ID = mPlayerGrid.update_shot_tiles(ship, coord);
+		// and returned ID should be handled properly in remote's handle_message()
+		/////////////////////////////////////////
+		if (mRemote->mMsgSent.ID == Net::MessageCode::LOSE)
+		{
+			mRemote->set_up_for_new_game(false);
+		}
+		else
+		{
+			mRemote->mMyTurn = false;
+			activate_enemy_grid(false);
+		}
+	}
+	
+	mRemote->send_message();
+
+	//std::cout << "Enemy hit your ship!\n";
 }
 
 void World::handle_event(const sf::Event& event, bool playerReady)
