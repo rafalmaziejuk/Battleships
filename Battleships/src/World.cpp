@@ -57,11 +57,11 @@ void World::init_ships(void)
 void World::init_world_components(void)
 {
 	mPlayerGrid.set_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE));
-	mPlayerGrid.set_hint_ship_texture(mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_I), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_A));
+	mPlayerGrid.set_up_ship_hint(mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_I), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_A), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_SANK));
 	mPlayerGrid.set_dot_testure(mTextures.get_resource(Textures::ID::DOT));
 	mPlayerGrid.set_sank_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE_SANK));
 	mEnemyGrid.set_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE_SANK));
-	mEnemyGrid.set_hint_ship_texture(mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_A), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_SANK));
+	mEnemyGrid.set_up_ship_hint(mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_I), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_A), mTextures.get_resource(Textures::ID::HINT_SHIP_TILE_SANK));
 	mEnemyGrid.set_dot_testure(mTextures.get_resource(Textures::ID::DOT));
 	mEnemyGrid.set_sank_ship_texture(mTextures.get_resource(Textures::ID::SHIP_TILE_SANK));
 
@@ -165,6 +165,10 @@ void World::draw(void)
 	mWindow->draw(mBackgroundSprite);
 	mWindow->draw(mGridSprites[0]);
 	mWindow->draw(mGridSprites[1]);
+
+	mHintBackgroundSprite.setPosition(sf::Vector2f(75, 607));
+	mWindow->draw(mHintBackgroundSprite);
+	mHintBackgroundSprite.setPosition(sf::Vector2f(680, 607));
 	mWindow->draw(mHintBackgroundSprite);
 
 	// drawing player's ships 

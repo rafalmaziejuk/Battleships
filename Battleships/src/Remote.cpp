@@ -116,6 +116,7 @@ namespace Net
             {
                 //std::cout << "Im ready and enemy is ready too!";
                 static_cast<States::GameState*>(mGameState)->deactivate_ready_button();
+                static_cast<States::GameState*>(mGameState)->get_world().get_enemy_grid().mShipHint.set_all_hints_active();
                 mGameStarted = true;
                 mGameOver = false;
             }

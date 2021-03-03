@@ -127,7 +127,6 @@ namespace States
 
 	void GameState::disconnect(void)
 	{
-		
 		mRemote->stop();
 		delete_state();
 		add_state(ID::MAIN_MENU);

@@ -51,7 +51,6 @@ public:
 	void set_dot_testure(const sf::Texture& texture);							// sets dot sprite texture
 	void set_ship_texture(const sf::Texture& texture);							// sets ship tile texture
 	void set_sank_ship_texture(const sf::Texture& texture);						// sets sank ship tile texture
-	void set_hint_ship_texture(sf::Texture& texture, sf::Texture& texture2);	// sets hint ship tile textures ( both active tile and innactive )
 	void set_remote(Net::Remote* remote);										// sets pointer to the remote
 
 	/* utility functions */

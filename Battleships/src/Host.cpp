@@ -85,6 +85,7 @@ namespace Net
 
             check_connection_status();
         }
+        mListener.close();
     }
 
 }

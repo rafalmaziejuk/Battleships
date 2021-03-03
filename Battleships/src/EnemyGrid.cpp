@@ -14,6 +14,7 @@ EnemyGrid::~EnemyGrid()
 
 void EnemyGrid::draw(sf::RenderWindow* window)
 {
+	mShipHint.draw_ship_hints(window);
 	draw_updated_shot_fields(window);
 }
 
@@ -47,15 +48,23 @@ void EnemyGrid::reset(void)
 			mShotTiles[i][j] = TileStatus::NUL;
 		}
 	}
+	for (unsigned i = 0; i < 10; i++)
+		mShipHint.update_ship_hints(i, HintAction::REMOVE);
 }
 
-void EnemyGrid::update_grid_after_ship_sank(sf::Vector2i missilePos, sf::Vector2i comeFrom)
+void EnemyGrid::set_up_ship_hint(sf::Texture& texture, sf::Texture& texture2, sf::Texture& texture3)
+{
+	mShipHint = ShipHint(texture, texture2, texture3, false);
+}
+
+int EnemyGrid::update_grid_after_ship_sank(sf::Vector2i missilePos, sf::Vector2i comeFrom)
 {
 	
 	std::list<sf::Vector2i> tiles_to_update;
 
 	int x = missilePos.x;
 	int y = missilePos.y;
+	int shipLenght = 0;
 
 	if (mShotTiles[x][y] == TileStatus::HIT)
 	{
@@ -64,62 +73,63 @@ void EnemyGrid::update_grid_after_ship_sank(sf::Vector2i missilePos, sf::Vector2
 			if (mShotTiles[x - 1][y - 1] != TileStatus::HIT)
 				tiles_to_update.push_back(sf::Vector2i(x - 1, y - 1));
 			else if (comeFrom != sf::Vector2i(x - 1, y - 1))
-				update_grid_after_ship_sank(sf::Vector2i(x - 1, y - 1), missilePos);
+				shipLenght += update_grid_after_ship_sank(sf::Vector2i(x - 1, y - 1), missilePos);
 		}
 		if (x - 1 >= 0)
 		{
 			if (mShotTiles[x - 1][y] != TileStatus::HIT)
 				tiles_to_update.push_back(sf::Vector2i(x - 1, y));
 			else if (comeFrom != sf::Vector2i(x - 1, y))
-				update_grid_after_ship_sank(sf::Vector2i(x - 1, y), missilePos);
+				shipLenght += update_grid_after_ship_sank(sf::Vector2i(x - 1, y), missilePos);
 		}
 		if (x - 1 >= 0 && y + 1 < FIELDS)
 		{
 			if (mShotTiles[x - 1][y + 1] != TileStatus::HIT)
 				tiles_to_update.push_back(sf::Vector2i(x - 1, y + 1));
 			else if(comeFrom != sf::Vector2i(x - 1, y + 1))
-				update_grid_after_ship_sank(sf::Vector2i(x - 1, y + 1), missilePos);
+				shipLenght += update_grid_after_ship_sank(sf::Vector2i(x - 1, y + 1), missilePos);
 		}
 		if (y - 1 >= 0)
 		{
 			if (mShotTiles[x][y - 1] != TileStatus::HIT)
 				tiles_to_update.push_back(sf::Vector2i(x, y - 1));
 			else if(comeFrom != sf::Vector2i(x, y - 1))
-				update_grid_after_ship_sank(sf::Vector2i(x, y - 1), missilePos);
+				shipLenght += update_grid_after_ship_sank(sf::Vector2i(x, y - 1), missilePos);
 		}
 		if (y + 1 < FIELDS)
 		{
 			if (mShotTiles[x][y + 1] != TileStatus::HIT)
 				tiles_to_update.push_back(sf::Vector2i(x, y + 1));
 			else if(comeFrom != sf::Vector2i(x, y + 1))
-				update_grid_after_ship_sank(sf::Vector2i(x, y + 1), missilePos);
+				shipLenght += update_grid_after_ship_sank(sf::Vector2i(x, y + 1), missilePos);
 		}
 		if (x + 1 < FIELDS && y - 1 >= 0)
 		{
 			if (mShotTiles[x + 1][y - 1] != TileStatus::HIT)
 				tiles_to_update.push_back(sf::Vector2i(x + 1, y - 1));
 			else if(comeFrom != sf::Vector2i(x + 1, y - 1)) 
-				update_grid_after_ship_sank(sf::Vector2i(x + 1, y - 1), missilePos);
+				shipLenght += update_grid_after_ship_sank(sf::Vector2i(x + 1, y - 1), missilePos);
 		}
 		if (x + 1 < FIELDS)
 		{
 			if (mShotTiles[x + 1][y] != TileStatus::HIT)
 				tiles_to_update.push_back(sf::Vector2i(x + 1, y));
 			else if(comeFrom != sf::Vector2i(x + 1, y))
-				update_grid_after_ship_sank(sf::Vector2i(x + 1, y), missilePos);
+				shipLenght += update_grid_after_ship_sank(sf::Vector2i(x + 1, y), missilePos);
 		}
 		if (x + 1 < FIELDS && y + 1 < FIELDS)
 		{
 			if (mShotTiles[x + 1][y + 1] != TileStatus::HIT)
 				tiles_to_update.push_back(sf::Vector2i(x + 1, y + 1));
 			else if(comeFrom != sf::Vector2i(x + 1, y + 1))
-				update_grid_after_ship_sank(sf::Vector2i(x + 1, y + 1), missilePos);
+				shipLenght += update_grid_after_ship_sank(sf::Vector2i(x + 1, y + 1), missilePos);
 		}
 	}
 
 	for (auto& tile : tiles_to_update)
 		mShotTiles[tile.x][tile.y] = TileStatus::MISS; // MISS means a dot is beign drawn
-		
+	
+	return shipLenght + 1;
 }
 
 void EnemyGrid::update_grid_after_hit_part(sf::Vector2i missilePos)
@@ -165,11 +175,18 @@ void EnemyGrid::update_shot_tiles(Net::MessageCode action, sf::Vector2i missileP
 	std::list<sf::Vector2i> tiles_to_update;
 
 	if (action == Net::MessageCode::HIT_ONE)			// Hit ship with lenght 1
+	{
 		update_grid_after_hit_one(missilePos);
+		mShipHint.update_ship_hints(1);
+	}
 	else if (action == Net::MessageCode::HIT_PART)		// Hit a part of a ship longer than 1
 		update_grid_after_hit_part(missilePos);
 	else if (action == Net::MessageCode::HIT_AND_SANK)	// Hit a part of a ship what caused a ship sinking
-		update_grid_after_ship_sank(missilePos, sf::Vector2i(-1,-1));
+	{
+		int shipLenght = update_grid_after_ship_sank(missilePos, sf::Vector2i(-1, -1));
+		std::cout << " ZATOPIONO STATEK O DL = " << shipLenght<<"\n";
+		mShipHint.update_ship_hints(shipLenght);
+	}
 }
 
 void EnemyGrid::handle_missile_hit(Net::MessageCode action, sf::Vector2i recentlyFiredMissile)

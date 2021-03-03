@@ -34,7 +34,8 @@ public:
 
 	bool is_field_free(sf::Vector2i position) const;								// true if ship can be placed on a given position
 	void draw_updated_shot_fields(sf::RenderWindow* window);						// draws dots and red ship tile textures 
-	
+	void set_up_ship_hint(sf::Texture& texture, sf::Texture& texture2, sf::Texture& texture3);
+
 	/* missile handling */
 	Net::MessageCode update_grid_after_ship_sank(Ship& ship, sf::Vector2i missilePos);	// updates grid after missile hit and caused ship sinking
 	Net::MessageCode update_grid_after_hit_part(sf::Vector2i missilePos);				// updating grid after missile hit a part of a ship

@@ -29,11 +29,6 @@ void Grid::set_sank_ship_texture(const sf::Texture& texture)
 	mSankShipTile.setTexture(texture);
 }
 
-void Grid::set_hint_ship_texture(sf::Texture& texture, sf::Texture& texture2)
-{
-	mShipHint = ShipHint(texture,texture2);
-}
-
 void Grid::set_remote(Net::Remote* remote)
 {
 	mRemote = remote;

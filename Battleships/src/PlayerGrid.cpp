@@ -210,6 +210,10 @@ void PlayerGrid::draw_updated_shot_fields(sf::RenderWindow* window)
 	}
 }
 
+void PlayerGrid::set_up_ship_hint(sf::Texture& texture, sf::Texture& texture2, sf::Texture& texture3)
+{
+	mShipHint = ShipHint(texture, texture2, texture3,true);
+}
 
 Net::MessageCode PlayerGrid::update_grid_after_ship_sank(Ship& ship, sf::Vector2i missilePos)
 {
@@ -292,6 +296,7 @@ Net::MessageCode PlayerGrid::update_grid_after_hit_one(Ship& ship, sf::Vector2i 
 	{
 		mShotTiles[tile.x][tile.y] = TileStatus::MISS; // MISS means a dot is beign drawn
 	}
+	mShipHint.update_ship_hints(ship.mId, HintAction::SANK);
 
 	return Net::MessageCode::HIT_ONE;
 }
@@ -317,6 +322,7 @@ Net::MessageCode PlayerGrid::update_shot_tiles(Ship* ship, sf::Vector2i missileP
 		else
 		{
 			playerAction = update_grid_after_ship_sank(*ship,missilePos);
+			mShipHint.update_ship_hints(ship->mId, HintAction::SANK);
 		}
 	}
 
