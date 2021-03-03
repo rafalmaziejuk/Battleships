@@ -229,7 +229,7 @@ void World::handle_missile(sf::Vector2i coord)
 		std::cout << "Enemy missed !\n";
 
 		// updating position to draw a dot
-		get_player_grid().mShotTiles[coord.x][coord.y] = TileStatus::MISS;
+		mPlayerGrid.mShotTiles[coord.x][coord.y] = TileStatus::MISS;
 
 		// setting data for feedback message
 		mRemote->mMsgSent.ID = Net::MessageCode::MISS;

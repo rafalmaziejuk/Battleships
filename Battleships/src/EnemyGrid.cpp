@@ -171,3 +171,16 @@ void EnemyGrid::update_shot_tiles(Net::MessageCode action, sf::Vector2i missileP
 	else if (action == Net::MessageCode::HIT_AND_SANK)	// Hit a part of a ship what caused a ship sinking
 		update_grid_after_ship_sank(missilePos, sf::Vector2i(-1,-1));
 }
+
+void EnemyGrid::handle_missile_hit(Net::MessageCode action, sf::Vector2i recentlyFiredMissile)
+{
+	mShotTiles[recentlyFiredMissile.x][recentlyFiredMissile.y] = TileStatus::HIT;
+	update_shot_tiles(action, recentlyFiredMissile);
+	mRemote->mMyTurn = true;
+}
+
+void EnemyGrid::handle_miss(sf::Vector2i recentlyFiredMissile)
+{
+	mShotTiles[recentlyFiredMissile.x][recentlyFiredMissile.y] = TileStatus::MISS;
+	mRemote->mMyTurn = false;
+}

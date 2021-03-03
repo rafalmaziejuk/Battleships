@@ -74,22 +74,20 @@ namespace Net
         sf::Socket::Status status;
         size_t received;
 
-        if ((status = mSocket.receive(&mMsgReceived, sizeof(message), received)) != sf::Socket::Done)
-        {
-            //decode_status(status);
-        }
-        else if (status == sf::Socket::Done)
+        if ((status = mSocket.receive(&mMsgReceived, sizeof(message), received)) == sf::Socket::Done)
         {
             std::cout << "Data received! \n";
+            //decode_status(status);
             handle_message(mMsgReceived);
         }
         else if (status == sf::Socket::Disconnected || status == sf::Socket::Error)
         {
-            // disconnected
-            // end client
-            // end state 
-            // back to main menu
+            mIsConnectedWithRemote = false;
             std::cout << "Disconnected with remote or an error occured\n";
+        }
+        else
+        {
+            //decode_status(status);
         }
     }
 
@@ -171,68 +169,50 @@ namespace Net
 
             break;
         case MessageCode::HIT_PART:
-            std::cout << "Ship is hit!";
-            world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
-            world.get_enemy_grid().update_shot_tiles(MessageCode::HIT_PART, mRecentlyFiredMissile);
-            mMyTurn = true;
+            //std::cout << "Ship is hit!";
+            world.get_enemy_grid().handle_missile_hit(MessageCode::HIT_PART,mRecentlyFiredMissile);
             world.activate_enemy_grid(true);
             std::cout << "\n";
             break;
-            // above HIT handler should be separated to this : 
-            //////////////////////////////////////
         case MessageCode::HIT_ONE:
-
-            std::cout << "Ship is hit!";
-            world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
-            world.get_enemy_grid().update_shot_tiles(MessageCode::HIT_ONE, mRecentlyFiredMissile);
-            mMyTurn = true;
+            //std::cout << "Ship is hit!";
+            world.get_enemy_grid().handle_missile_hit(MessageCode::HIT_ONE, mRecentlyFiredMissile);
             world.activate_enemy_grid(true);
-
             break;
         case MessageCode::HIT_AND_SANK:
-            std::cout << "Ship is hit!";
-            world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
-            world.get_enemy_grid().update_shot_tiles(MessageCode::HIT_AND_SANK, mRecentlyFiredMissile);
-            mMyTurn = true;
+            //std::cout << "Ship is hit!";
+            world.get_enemy_grid().handle_missile_hit(MessageCode::HIT_AND_SANK, mRecentlyFiredMissile);
             world.activate_enemy_grid(true);
             break;
-            ///////////////////////////////////////
-
         case MessageCode::MISS:
-            std::cout << "You missed! :( ";
-            world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::MISS;
+            //std::cout << "You missed! :( ";
+            world.get_enemy_grid().handle_miss(mRecentlyFiredMissile);
             world.activate_enemy_grid(false);
-            mMyTurn = false;
-            std::cout << "\n";
             break;
         case MessageCode::NUL:
-            std::cout << "NUL";
+            //std::cout << "NUL";
             break;
         case MessageCode::READY:
-            std::cout << "READY";
+            //std::cout << "READY";
             mEnemyReady = true;
             break;
         case MessageCode::MISSILE:
         {
-            std::cout << "Odebralem -  " << msg.coord.x << " " << msg.coord.y;
-
+            //std::cout << "Odebralem -  " << msg.coord.x << " " << msg.coord.y;
             handle_missile_msg(world, msg.coord);
             world.activate_enemy_grid(true);
-
             break;
         }
         case MessageCode::DISCONNECT:
-            std::cout << "DISCONNECT";
+            mIsConnectedWithRemote = false;
             break;
         case MessageCode::LOSE:
             world.get_enemy_grid().mShotTiles[mRecentlyFiredMissile.x][mRecentlyFiredMissile.y] = TileStatus::HIT;
             world.get_enemy_grid().update_shot_tiles(MessageCode::HIT_AND_SANK, mRecentlyFiredMissile);
-
             set_up_for_new_game(true);
-            std::cout << "You won!";
+            //std::cout << "You won!";
             break;
         }
-
     }
 
     void Remote::handle_missile_msg(World& world, sf::Vector2i coord)
@@ -269,6 +249,12 @@ namespace Net
     bool Remote::both_ready(void) const
     {
         return (mReady && mEnemyReady) ? true : false;
+    }
+
+    void Remote::check_connection_status(void)
+    {
+        if (!mIsConnectedWithRemote)
+            static_cast<States::GameState*>(mGameState)->mExitToMenuState = true;
     }
 
 }

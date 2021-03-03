@@ -74,6 +74,6 @@ public:
 	void activate_enemy_grid(bool flag);							// activated or deactivates enemy grid by setting different textures
 	void update_game_status(bool isWon);							// sets different texture rect depending on game status (won or lose)
 	Ship* is_ship_choosen(const sf::Vector2i& cursorPos);			// return pointer to the ship if it contains given tile
-	PlayerGrid& get_player_grid(void);								// returns reference to player grid
-	EnemyGrid& get_enemy_grid(void);								// returns reference to enemy grid
+	PlayerGrid& get_player_grid(void);								
+	EnemyGrid& get_enemy_grid(void);								
 };

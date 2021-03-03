@@ -33,6 +33,8 @@ namespace States
 		void set_gui(Context context);
 
 	public:
+		bool mExitToMenuState;
+
 		GameState(StateManager &stateManager, Context context, Net::RemoteType mRemoteType);
 		virtual ~GameState(void);
 
@@ -46,5 +48,6 @@ namespace States
 		virtual bool handle_event(const sf::Event &event) override;
 
 		void reset_game(void);
+		void disconnect(void);
 	};
 }

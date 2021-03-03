@@ -141,6 +141,8 @@ namespace Net
         bool i_want_replay(void) const;
         bool both_clicked_replay(void) const;
         bool both_ready(void) const;
+
+        void check_connection_status(void);
     };
 
 }

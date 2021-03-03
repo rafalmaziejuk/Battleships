@@ -59,7 +59,9 @@ void Application::process_events(void)
 		mStateManager.handle_event(event);
 
 		if (event.type == sf::Event::Closed)
+		{
 			mWindow.close();
+		}
 	}
 }
 

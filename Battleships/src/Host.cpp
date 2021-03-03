@@ -52,6 +52,7 @@ namespace Net
                 return false;
             }
         }
+        mIsConnectedWithRemote = true;
         return true;
     }
 
@@ -81,8 +82,9 @@ namespace Net
             try_send();
 
             mutex.unlock();
+
+            check_connection_status();
         }
-        system("pause");
     }
 
 }
