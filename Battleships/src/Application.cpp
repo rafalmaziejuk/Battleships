@@ -46,8 +46,7 @@ void Application::render(void)
 	mWindow.clear();
 
 	mStateManager.render();
-	mWindow.draw(mStatisticsText);
-
+	//mWindow.draw(mStatisticsText);
 	mWindow.display();
 }
 

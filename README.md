@@ -27,7 +27,7 @@ You can launch two clients of our game on your computer.
 One will be host (Host option) and the other will be client (Connect option).
 In IP input box put for example "127.0.0.1" and in Port input box "20".
 It shouldn't matter what you write in Port input box as long as 
-it's the same in both clients.
+it's the same in both clients and the port is not used by other activities.
 
 After successfuly entering a match you can put your ships
 on to the left grid by clicking left mouse button and dragging your mouse.
@@ -42,8 +42,7 @@ turn goes to the other player.
 Screenshots
 ------------------------
 
-![ScreenShot](screenshots/menu.jpg)
-![ScreenShot](screenshots/gameplay1.jpg)
-![ScreenShot](screenshots/gameplay2.jpg)
-![ScreenShot](screenshots/gameplay3.jpg)
-![ScreenShot](screenshots/gameover.jpg)
+![ScreenShot](screenshots/s1.jpg)
+![ScreenShot](screenshots/s2.jpg)
+![ScreenShot](screenshots/s3.jpg)
+![ScreenShot](screenshots/s4.jpg)
